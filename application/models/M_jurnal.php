@@ -92,6 +92,16 @@ class M_jurnal extends CI_Model
     public function save($header, $details)
     {
         $this->db->trans_start();
+        $company = $this->session->userdata('id_perusahaan');
+        if (!$company || !isset($header['id_perusahaan']) || (string) $header['id_perusahaan'] !== (string) $company) {
+            $this->db->trans_rollback();
+            return false;
+        }
+        $locked = $this->db->query('SELECT id_perusahaan FROM perusahaan WHERE id_perusahaan = ? FOR UPDATE', array($company));
+        if (!$locked || !$locked->row()) {
+            $this->db->trans_rollback();
+            return false;
+        }
         $this->db->insert($this->table, $header);
         $id_jurnal = $this->db->insert_id();
         if (!empty($details)) {

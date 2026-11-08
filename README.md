@@ -28,9 +28,36 @@ melakukan commit, rollback, atau operasi di luar transaksi database.
 Layanan memulai dan menyelesaikan transaksi database sendiri; jangan memanggilnya
 dari transaksi database yang sudah aktif. Exception dari callback atau kegagalan
 database membatalkan seluruh perubahan. Modul pemanggil wajib menampilkan pesan
-kesalahan yang sesuai dan tidak melaporkan keberhasilan. Layanan ini belum
-membuat halaman transaksi, menghitung pajak atau stok, atau menyediakan handler
-posting dan pembatalan untuk tiap jenis transaksi.
+kesalahan yang sesuai dan tidak melaporkan keberhasilan. Layanan dasar ini
+tidak membuat halaman transaksi atau menghitung pajak dan stok; setiap modul
+bertanggung jawab atas handler posting dan pembatalannya sendiri. `atomic()`
+mengunci perusahaan selama transaksi, sehingga modul transaksi lain harus
+menggunakan layanan ini untuk menjaga konsistensi pembukaan dan jurnal.
 
 Jurnal hasil posting atau pembalik dilindungi dari edit dan hapus langsung.
 CRUD jurnal lama tetap tersedia sementara modul transaksi belum selesai.
+
+## Saldo awal
+
+Menu Transaksi → Saldo Awal mencatat satu pembukaan per perusahaan dengan
+tanggal yang sama untuk seluruh rincian. Masukkan saldo akun umum, faktur
+piutang dan utang, serta jumlah dan total nilai per produk barang. Akun di
+kelompok piutang, utang usaha, dan persediaan tidak boleh dimasukkan lagi
+sebagai saldo akun umum. Pilih akun ekuitas tanpa anak untuk mencatat selisih
+debit dan kredit. Pengaturan akun piutang usaha, utang usaha, dan persediaan
+harus sesuai dengan akun di perusahaan.
+
+Simpan draft sebelum melakukan posting. Posting hanya dapat dilakukan jika
+jurnal perusahaan masih kosong; jurnal pembukaan dibuat otomatis dan tidak
+dapat diedit secara langsung. Faktur pembukaan merupakan rincian transaksi
+induk dan dapat diidentifikasi berdasarkan nomor dan jatuh tempo; jurnal
+dibuat untuk pembukaan sebagai satu kesatuan. Nilai stok awal menghasilkan
+saldo dan mutasi persediaan dengan harga pokok rata-rata.
+
+Pembatalan menghasilkan jurnal pembalik dan hanya diperbolehkan jika rincian
+faktur belum dialokasikan dan persediaan belum memiliki mutasi lanjutan.
+Pembukaan yang dibatalkan tetap tersimpan sebagai riwayat; modul tidak
+mengizinkan pembuatan pembukaan baru setelah pembatalan.
+Lakukan pencadangan dan terapkan migrasi saldo awal yang disediakan terpisah
+sebelum menggunakan modul ini. SQL dan data database tidak disimpan di
+repository.

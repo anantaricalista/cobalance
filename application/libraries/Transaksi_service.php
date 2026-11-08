@@ -105,7 +105,7 @@ class Transaksi_service
         });
     }
 
-    private function atomic(callable $operation)
+    public function atomic(callable $operation)
     {
         $db = $this->ci->db;
         $perusahaan = $this->ci->session->userdata('id_perusahaan');
@@ -123,7 +123,11 @@ class Transaksi_service
             throw new RuntimeException('Gagal memulai transaksi database.');
         }
         try {
-            $user = $db->where('id_pengguna', $pengguna)->where('id_perusahaan', $perusahaan)->get('pengguna');
+            $company = $db->query('SELECT id_perusahaan FROM perusahaan WHERE id_perusahaan = ? FOR UPDATE', array($perusahaan));
+            if (!$company || !$company->row()) {
+                throw new DomainException('Perusahaan tidak ditemukan.');
+            }
+            $user = $db->query('SELECT id_pengguna FROM pengguna WHERE id_pengguna = ? AND id_perusahaan = ? FOR UPDATE', array($pengguna, $perusahaan));
             if (!$user || !$user->row()) {
                 throw new DomainException('Pengguna tidak termasuk perusahaan ini.');
             }

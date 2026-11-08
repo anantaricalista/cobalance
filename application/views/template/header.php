@@ -108,7 +108,7 @@
                             </li>
                         </ul>
                     </li>
-                    <li class="dropdown">
+                    <li class="dropdown <?php if ($this->router->fetch_class() == 'saldo_awal') echo 'active'; ?>">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                             aria-expanded="false">
                             Transaksi <span class="caret"></span>
@@ -123,7 +123,7 @@
                             <li class="disabled"><a aria-disabled="true">Persediaan (belum tersedia)</a></li>
                             <li class="disabled"><a aria-disabled="true">Modal dan Prive (belum tersedia)</a></li>
                             <li class="disabled"><a aria-disabled="true">Penyesuaian Akuntansi (belum tersedia)</a></li>
-                            <li class="disabled"><a aria-disabled="true">Saldo Awal (belum tersedia)</a></li>
+                            <li <?php if ($this->router->fetch_class() == 'saldo_awal') echo 'class="active"'; ?>><a href="<?php echo site_url('saldo_awal'); ?>">Saldo Awal</a></li>
                         </ul>
                     </li>
                     <li <?php if ($this->router->fetch_class() == 'jurnal')
