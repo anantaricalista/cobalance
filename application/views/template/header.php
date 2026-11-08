@@ -78,7 +78,7 @@
             <!-- Menu Items -->
             <div class="collapse navbar-collapse" id="navbar-menu">
                 <ul class="nav navbar-nav">
-                    <li class="dropdown <?php if ($this->router->fetch_class() == 'akun')
+                    <li class="dropdown <?php if (in_array($this->router->fetch_class(), array('akun', 'pelanggan')))
                         echo 'active'; ?>">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                             aria-expanded="false">
@@ -89,7 +89,10 @@
                                 echo 'class="active"'; ?>>
                                 <a href="<?php echo site_url('akun'); ?>">Akun</a>
                             </li>
-                            <li class="disabled"><a aria-disabled="true">Pelanggan (belum tersedia)</a></li>
+                            <li <?php if ($this->router->fetch_class() == 'pelanggan')
+                                echo 'class="active"'; ?>>
+                                <a href="<?php echo site_url('pelanggan'); ?>">Pelanggan</a>
+                            </li>
                             <li class="disabled"><a aria-disabled="true">Pemasok (belum tersedia)</a></li>
                             <li class="disabled"><a aria-disabled="true">Produk dan Jasa (belum tersedia)</a></li>
                             <li class="disabled"><a aria-disabled="true">Pajak (belum tersedia)</a></li>
