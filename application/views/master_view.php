@@ -1,0 +1,137 @@
+<div class="row" style="margin-bottom:10px;">
+    <div class="col-xs-12 col-sm-6"><h1>Data <?php echo html_escape($master['title']); ?></h1></div>
+    <div class="col-xs-12 col-sm-6 text-right" style="padding-top:20px;">
+        <button type="button" class="btn btn-success btn-sm" onclick="add_master()">
+            <i class="glyphicon glyphicon-plus"></i> Tambah
+        </button>
+    </div>
+</div>
+<?php if (isset($master['help'])): ?>
+    <p class="alert alert-info"><?php echo html_escape($master['help']); ?></p>
+<?php endif; ?>
+<div class="table-responsive">
+    <table id="table" class="table table-striped table-bordered" cellspacing="0" width="100%">
+        <thead><tr>
+            <th>No</th>
+            <?php foreach ($master['list'] as $name): ?>
+                <th><?php echo html_escape($master['fields'][$name]['label']); ?></th>
+            <?php endforeach; ?>
+            <th>Aksi</th>
+        </tr></thead>
+        <tbody></tbody>
+    </table>
+</div>
+
+<div class="modal fade" id="modal_form" role="dialog" aria-labelledby="modal_title">
+    <div class="modal-dialog"><div class="modal-content">
+        <form id="form" class="form-horizontal">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span>&times;</span></button>
+                <h3 class="modal-title" id="modal_title"></h3>
+            </div>
+            <div class="modal-body">
+                <div id="form_error" class="alert alert-danger" role="alert" style="display:none;"></div>
+                <input type="hidden" name="<?php echo html_escape($master['id']); ?>">
+                <?php foreach ($master['fields'] as $name => $field): ?>
+                    <div class="form-group">
+                        <label for="<?php echo html_escape($name); ?>" class="control-label col-xs-12 col-sm-4"><?php echo html_escape($field['label']); ?></label>
+                        <div class="col-xs-12 col-sm-8">
+                            <?php if ($field['type'] === 'select'): ?>
+                                <select id="<?php echo html_escape($name); ?>" name="<?php echo html_escape($name); ?>" class="form-control" <?php echo !empty($field['required']) ? 'required' : ''; ?>>
+                                    <?php foreach ($field['options'] as $value => $label): ?>
+                                        <option value="<?php echo html_escape((string) $value); ?>"><?php echo html_escape($label); ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            <?php elseif ($field['type'] === 'account'): ?>
+                                <select id="<?php echo html_escape($name); ?>" name="<?php echo html_escape($name); ?>" class="form-control" <?php echo !empty($field['required']) ? 'required' : ''; ?>>
+                                    <option value="">-- Pilih Akun --</option>
+                                    <?php foreach ($accounts as $account): ?>
+                                        <option value="<?php echo html_escape($account->id_akun); ?>"><?php echo html_escape($account->kode_akun . ' - ' . $account->nama_akun); ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            <?php else: ?>
+                                <input id="<?php echo html_escape($name); ?>" name="<?php echo html_escape($name); ?>" class="form-control"
+                                    type="<?php echo $field['type'] === 'decimal' ? 'number' : 'text'; ?>"
+                                    <?php if ($field['type'] === 'decimal'): ?>min="0" step="<?php echo html_escape($field['step']); ?>" <?php if (isset($field['max'])): ?>max="<?php echo html_escape((string) $field['max']); ?>"<?php endif; ?><?php endif; ?>
+                                    <?php if (isset($field['maxlength'])): ?>maxlength="<?php echo (int) $field['maxlength']; ?>"<?php endif; ?>
+                                    <?php echo !empty($field['required']) ? 'required' : ''; ?>>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" id="btnSave" class="btn btn-primary btn-sm">Simpan</button>
+                <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal">Batal</button>
+            </div>
+        </form>
+    </div></div>
+</div>
+
+<script type="text/javascript">
+    var table;
+    var save_method;
+    var masterUrl = <?php echo json_encode(site_url($master['route']), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
+    var masterId = <?php echo json_encode($master['id']); ?>;
+    var masterFields = <?php echo json_encode(array_keys($master['fields'])); ?>;
+    var masterTitle = <?php echo json_encode($master['title']); ?>;
+
+    $(document).ready(function () {
+        table = $('#table').DataTable({
+            processing: true, serverSide: true, order: [[1, 'asc']],
+            ajax: { url: masterUrl + '/ajax_list', type: 'POST' },
+            columnDefs: [{ targets: [0, -1], orderable: false }]
+        });
+        $('#form').on('submit', function (event) {
+            event.preventDefault();
+            $('#form_error').hide().text('');
+            $('#btnSave').prop('disabled', true).text('Menyimpan...');
+            $.ajax({
+                url: masterUrl + (save_method === 'add' ? '/ajax_add' : '/ajax_update'),
+                type: 'POST', data: $('#form').serialize(), dataType: 'json',
+                success: function () { $('#modal_form').modal('hide'); table.ajax.reload(null, false); },
+                error: function (xhr) { $('#form_error').text(error_message(xhr, 'Gagal menyimpan data.')).show(); },
+                complete: function () { $('#btnSave').prop('disabled', false).text('Simpan'); }
+            });
+        });
+    });
+
+    function error_message(xhr, fallback) {
+        return xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : fallback;
+    }
+
+    function add_master() {
+        save_method = 'add';
+        $('#form')[0].reset();
+        $('#form').find('[name="' + masterId + '"]').val('');
+        $('#form_error').hide().text('');
+        $('#modal_title').text('Tambah ' + masterTitle);
+        $('#modal_form').modal('show');
+    }
+
+    function edit_master(id) {
+        $.ajax({
+            url: masterUrl + '/ajax_edit/' + id, type: 'GET', dataType: 'json',
+            success: function (data) {
+                save_method = 'update';
+                $('#form')[0].reset();
+                $('#form_error').hide().text('');
+                [masterId].concat(masterFields).forEach(function (field) {
+                    $('#form').find('[name="' + field + '"]').val(data[field] === null ? '' : data[field]);
+                });
+                $('#modal_title').text('Edit ' + masterTitle);
+                $('#modal_form').modal('show');
+            },
+            error: function (xhr) { alert(error_message(xhr, 'Gagal mengambil data.')); }
+        });
+    }
+
+    function delete_master(id) {
+        if (!confirm('Apakah Anda yakin ingin menghapus data ini?')) return;
+        $.ajax({
+            url: masterUrl + '/ajax_delete/' + id, type: 'POST', dataType: 'json',
+            success: function () { table.ajax.reload(null, false); },
+            error: function (xhr) { alert(error_message(xhr, 'Gagal menghapus data.')); }
+        });
+    }
+</script>

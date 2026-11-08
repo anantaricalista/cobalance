@@ -78,7 +78,7 @@
             <!-- Menu Items -->
             <div class="collapse navbar-collapse" id="navbar-menu">
                 <ul class="nav navbar-nav">
-                    <li class="dropdown <?php if (in_array($this->router->fetch_class(), array('akun', 'pelanggan', 'pemasok')))
+                    <li class="dropdown <?php if (in_array($this->router->fetch_class(), array('akun', 'pelanggan', 'pemasok', 'produk', 'pajak', 'pengaturan_akun')))
                         echo 'active'; ?>">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                             aria-expanded="false">
@@ -97,9 +97,15 @@
                                 echo 'class="active"'; ?>>
                                 <a href="<?php echo site_url('pemasok'); ?>">Pemasok</a>
                             </li>
-                            <li class="disabled"><a aria-disabled="true">Produk dan Jasa (belum tersedia)</a></li>
-                            <li class="disabled"><a aria-disabled="true">Pajak (belum tersedia)</a></li>
-                            <li class="disabled"><a aria-disabled="true">Pengaturan Akun (belum tersedia)</a></li>
+                            <li <?php if ($this->router->fetch_class() == 'produk') echo 'class="active"'; ?>>
+                                <a href="<?php echo site_url('produk'); ?>">Produk dan Jasa</a>
+                            </li>
+                            <li <?php if ($this->router->fetch_class() == 'pajak') echo 'class="active"'; ?>>
+                                <a href="<?php echo site_url('pajak'); ?>">Pajak</a>
+                            </li>
+                            <li <?php if ($this->router->fetch_class() == 'pengaturan_akun') echo 'class="active"'; ?>>
+                                <a href="<?php echo site_url('pengaturan_akun'); ?>">Pengaturan Akun</a>
+                            </li>
                         </ul>
                     </li>
                     <li class="dropdown">

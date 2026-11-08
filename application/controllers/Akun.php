@@ -107,7 +107,16 @@ class Akun extends MY_Controller
         if ($this->akun->is_in_use($id)) {
             return $this->error('Akun tidak dapat dihapus karena digunakan sebagai akun induk atau dalam jurnal.', 400);
         }
-        if (!$this->akun->delete_by_id($id)) {
+        $debug = $this->db->db_debug;
+        $this->db->db_debug = false;
+        $success = $this->akun->delete_by_id($id);
+        $error = $success ? null : $this->db->error();
+        $this->db->db_debug = $debug;
+        if (!$success && (int) $error['code'] === 1451) {
+            return $this->error('Akun tidak dapat dihapus karena digunakan oleh data lain.', 409);
+        }
+        if (!$success) {
+            log_message('error', 'Gagal menghapus akun: ' . $error['code'] . ' ' . $error['message']);
             return $this->error('Akun gagal dihapus.', 500);
         }
         echo json_encode(array("status" => TRUE));
