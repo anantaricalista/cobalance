@@ -78,9 +78,23 @@
             <!-- Menu Items -->
             <div class="collapse navbar-collapse" id="navbar-menu">
                 <ul class="nav navbar-nav">
-                    <li <?php if ($this->router->fetch_class() == 'akun')
-                        echo 'class="active"'; ?>>
-                        <a href="<?php echo site_url('akun'); ?>">Akun</a>
+                    <li class="dropdown <?php if ($this->router->fetch_class() == 'akun')
+                        echo 'active'; ?>">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                            aria-expanded="false">
+                            Master <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li <?php if ($this->router->fetch_class() == 'akun')
+                                echo 'class="active"'; ?>>
+                                <a href="<?php echo site_url('akun'); ?>">Akun</a>
+                            </li>
+                            <li class="disabled"><a aria-disabled="true">Pelanggan (belum tersedia)</a></li>
+                            <li class="disabled"><a aria-disabled="true">Pemasok (belum tersedia)</a></li>
+                            <li class="disabled"><a aria-disabled="true">Produk dan Jasa (belum tersedia)</a></li>
+                            <li class="disabled"><a aria-disabled="true">Pajak (belum tersedia)</a></li>
+                            <li class="disabled"><a aria-disabled="true">Pengaturan Akun (belum tersedia)</a></li>
+                        </ul>
                     </li>
                     <li <?php if ($this->router->fetch_class() == 'jurnal')
                         echo 'class="active"'; ?>>
