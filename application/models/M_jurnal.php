@@ -106,7 +106,7 @@ class M_jurnal extends CI_Model
 
     public function update($id_jurnal, $header, $details)
     {
-        if (!$this->get_by_id($id_jurnal)) {
+        if (!$this->get_by_id($id_jurnal) || $this->is_generated($id_jurnal)) {
             return false;
         }
         $this->db->trans_start();
@@ -127,7 +127,7 @@ class M_jurnal extends CI_Model
 
     public function delete_by_id($id)
     {
-        if (!$this->get_by_id($id)) {
+        if (!$this->get_by_id($id) || $this->is_generated($id)) {
             return false;
         }
         $this->db->trans_start();
@@ -137,5 +137,25 @@ class M_jurnal extends CI_Model
             ->delete($this->table);
         $this->db->trans_complete();
         return $this->db->trans_status();
+    }
+
+    public function is_generated($id)
+    {
+        return $this->db->where('id_perusahaan', $this->session->userdata('id_perusahaan'))
+            ->where('id_jurnal', $id)->count_all_results('transaksi_jurnal') > 0;
+    }
+
+    public function generated_ids($ids)
+    {
+        if (!$ids) {
+            return array();
+        }
+        $rows = $this->db->select('id_jurnal')->where('id_perusahaan', $this->session->userdata('id_perusahaan'))
+            ->where_in('id_jurnal', $ids)->get('transaksi_jurnal')->result();
+        $result = array();
+        foreach ($rows as $row) {
+            $result[$row->id_jurnal] = true;
+        }
+        return $result;
     }
 }

@@ -26,6 +26,11 @@ class Jurnal extends MY_Controller
     public function ajax_list()
     {
         $list = $this->jurnal->get_datatables();
+        $ids = array();
+        foreach ($list as $item) {
+            $ids[] = $item->id_jurnal;
+        }
+        $generated = $this->jurnal->generated_ids($ids);
         $data = array();
         $no = $_POST['start'];
         foreach ($list as $jurnal) {
@@ -36,13 +41,16 @@ class Jurnal extends MY_Controller
             $row[] = html_escape($jurnal->deskripsi);
             $row[] = html_escape($jurnal->referensi);
             // Hanya tampilkan ikon saja pada tombol aksi
-            $row[] = '<a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Edit" onclick="edit_jurnal(' . "'" . $jurnal->id_jurnal . "'" . ')">
+            $actions = '';
+            if (!isset($generated[$jurnal->id_jurnal])) {
+                $actions = '<a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Edit" onclick="edit_jurnal(' . "'" . $jurnal->id_jurnal . "'" . ')">
                         <i class="glyphicon glyphicon-pencil"></i>
                       </a>
                       <a class="btn btn-sm btn-danger" href="javascript:void(0)" title="Hapus" onclick="delete_jurnal(' . "'" . $jurnal->id_jurnal . "'" . ')">
                         <i class="glyphicon glyphicon-trash"></i>
-                      </a>
-                      <a class="btn btn-sm btn-warning" target="_blank" href="' . site_url('jurnal/export_pdf/' . $jurnal->id_jurnal) . '" title="Export PDF">
+                      </a> ';
+            }
+            $row[] = $actions . '<a class="btn btn-sm btn-warning" target="_blank" href="' . site_url('jurnal/export_pdf/' . $jurnal->id_jurnal) . '" title="Export PDF">
                         <i class="glyphicon glyphicon-file"></i>
                       </a>';
             $data[] = $row;
@@ -93,6 +101,9 @@ class Jurnal extends MY_Controller
         if (!$this->jurnal->get_by_id($id_jurnal)) {
             return $this->error('Jurnal tidak ditemukan.', 404);
         }
+        if ($this->jurnal->is_generated($id_jurnal)) {
+            return $this->error('Jurnal transaksi otomatis tidak dapat diubah langsung.', 409);
+        }
         $header = array(
             'tanggal' => $this->input->post('tanggal'),
             'deskripsi' => $this->input->post('deskripsi'),
@@ -113,6 +124,9 @@ class Jurnal extends MY_Controller
     {
         if (!$this->jurnal->get_by_id($id)) {
             return $this->error('Jurnal tidak ditemukan.', 404);
+        }
+        if ($this->jurnal->is_generated($id)) {
+            return $this->error('Jurnal transaksi otomatis tidak dapat dihapus langsung.', 409);
         }
         if (!$this->jurnal->delete_by_id($id)) {
             return $this->error('Jurnal gagal dihapus.', 500);

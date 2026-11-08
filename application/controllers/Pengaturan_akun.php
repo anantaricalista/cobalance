@@ -14,7 +14,11 @@ class Pengaturan_akun extends Master_Controller
             'utang_usaha' => '2100',
             'persediaan' => '1700',
             'pajak_masukan' => '1500',
-            'pajak_keluaran' => '2200'
+            'pajak_keluaran' => '2200',
+            'beban_pokok_penjualan' => '5100',
+            'pendapatan_default' => '4000',
+            'modal' => '3100',
+            'rugi_pelepasan_aset' => '9000'
         ),
         'fields' => array(
             'jenis_pengaturan' => array('label' => 'Jenis Pengaturan', 'type' => 'select', 'placeholder' => '-- Pilih Jenis Pengaturan --', 'options' => array(
@@ -23,7 +27,11 @@ class Pengaturan_akun extends Master_Controller
                 'utang_usaha' => 'Utang Usaha',
                 'persediaan' => 'Persediaan',
                 'pajak_masukan' => 'Pajak Masukan',
-                'pajak_keluaran' => 'Pajak Keluaran'
+                'pajak_keluaran' => 'Pajak Keluaran',
+                'beban_pokok_penjualan' => 'Beban Pokok Penjualan',
+                'pendapatan_default' => 'Pendapatan Default',
+                'modal' => 'Modal',
+                'rugi_pelepasan_aset' => 'Rugi Pelepasan Aset'
             ), 'required' => true),
             'id_akun' => array('label' => 'Akun', 'type' => 'account', 'required' => true)
         )
