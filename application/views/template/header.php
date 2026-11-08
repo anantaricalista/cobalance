@@ -96,6 +96,24 @@
                             <li class="disabled"><a aria-disabled="true">Pengaturan Akun (belum tersedia)</a></li>
                         </ul>
                     </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                            aria-expanded="false">
+                            Transaksi <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li class="disabled"><a aria-disabled="true">Penjualan (belum tersedia)</a></li>
+                            <li class="disabled"><a aria-disabled="true">Penerimaan Piutang (belum tersedia)</a></li>
+                            <li class="disabled"><a aria-disabled="true">Pembelian (belum tersedia)</a></li>
+                            <li class="disabled"><a aria-disabled="true">Pembayaran Utang (belum tersedia)</a></li>
+                            <li class="disabled"><a aria-disabled="true">Kas dan Bank (belum tersedia)</a></li>
+                            <li class="disabled"><a aria-disabled="true">Aset Tetap (belum tersedia)</a></li>
+                            <li class="disabled"><a aria-disabled="true">Persediaan (belum tersedia)</a></li>
+                            <li class="disabled"><a aria-disabled="true">Modal dan Prive (belum tersedia)</a></li>
+                            <li class="disabled"><a aria-disabled="true">Penyesuaian Akuntansi (belum tersedia)</a></li>
+                            <li class="disabled"><a aria-disabled="true">Saldo Awal (belum tersedia)</a></li>
+                        </ul>
+                    </li>
                     <li <?php if ($this->router->fetch_class() == 'jurnal')
                         echo 'class="active"'; ?>>
                         <a href="<?php echo site_url('jurnal'); ?>">Jurnal Transaksi</a>
