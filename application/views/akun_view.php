@@ -75,8 +75,8 @@
                                 <select name="id_akun_induk" class="form-control">
                                     <option value="">-- Tidak Ada (Akun Induk) --</option>
                                     <?php foreach ($parent_list as $parent): ?>
-                                        <option value="<?php echo $parent->id_akun; ?>">
-                                            <?php echo $parent->nama_akun . " (" . $parent->kode_akun . ")"; ?>
+                                        <option value="<?php echo html_escape($parent->id_akun); ?>">
+                                            <?php echo html_escape($parent->nama_akun . " (" . $parent->kode_akun . ")"); ?>
                                         </option>
                                     <?php endforeach; ?>
                                 </select>
@@ -183,9 +183,10 @@
                 $('#btnSave').text('Simpan');
                 $('#btnSave').attr('disabled', false);
                 table.ajax.reload(null, false);
+                refresh_account_options();
             },
             error: function (jqXHR, textStatus, errorThrown) {
-                alert('Error menambahkan/memperbarui data');
+                alert(jqXHR.responseJSON && jqXHR.responseJSON.message || 'Error menambahkan/memperbarui data');
                 $('#btnSave').text('Simpan');
                 $('#btnSave').attr('disabled', false);
             }
@@ -200,11 +201,29 @@
                 dataType: "JSON",
                 success: function (data) {
                     table.ajax.reload(null, false);
+                    refresh_account_options();
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
-                    alert('Error menghapus data');
+                    alert(jqXHR.responseJSON && jqXHR.responseJSON.message || 'Error menghapus data');
                 }
             });
         }
+    }
+
+    function refresh_account_options() {
+        $.ajax({
+            url: "<?php echo site_url('akun/ajax_options'); ?>",
+            dataType: 'json',
+            success: function (accounts) {
+                var select = $('[name="id_akun_induk"]');
+                select.empty().append($('<option>').val('').text('-- Tidak Ada (Akun Induk) --'));
+                accounts.forEach(function (account) {
+                    select.append($('<option>').val(account.id_akun).text(account.nama_akun + ' (' + account.kode_akun + ')'));
+                });
+            },
+            error: function () {
+                alert('Gagal memperbarui pilihan akun induk. Muat ulang halaman.');
+            }
+        });
     }
 </script>

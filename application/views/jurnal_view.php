@@ -136,7 +136,7 @@
         $('#detail_table tbody').empty();
 
         $.ajax({
-            url: "<?php echo site_url('jurnal/ajax_edit/'); ?>" + id,
+            url: "<?php echo site_url('jurnal/ajax_edit'); ?>/" + id,
             type: "GET",
             dataType: "JSON",
             success: function (data) {
@@ -160,6 +160,7 @@
     }
 
     function save() {
+        var saveButtonContent = $('#btnSave').html();
         $('#btnSave').text('Menyimpan...');
         $('#btnSave').attr('disabled', true);
         var url = (save_method == 'add') ? "<?php echo site_url('jurnal/ajax_add'); ?>" : "<?php echo site_url('jurnal/ajax_update'); ?>";
@@ -171,13 +172,13 @@
             dataType: "JSON",
             success: function (data) {
                 $('#modal_form').modal('hide');
-                $('#btnSave').text('');
+                $('#btnSave').html(saveButtonContent);
                 $('#btnSave').attr('disabled', false);
                 table.ajax.reload(null, false);
             },
             error: function (jqXHR, textStatus, errorThrown) {
-                alert('Error menambahkan/memperbarui data');
-                $('#btnSave').text('');
+                alert(jqXHR.responseJSON && jqXHR.responseJSON.message || 'Error menambahkan/memperbarui data');
+                $('#btnSave').html(saveButtonContent);
                 $('#btnSave').attr('disabled', false);
             }
         });
@@ -186,14 +187,14 @@
     function delete_jurnal(id) {
         if (confirm('Apakah anda yakin akan menghapus data ini?')) {
             $.ajax({
-                url: "<?php echo site_url('jurnal/ajax_delete/'); ?>" + id,
+                url: "<?php echo site_url('jurnal/ajax_delete'); ?>/" + id,
                 type: "POST",
                 dataType: "JSON",
                 success: function (data) {
                     table.ajax.reload(null, false);
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
-                    alert('Error menghapus data');
+                    alert(jqXHR.responseJSON && jqXHR.responseJSON.message || 'Error menghapus data');
                 }
             });
         }
@@ -201,19 +202,20 @@
 
     function add_detail_row(detail) {
         // Parameter detail opsional; jika ada, merupakan objek dengan properti: id_akun, debit, kredit.
-        var akunOptions = '<option value="">-- Pilih Akun --</option>';
-        <?php foreach ($akun_list as $akun): ?>
-            akunOptions += '<option value="<?php echo $akun->id_akun; ?>"><?php echo $akun->nama_akun . ' (' . $akun->kode_akun . ')'; ?></option>';
-        <?php endforeach; ?>
-
         var row = '<tr>';
-        row += '<td><select name="detail_akun[]" class="form-control">' + akunOptions + '</select></td>';
+        row += '<td><select name="detail_akun[]" class="form-control"></select></td>';
         row += '<td><input name="detail_debit[]" class="form-control" type="number" step="0.01" value="0"></td>';
         row += '<td><input name="detail_kredit[]" class="form-control" type="number" step="0.01" value="0"></td>';
         row += '<td style="text-align:center;"><button type="button" class="btn btn-danger btn-sm" onclick="remove_detail_row(this)"><i class="glyphicon glyphicon-trash"></i></button></td>';
         row += '</tr>';
 
         var $row = $(row);
+        var select = $row.find('select[name="detail_akun[]"]');
+        select.append($('<option>').val('').text('-- Pilih Akun --'));
+        var accounts = <?php echo json_encode($akun_list, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
+        accounts.forEach(function (account) {
+            select.append($('<option>').val(account.id_akun).text(account.nama_akun + ' (' + account.kode_akun + ')'));
+        });
         if (detail) {
             $row.find('select[name="detail_akun[]"]').val(detail.id_akun);
             $row.find('input[name="detail_debit[]"]').val(detail.debit);

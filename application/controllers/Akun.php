@@ -28,10 +28,10 @@ class Akun extends MY_Controller
             $no++;
             $row = array();
             $row[] = $no;
-            $row[] = $akun->kode_akun;
-            $row[] = $akun->nama_akun;
-            $row[] = $akun->tipe_akun;
-            $row[] = $akun->nama_akun_induk;
+            $row[] = html_escape($akun->kode_akun);
+            $row[] = html_escape($akun->nama_akun);
+            $row[] = html_escape($akun->tipe_akun);
+            $row[] = html_escape($akun->nama_akun_induk === null ? '' : $akun->nama_akun_induk);
             $row[] = '<a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Edit" onclick="edit_akun(' . "'" . $akun->id_akun . "'" . ')">
                         <i class="glyphicon glyphicon-pencil"></i>
                       </a>
@@ -53,57 +53,97 @@ class Akun extends MY_Controller
     public function ajax_edit($id)
     {
         $data = $this->akun->get_by_id($id);
+        if (!$data) {
+            return $this->error('Akun tidak ditemukan.', 404);
+        }
         echo json_encode($data);
+    }
+
+    public function ajax_options()
+    {
+        echo json_encode($this->akun->get_all());
     }
 
     public function ajax_add()
     {
-        $id_akun_induk = $this->input->post('id_akun_induk');
-        if (empty($id_akun_induk)) {
-            $id_akun_induk = NULL;
+        $data = $this->account_data();
+        if ($data === false) {
+            return;
         }
-        $data = array(
-            'kode_akun' => $this->input->post('kode_akun'),
-            'nama_akun' => $this->input->post('nama_akun'),
-            'tipe_akun' => $this->input->post('tipe_akun'),
-            'id_akun_induk' => $id_akun_induk,
-            'id_perusahaan' => $this->session->userdata('id_perusahaan')
-        );
-        $this->akun->save($data);
+        $data['id_perusahaan'] = $this->session->userdata('id_perusahaan');
+        if (!$this->akun->save($data)) {
+            return $this->error('Akun gagal disimpan.', 500);
+        }
         echo json_encode(array("status" => TRUE));
     }
 
     public function ajax_update()
     {
         $id_akun = $this->input->post('id_akun');
-        $kode_akun = $this->input->post('kode_akun');
-        $nama_akun = $this->input->post('nama_akun');
-
-        // Cek apakah akun induk dipilih; jika tidak, set ke null
-        $parent = $this->input->post('id_akun_induk');
-        if (empty($parent)) {
-            $parent = null;
+        if (!$this->akun->get_by_id($id_akun)) {
+            return $this->error('Akun tidak ditemukan.', 404);
         }
-
-        $data = array(
-            'kode_akun' => $kode_akun,
-            'nama_akun' => $nama_akun,
-            'id_akun_induk' => $parent
-        );
-
+        $data = $this->account_data($id_akun);
+        if ($data === false) {
+            return;
+        }
         $where = array(
             'id_akun' => $id_akun,
             'id_perusahaan' => $this->session->userdata('id_perusahaan')
         );
 
-        $this->akun->update($where, $data);
+        if ($this->akun->update($where, $data) === false) {
+            return $this->error('Akun gagal diperbarui.', 500);
+        }
         echo json_encode(array("status" => TRUE));
     }
 
 
     public function ajax_delete($id)
     {
-        $this->akun->delete_by_id($id);
+        if (!$this->akun->get_by_id($id)) {
+            return $this->error('Akun tidak ditemukan.', 404);
+        }
+        if ($this->akun->is_in_use($id)) {
+            return $this->error('Akun tidak dapat dihapus karena digunakan sebagai akun induk atau dalam jurnal.', 400);
+        }
+        if (!$this->akun->delete_by_id($id)) {
+            return $this->error('Akun gagal dihapus.', 500);
+        }
         echo json_encode(array("status" => TRUE));
+    }
+
+    private function account_data($id = null)
+    {
+        $kode = trim((string) $this->input->post('kode_akun'));
+        $nama = trim((string) $this->input->post('nama_akun'));
+        $tipe = $this->input->post('tipe_akun');
+        $parent = $this->input->post('id_akun_induk');
+        if ($kode === '' || $nama === '' || !in_array($tipe, array('Aset', 'Kewajiban', 'Ekuitas', 'Pendapatan', 'Beban'), true)) {
+            $this->error('Kode, nama, dan tipe akun wajib diisi.', 400);
+            return false;
+        }
+        $seen = array();
+        $parent_id = $parent;
+        while ($parent_id !== null && $parent_id !== '') {
+            if ((string) $parent_id === (string) $id || isset($seen[$parent_id])) {
+                $this->error('Akun induk tidak boleh membentuk siklus.', 400);
+                return false;
+            }
+            $seen[$parent_id] = true;
+            $account = $this->akun->get_by_id($parent_id);
+            if (!$account) {
+                $this->error('Akun induk tidak ditemukan.', 400);
+                return false;
+            }
+            $parent_id = $account->id_akun_induk;
+        }
+        return array('kode_akun' => $kode, 'nama_akun' => $nama, 'tipe_akun' => $tipe, 'id_akun_induk' => $parent === '' || $parent === null ? null : $parent);
+    }
+
+    private function error($message, $code)
+    {
+        $this->output->set_status_header($code)->set_content_type('application/json')
+            ->set_output(json_encode(array('status' => false, 'message' => $message)));
     }
 }

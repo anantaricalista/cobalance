@@ -101,7 +101,7 @@
 
     function view_detail(id) {
         $.ajax({
-            url: "<?php echo site_url('jurnal_umum/ajax_detail/'); ?>" + id,
+            url: "<?php echo site_url('jurnal_umum/ajax_detail'); ?>/" + id,
             type: "GET",
             dataType: "JSON",
             success: function (data) {
@@ -110,8 +110,8 @@
                     var row = data[i];
                     html += '<tr>';
                     html += '<td>' + (i + 1) + '</td>';
-                    html += '<td>' + row.kode_akun + '</td>';
-                    html += '<td>' + row.nama_akun + '</td>';
+                    html += '<td>' + $('<div>').text(row.kode_akun || '').html() + '</td>';
+                    html += '<td>' + $('<div>').text(row.nama_akun || '').html() + '</td>';
                     html += '<td style="text-align:right;">' + formatRupiah(row.debit) + '</td>';
                     html += '<td style="text-align:right;">' + formatRupiah(row.kredit) + '</td>';
                     html += '</tr>';

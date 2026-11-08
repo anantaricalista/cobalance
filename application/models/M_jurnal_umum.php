@@ -22,7 +22,7 @@ class M_jurnal_umum extends CI_Model
 
         $i = 0;
         foreach ($this->column_search as $item) {
-            if ($_POST['search']['value']) {
+            if (isset($_POST['search']['value']) && $_POST['search']['value'] !== '') {
                 if ($i === 0) {
                     $this->db->group_start();
                     $this->db->like($item, $_POST['search']['value']);
@@ -34,9 +34,11 @@ class M_jurnal_umum extends CI_Model
             }
             $i++;
         }
-        if (isset($_POST['order'])) {
-            $this->db->order_by($this->column_order[$_POST['order']['0']['column']], $_POST['order']['0']['dir']);
-        } else if (isset($this->order)) {
+        $column = isset($_POST['order'][0]['column']) ? (int) $_POST['order'][0]['column'] : -1;
+        if (isset($this->column_order[$column]) && isset($_POST['order'][0]['dir'])) {
+            $direction = strtolower($_POST['order'][0]['dir']) === 'desc' ? 'desc' : 'asc';
+            $this->db->order_by($this->column_order[$column], $direction);
+        } else {
             $order = $this->order;
             $this->db->order_by(key($order), $order[key($order)]);
         }
@@ -70,8 +72,10 @@ class M_jurnal_umum extends CI_Model
     {
         $this->db->select('d.*, a.nama_akun, a.kode_akun');
         $this->db->from('detail_jurnal d');
+        $this->db->join('jurnal_transaksi jt', 'd.id_jurnal = jt.id_jurnal');
         $this->db->join('akun a', 'd.id_akun = a.id_akun', 'left');
         $this->db->where('d.id_jurnal', $id);
+        $this->db->where('jt.id_perusahaan', $this->session->userdata('id_perusahaan'));
         $query = $this->db->get();
         return $query->result();
     }

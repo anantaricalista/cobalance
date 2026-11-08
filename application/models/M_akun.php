@@ -5,9 +5,9 @@ class M_akun extends CI_Model
 {
 
     var $table = 'akun';
-    var $column_order = array(null, 'kode_akun', 'nama_akun', 'tipe_akun', 'id_akun_induk');
-    var $column_search = array('kode_akun', 'nama_akun', 'tipe_akun');
-    var $order = array('id_akun' => 'asc');
+    var $column_order = array(null, 'a.kode_akun', 'a.nama_akun', 'a.tipe_akun', 'p.nama_akun');
+    var $column_search = array('a.kode_akun', 'a.nama_akun', 'a.tipe_akun', 'p.nama_akun');
+    var $order = array('a.id_akun' => 'asc');
 
     public function __construct()
     {
@@ -29,7 +29,7 @@ class M_akun extends CI_Model
 
         $i = 0;
         foreach ($this->column_search as $item) {
-            if ($_POST['search']['value']) {
+            if (isset($_POST['search']['value']) && $_POST['search']['value'] !== '') {
                 if ($i === 0) {
                     $this->db->group_start();
                     $this->db->like($item, $_POST['search']['value']);
@@ -43,9 +43,11 @@ class M_akun extends CI_Model
             $i++;
         }
 
-        if (isset($_POST['order'])) {
-            $this->db->order_by($this->column_order[$_POST['order']['0']['column']], $_POST['order']['0']['dir']);
-        } else if (isset($this->order)) {
+        $column = isset($_POST['order'][0]['column']) ? (int) $_POST['order'][0]['column'] : -1;
+        if (isset($this->column_order[$column]) && isset($_POST['order'][0]['dir'])) {
+            $direction = strtolower($_POST['order'][0]['dir']) === 'desc' ? 'desc' : 'asc';
+            $this->db->order_by($this->column_order[$column], $direction);
+        } else {
             $order = $this->order;
             $this->db->order_by(key($order), $order[key($order)]);
         }
@@ -99,14 +101,19 @@ class M_akun extends CI_Model
 
     public function update($where, $data)
     {
-        $this->db->update($this->table, $data, $where);
-        return $this->db->affected_rows();
+        return $this->db->update($this->table, $data, $where);
+    }
+
+    public function is_in_use($id)
+    {
+        return $this->db->where('id_akun_induk', $id)->count_all_results($this->table) > 0
+            || $this->db->where('id_akun', $id)->count_all_results('detail_jurnal') > 0;
     }
 
     public function delete_by_id($id)
     {
         $this->db->where('id_akun', $id);
         $this->db->where('id_perusahaan', $this->session->userdata('id_perusahaan'));
-        $this->db->delete($this->table);
+        return $this->db->delete($this->table);
     }
 }

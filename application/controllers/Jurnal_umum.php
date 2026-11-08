@@ -30,8 +30,8 @@ class Jurnal_umum extends MY_Controller
             $row[] = $no;
             // Misal: format tanggal dapat diterapkan di view (menggunakan fungsi JavaScript seperti formatDateIndo())
             $row[] = $journal->tanggal;
-            $row[] = $journal->deskripsi;
-            $row[] = $journal->referensi;
+            $row[] = html_escape($journal->deskripsi);
+            $row[] = html_escape($journal->referensi);
             $row[] = '<a class="btn btn-sm btn-info" href="javascript:void(0)" title="Lihat Detail" onclick="view_detail(' . "'" . $journal->id_jurnal . "'" . ')">
                         <i class="glyphicon glyphicon-eye-open"></i>
                       </a>';

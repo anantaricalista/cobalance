@@ -22,7 +22,7 @@ class M_jurnal extends CI_Model
         $this->db->where('id_perusahaan', $this->session->userdata('id_perusahaan'));
         $i = 0;
         foreach ($this->column_search as $item) {
-            if ($_POST['search']['value']) {
+            if (isset($_POST['search']['value']) && $_POST['search']['value'] !== '') {
                 if ($i === 0) {
                     $this->db->group_start();
                     $this->db->like($item, $_POST['search']['value']);
@@ -34,9 +34,11 @@ class M_jurnal extends CI_Model
             }
             $i++;
         }
-        if (isset($_POST['order'])) {
-            $this->db->order_by($this->column_order[$_POST['order']['0']['column']], $_POST['order']['0']['dir']);
-        } else if (isset($this->order)) {
+        $column = isset($_POST['order'][0]['column']) ? (int) $_POST['order'][0]['column'] : -1;
+        if (isset($this->column_order[$column]) && isset($_POST['order'][0]['dir'])) {
+            $direction = strtolower($_POST['order'][0]['dir']) === 'desc' ? 'desc' : 'asc';
+            $this->db->order_by($this->column_order[$column], $direction);
+        } else {
             $order = $this->order;
             $this->db->order_by(key($order), $order[key($order)]);
         }
@@ -70,21 +72,26 @@ class M_jurnal extends CI_Model
     {
         $this->db->from($this->table);
         $this->db->where('id_jurnal', $id);
+        $this->db->where('id_perusahaan', $this->session->userdata('id_perusahaan'));
         $query = $this->db->get();
         return $query->row();
     }
 
     public function get_details($id_jurnal)
     {
+        $this->db->select('dj.*, a.kode_akun, a.nama_akun');
         $this->db->from('detail_jurnal dj');
+        $this->db->join('jurnal_transaksi jt', 'jt.id_jurnal = dj.id_jurnal');
         $this->db->join('akun a', 'a.id_akun = dj.id_akun', 'left');
         $this->db->where('dj.id_jurnal', $id_jurnal);
+        $this->db->where('jt.id_perusahaan', $this->session->userdata('id_perusahaan'));
         $query = $this->db->get();
         return $query->result();
     }
 
     public function save($header, $details)
     {
+        $this->db->trans_start();
         $this->db->insert($this->table, $header);
         $id_jurnal = $this->db->insert_id();
         if (!empty($details)) {
@@ -93,30 +100,42 @@ class M_jurnal extends CI_Model
             }
             $this->db->insert_batch('detail_jurnal', $details);
         }
-        return $id_jurnal;
+        $this->db->trans_complete();
+        return $this->db->trans_status() ? $id_jurnal : false;
     }
 
-    public function update_header($id_jurnal, $header)
+    public function update($id_jurnal, $header, $details)
     {
+        if (!$this->get_by_id($id_jurnal)) {
+            return false;
+        }
+        $this->db->trans_start();
         $this->db->where('id_jurnal', $id_jurnal);
+        $this->db->where('id_perusahaan', $this->session->userdata('id_perusahaan'));
         $this->db->update($this->table, $header);
-        return $this->db->affected_rows();
-    }
-
-    public function delete_details($id_jurnal)
-    {
         $this->db->where('id_jurnal', $id_jurnal);
         $this->db->delete('detail_jurnal');
-    }
-
-    public function save_details_batch($id_jurnal, $details)
-    {
-        $this->db->insert_batch('detail_jurnal', $details);
+        if (!empty($details)) {
+            foreach ($details as &$detail) {
+                $detail['id_jurnal'] = $id_jurnal;
+            }
+            $this->db->insert_batch('detail_jurnal', $details);
+        }
+        $this->db->trans_complete();
+        return $this->db->trans_status();
     }
 
     public function delete_by_id($id)
     {
-        $this->db->where('id_jurnal', $id);
-        $this->db->delete($this->table);
+        if (!$this->get_by_id($id)) {
+            return false;
+        }
+        $this->db->trans_start();
+        $this->db->where('id_jurnal', $id)->delete('detail_jurnal');
+        $this->db->where('id_jurnal', $id)
+            ->where('id_perusahaan', $this->session->userdata('id_perusahaan'))
+            ->delete($this->table);
+        $this->db->trans_complete();
+        return $this->db->trans_status();
     }
 }

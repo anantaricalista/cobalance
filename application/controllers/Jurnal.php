@@ -33,8 +33,8 @@ class Jurnal extends MY_Controller
             $row = array();
             $row[] = $no;
             $row[] = $jurnal->tanggal;
-            $row[] = $jurnal->deskripsi;
-            $row[] = $jurnal->referensi;
+            $row[] = html_escape($jurnal->deskripsi);
+            $row[] = html_escape($jurnal->referensi);
             // Hanya tampilkan ikon saja pada tombol aksi
             $row[] = '<a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Edit" onclick="edit_jurnal(' . "'" . $jurnal->id_jurnal . "'" . ')">
                         <i class="glyphicon glyphicon-pencil"></i>
@@ -60,6 +60,9 @@ class Jurnal extends MY_Controller
     public function ajax_edit($id)
     {
         $data = $this->jurnal->get_by_id($id);
+        if (!$data) {
+            return $this->error('Jurnal tidak ditemukan.', 404);
+        }
         $data->detail = $this->jurnal->get_details($id);
         echo json_encode($data);
     }
@@ -73,21 +76,13 @@ class Jurnal extends MY_Controller
             'referensi' => $this->input->post('referensi'),
             'id_perusahaan' => $this->session->userdata('id_perusahaan')
         );
-        // Detail jurnal (dari form, berupa array)
-        $detail_akun = $this->input->post('detail_akun');
-        $detail_debit = $this->input->post('detail_debit');
-        $detail_kredit = $this->input->post('detail_kredit');
-        $details = array();
-        if ($detail_akun) {
-            for ($i = 0; $i < count($detail_akun); $i++) {
-                $details[] = array(
-                    'id_akun' => $detail_akun[$i],
-                    'debit' => $detail_debit[$i],
-                    'kredit' => $detail_kredit[$i]
-                );
-            }
+        $details = $this->details_from_input();
+        if ($details === false || !$this->valid_date($header['tanggal'])) {
+            return $this->error('Tanggal atau detail jurnal tidak valid. Pastikan akun dan nominal diisi dengan benar.', 400);
         }
-        $this->jurnal->save($header, $details);
+        if (!$this->jurnal->save($header, $details)) {
+            return $this->error('Jurnal gagal disimpan.', 500);
+        }
         echo json_encode(array("status" => TRUE));
     }
 
@@ -95,28 +90,20 @@ class Jurnal extends MY_Controller
     public function ajax_update()
     {
         $id_jurnal = $this->input->post('id_jurnal');
+        if (!$this->jurnal->get_by_id($id_jurnal)) {
+            return $this->error('Jurnal tidak ditemukan.', 404);
+        }
         $header = array(
             'tanggal' => $this->input->post('tanggal'),
             'deskripsi' => $this->input->post('deskripsi'),
             'referensi' => $this->input->post('referensi')
         );
-        $this->jurnal->update_header($id_jurnal, $header);
-        // Hapus detail lama, kemudian simpan detail baru
-        $this->jurnal->delete_details($id_jurnal);
-        $detail_akun = $this->input->post('detail_akun');
-        $detail_debit = $this->input->post('detail_debit');
-        $detail_kredit = $this->input->post('detail_kredit');
-        $details = array();
-        if ($detail_akun) {
-            for ($i = 0; $i < count($detail_akun); $i++) {
-                $details[] = array(
-                    'id_jurnal' => $id_jurnal,
-                    'id_akun' => $detail_akun[$i],
-                    'debit' => $detail_debit[$i],
-                    'kredit' => $detail_kredit[$i]
-                );
-            }
-            $this->jurnal->save_details_batch($id_jurnal, $details);
+        $details = $this->details_from_input();
+        if ($details === false || !$this->valid_date($header['tanggal'])) {
+            return $this->error('Tanggal atau detail jurnal tidak valid. Pastikan akun dan nominal diisi dengan benar.', 400);
+        }
+        if (!$this->jurnal->update($id_jurnal, $header, $details)) {
+            return $this->error('Jurnal gagal diperbarui.', 500);
         }
         echo json_encode(array("status" => TRUE));
     }
@@ -124,7 +111,12 @@ class Jurnal extends MY_Controller
     // Proses hapus jurnal (detail akan terhapus otomatis jika foreign key sudah diset cascade)
     public function ajax_delete($id)
     {
-        $this->jurnal->delete_by_id($id);
+        if (!$this->jurnal->get_by_id($id)) {
+            return $this->error('Jurnal tidak ditemukan.', 404);
+        }
+        if (!$this->jurnal->delete_by_id($id)) {
+            return $this->error('Jurnal gagal dihapus.', 500);
+        }
         echo json_encode(array("status" => TRUE));
     }
 
@@ -133,6 +125,10 @@ class Jurnal extends MY_Controller
     {
         // Ambil data jurnal (header dan detail)
         $jurnal = $this->jurnal->get_by_id($id);
+        if (!$jurnal) {
+            show_404();
+            return;
+        }
         $jurnal->detail = $this->jurnal->get_details($id);
         $data['jurnal'] = $jurnal;
 
@@ -145,5 +141,44 @@ class Jurnal extends MY_Controller
         $this->pdf->setPaper('A4', 'portrait');
         $this->pdf->render();
         $this->pdf->stream("jurnal_{$id}.pdf", array("Attachment" => 0));
+    }
+
+    private function details_from_input()
+    {
+        $accounts = $this->input->post('detail_akun');
+        $debits = $this->input->post('detail_debit');
+        $credits = $this->input->post('detail_kredit');
+        if ($accounts === null && $debits === null && $credits === null) {
+            return array();
+        }
+        if (!is_array($accounts) || !is_array($debits) || !is_array($credits)
+            || count($accounts) !== count($debits) || count($accounts) !== count($credits)) {
+            return false;
+        }
+        $details = array();
+        foreach ($accounts as $i => $account) {
+            if (!isset($debits[$i], $credits[$i]) || !$this->akun->get_by_id($account)
+                || !is_numeric($debits[$i]) || !is_numeric($credits[$i])
+                || $debits[$i] < 0 || $credits[$i] < 0) {
+                return false;
+            }
+            $details[] = array('id_akun' => $account, 'debit' => $debits[$i], 'kredit' => $credits[$i]);
+        }
+        return $details;
+    }
+
+    private function valid_date($value)
+    {
+        if (!is_string($value)) {
+            return false;
+        }
+        $date = DateTime::createFromFormat('!Y-m-d', $value);
+        return $date && $date->format('Y-m-d') === $value;
+    }
+
+    private function error($message, $code)
+    {
+        $this->output->set_status_header($code)->set_content_type('application/json')
+            ->set_output(json_encode(array('status' => false, 'message' => $message)));
     }
 }
