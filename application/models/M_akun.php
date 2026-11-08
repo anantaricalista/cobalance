@@ -93,6 +93,45 @@ class M_akun extends CI_Model
         return $this->db->get($this->table)->result();
     }
 
+    public function get_selectable($types = array(), $roots = array())
+    {
+        $accounts = $this->get_all();
+        $by_id = array();
+        $parents = array();
+        foreach ($accounts as $account) {
+            $by_id[$account->id_akun] = $account;
+            if ($account->id_akun_induk !== null && $account->id_akun_induk != 0) {
+                $parents[$account->id_akun_induk] = true;
+            }
+        }
+        $result = array();
+        foreach ($accounts as $account) {
+            if (isset($parents[$account->id_akun])) {
+                continue;
+            }
+            if (!$types && !$roots) {
+                $result[] = $account;
+                continue;
+            }
+            if (in_array($account->tipe_akun, $types, true)) {
+                $result[] = $account;
+                continue;
+            }
+            $current = $account;
+            $seen = array();
+            while ($current && !isset($seen[$current->id_akun])) {
+                $seen[$current->id_akun] = true;
+                if (in_array($current->kode_akun, $roots, true)) {
+                    $result[] = $account;
+                    break;
+                }
+                $parent = $current->id_akun_induk;
+                $current = isset($by_id[$parent]) ? $by_id[$parent] : null;
+            }
+        }
+        return $result;
+    }
+
     public function save($data)
     {
         $this->db->insert($this->table, $data);

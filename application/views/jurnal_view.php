@@ -216,6 +216,9 @@
         accounts.forEach(function (account) {
             select.append($('<option>').val(account.id_akun).text(account.nama_akun + ' (' + account.kode_akun + ')'));
         });
+        if (detail && !select.find('option').filter(function () { return this.value === String(detail.id_akun); }).length) {
+            select.append($('<option>').val(detail.id_akun).text(detail.nama_akun + ' (' + detail.kode_akun + ') - pilihan lama'));
+        }
         if (detail) {
             $row.find('select[name="detail_akun[]"]').val(detail.id_akun);
             $row.find('input[name="detail_debit[]"]').val(detail.debit);

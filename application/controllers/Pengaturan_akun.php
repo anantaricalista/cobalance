@@ -8,7 +8,15 @@ class Pengaturan_akun extends Master_Controller
         'table' => 'pengaturan_akun', 'id' => 'id_pengaturan_akun', 'title' => 'Pengaturan Akun', 'route' => 'pengaturan_akun',
         'search' => array('jenis_pengaturan'),
         'list' => array('jenis_pengaturan', 'id_akun'),
-        'help' => 'Gunakan kode pengaturan huruf kecil, angka, dan garis bawah, misalnya piutang_usaha atau utang_usaha. Modul transaksi akan menggunakan kode yang disepakati saat dikembangkan.',
+        'help' => 'Kode yang dikenali: kas_bank, piutang_usaha, utang_usaha, persediaan, pajak_masukan, pajak_keluaran. Kode lain menampilkan semua akun tanpa anak. Modul transaksi belum menggunakan pengaturan ini.',
+        'account_settings' => array(
+            'kas_bank' => '1100',
+            'piutang_usaha' => '1200',
+            'utang_usaha' => '2100',
+            'persediaan' => '1700',
+            'pajak_masukan' => '1500',
+            'pajak_keluaran' => '2200'
+        ),
         'fields' => array(
             'jenis_pengaturan' => array('label' => 'Kode Pengaturan', 'type' => 'text', 'maxlength' => 50, 'pattern' => '/^[a-z][a-z0-9_]*$/D', 'required' => true),
             'id_akun' => array('label' => 'Akun', 'type' => 'account', 'required' => true)

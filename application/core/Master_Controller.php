@@ -15,7 +15,19 @@ abstract class Master_Controller extends MY_Controller
 
     public function index()
     {
-        $data = array('master' => $this->config_master, 'accounts' => $this->akun->get_all());
+        $options = array();
+        foreach ($this->config_master['fields'] as $name => $field) {
+            if ($field['type'] === 'account') {
+                $options[$name] = $this->account_options($field);
+            }
+        }
+        $setting_options = array();
+        if (isset($this->config_master['account_settings'])) {
+            foreach ($this->config_master['account_settings'] as $key => $root) {
+                $setting_options[$key] = $this->akun->get_selectable(array(), array($root));
+            }
+        }
+        $data = array('master' => $this->config_master, 'accounts' => $options, 'setting_options' => $setting_options, 'all_accounts' => $this->akun->get_all());
         $this->load->view('template/header');
         $this->load->view('master_view', $data);
         $this->load->view('template/footer');
@@ -95,7 +107,7 @@ abstract class Master_Controller extends MY_Controller
         if (!$record) {
             return $this->error('Data tidak ditemukan.', 404);
         }
-        $data = $this->validated_data();
+        $data = $this->validated_data($record);
         if ($data === false) {
             return;
         }
@@ -117,7 +129,14 @@ abstract class Master_Controller extends MY_Controller
         $this->write('delete', $id, null);
     }
 
-    private function validated_data()
+    private function account_options($field)
+    {
+        $types = isset($field['account_types']) ? $field['account_types'] : array();
+        $roots = isset($field['account_roots']) ? $field['account_roots'] : array();
+        return $this->akun->get_selectable($types, $roots);
+    }
+
+    private function validated_data($record = null)
     {
         $data = array();
         foreach ($this->config_master['fields'] as $name => $field) {
@@ -153,8 +172,21 @@ abstract class Master_Controller extends MY_Controller
                     return false;
                 }
             } elseif ($field['type'] === 'account') {
-                if (!ctype_digit($value) || !$this->akun->get_by_id($value)) {
-                    $this->error($field['label'] . ' tidak ditemukan pada perusahaan ini.', 400);
+                $allowed = $this->account_options($field);
+                if ($this->config_master['table'] === 'pengaturan_akun' && isset($this->config_master['account_settings'][$data['jenis_pengaturan']])) {
+                    $allowed = $this->akun->get_selectable(array(), array($this->config_master['account_settings'][$data['jenis_pengaturan']]));
+                }
+                $valid = false;
+                foreach ($allowed as $account) {
+                    if ((string) $account->id_akun === $value) {
+                        $valid = true;
+                        break;
+                    }
+                }
+                $legacy = $record && isset($record->$name) && (string) $record->$name === $value
+                    && ($this->config_master['table'] !== 'pengaturan_akun' || $record->jenis_pengaturan === $data['jenis_pengaturan']);
+                if (!ctype_digit($value) || (!$valid && !($legacy && $this->akun->get_by_id($value)))) {
+                    $this->error($field['label'] . ' tidak sesuai kategori atau bukan akun yang dapat dipilih.', 400);
                     return false;
                 }
             }

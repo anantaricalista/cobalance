@@ -45,7 +45,7 @@
                             <?php elseif ($field['type'] === 'account'): ?>
                                 <select id="<?php echo html_escape($name); ?>" name="<?php echo html_escape($name); ?>" class="form-control" <?php echo !empty($field['required']) ? 'required' : ''; ?>>
                                     <option value="">-- Pilih Akun --</option>
-                                    <?php foreach ($accounts as $account): ?>
+                                    <?php foreach ($accounts[$name] as $account): ?>
                                         <option value="<?php echo html_escape($account->id_akun); ?>"><?php echo html_escape($account->kode_akun . ' - ' . $account->nama_akun); ?></option>
                                     <?php endforeach; ?>
                                 </select>
@@ -75,12 +75,18 @@
     var masterId = <?php echo json_encode($master['id']); ?>;
     var masterFields = <?php echo json_encode(array_keys($master['fields'])); ?>;
     var masterTitle = <?php echo json_encode($master['title']); ?>;
+    var allAccounts = <?php echo json_encode($all_accounts, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
+    var accountOptions = <?php echo json_encode($accounts, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
+    var settingOptions = <?php echo json_encode($setting_options, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
 
     $(document).ready(function () {
         table = $('#table').DataTable({
             processing: true, serverSide: true, order: [[1, 'asc']],
             ajax: { url: masterUrl + '/ajax_list', type: 'POST' },
             columnDefs: [{ targets: [0, -1], orderable: false }]
+        });
+        $('#jenis_pengaturan').on('input', function () {
+            updateSettingOptions();
         });
         $('#form').on('submit', function (event) {
             event.preventDefault();
@@ -103,6 +109,8 @@
     function add_master() {
         save_method = 'add';
         $('#form')[0].reset();
+        $('#form option[data-legacy]').remove();
+        updateSettingOptions();
         $('#form').find('[name="' + masterId + '"]').val('');
         $('#form_error').hide().text('');
         $('#modal_title').text('Tambah ' + masterTitle);
@@ -115,15 +123,42 @@
             success: function (data) {
                 save_method = 'update';
                 $('#form')[0].reset();
+                $('#form option[data-legacy]').remove();
                 $('#form_error').hide().text('');
+                if (masterId === 'id_pengaturan_akun') {
+                    $('#jenis_pengaturan').val(data.jenis_pengaturan);
+                    updateSettingOptions();
+                }
                 [masterId].concat(masterFields).forEach(function (field) {
-                    $('#form').find('[name="' + field + '"]').val(data[field] === null ? '' : data[field]);
+                    var input = $('#form').find('[name="' + field + '"]');
+                    var value = data[field] === null ? '' : String(data[field]);
+                    if (input.is('select') && value && input.find('option').filter(function () { return this.value === value; }).length === 0) {
+                        allAccounts.forEach(function (account) {
+                            if (String(account.id_akun) === value) {
+                                input.append($('<option>').val(value).text(account.kode_akun + ' - ' + account.nama_akun + ' (pilihan lama)').attr('data-legacy', 'true'));
+                            }
+                        });
+                    }
+                    input.val(value);
                 });
                 $('#modal_title').text('Edit ' + masterTitle);
                 $('#modal_form').modal('show');
             },
             error: function (xhr) { alert(error_message(xhr, 'Gagal mengambil data.')); }
         });
+    }
+
+    function updateSettingOptions() {
+        if (masterId !== 'id_pengaturan_akun') return;
+        var select = $('#id_akun');
+        var selected = select.val();
+        var key = $('#jenis_pengaturan').val().trim();
+        var choices = Object.prototype.hasOwnProperty.call(settingOptions, key) ? settingOptions[key] : accountOptions.id_akun;
+        select.empty().append($('<option>').val('').text('-- Pilih Akun --'));
+        choices.forEach(function (account) {
+            select.append($('<option>').val(account.id_akun).text(account.kode_akun + ' - ' + account.nama_akun));
+        });
+        if (selected) select.val(selected);
     }
 
     function delete_master(id) {

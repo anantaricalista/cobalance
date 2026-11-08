@@ -16,7 +16,7 @@ class Jurnal extends MY_Controller
     // Tampilkan halaman dengan template header & footer
     public function index()
     {
-        $data['akun_list'] = $this->akun->get_all();
+        $data['akun_list'] = $this->akun->get_selectable();
         $this->load->view('template/header');
         $this->load->view('jurnal_view', $data);
         $this->load->view('template/footer');
@@ -98,7 +98,7 @@ class Jurnal extends MY_Controller
             'deskripsi' => $this->input->post('deskripsi'),
             'referensi' => $this->input->post('referensi')
         );
-        $details = $this->details_from_input();
+        $details = $this->details_from_input($id_jurnal);
         if ($details === false || !$this->valid_date($header['tanggal'])) {
             return $this->error('Tanggal atau detail jurnal tidak valid. Pastikan akun dan nominal diisi dengan benar.', 400);
         }
@@ -143,7 +143,7 @@ class Jurnal extends MY_Controller
         $this->pdf->stream("jurnal_{$id}.pdf", array("Attachment" => 0));
     }
 
-    private function details_from_input()
+    private function details_from_input($id_jurnal = null)
     {
         $accounts = $this->input->post('detail_akun');
         $debits = $this->input->post('detail_debit');
@@ -155,9 +155,19 @@ class Jurnal extends MY_Controller
             || count($accounts) !== count($debits) || count($accounts) !== count($credits)) {
             return false;
         }
+        $allowed = array();
+        foreach ($this->akun->get_selectable() as $account) {
+            $allowed[$account->id_akun] = true;
+        }
+        if ($id_jurnal !== null) {
+            foreach ($this->jurnal->get_details($id_jurnal) as $detail) {
+                $allowed[$detail->id_akun] = true;
+            }
+        }
         $details = array();
         foreach ($accounts as $i => $account) {
-            if (!isset($debits[$i], $credits[$i]) || !$this->akun->get_by_id($account)
+            if (!is_string($account) || !ctype_digit($account) || !isset($allowed[$account])
+                || !isset($debits[$i], $credits[$i]) || !$this->akun->get_by_id($account)
                 || !is_numeric($debits[$i]) || !is_numeric($credits[$i])
                 || $debits[$i] < 0 || $credits[$i] < 0) {
                 return false;
