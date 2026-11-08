@@ -132,6 +132,59 @@ class M_akun extends CI_Model
         return $result;
     }
 
+    public function get_display_options($types = array(), $roots = array())
+    {
+        $accounts = $this->get_all();
+        $by_id = array();
+        foreach ($accounts as $account) {
+            $by_id[$account->id_akun] = $account;
+        }
+        $included = array();
+        $selectable = array();
+        foreach ($this->get_selectable($types, $roots) as $account) {
+            $selectable[$account->id_akun] = true;
+            $current = $account;
+            $seen = array();
+            while ($current && !isset($seen[$current->id_akun])) {
+                $seen[$current->id_akun] = true;
+                $included[$current->id_akun] = true;
+                $parent = $current->id_akun_induk;
+                $current = isset($by_id[$parent]) ? $by_id[$parent] : null;
+            }
+        }
+        $children = array();
+        foreach ($accounts as $account) {
+            if (!isset($included[$account->id_akun])) {
+                continue;
+            }
+            $parent = $account->id_akun_induk;
+            if (!isset($included[$parent]) || $parent == $account->id_akun) {
+                $parent = 0;
+            }
+            $children[$parent][] = $account;
+        }
+        $result = array();
+        $visited = array();
+        $append = function ($parent, $depth) use (&$append, &$result, &$visited, $children, $selectable) {
+            if (!isset($children[$parent])) {
+                return;
+            }
+            foreach ($children[$parent] as $account) {
+                if (isset($visited[$account->id_akun])) {
+                    continue;
+                }
+                $visited[$account->id_akun] = true;
+                $option = clone $account;
+                $option->selectable = isset($selectable[$account->id_akun]);
+                $option->depth = $depth;
+                $result[] = $option;
+                $append($account->id_akun, $depth + 1);
+            }
+        };
+        $append(0, 0);
+        return $result;
+    }
+
     public function save($data)
     {
         $this->db->insert($this->table, $data);

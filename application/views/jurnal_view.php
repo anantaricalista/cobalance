@@ -214,7 +214,8 @@
         select.append($('<option>').val('').text('-- Pilih Akun --'));
         var accounts = <?php echo json_encode($akun_list, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
         accounts.forEach(function (account) {
-            select.append($('<option>').val(account.id_akun).text(account.nama_akun + ' (' + account.kode_akun + ')'));
+            select.append($('<option>').val(account.selectable ? account.id_akun : '').prop('disabled', !account.selectable)
+                .text(new Array(account.depth + 1).join('- ') + account.kode_akun + ' - ' + account.nama_akun));
         });
         if (detail && !select.find('option').filter(function () { return this.value === String(detail.id_akun); }).length) {
             select.append($('<option>').val(detail.id_akun).text(detail.nama_akun + ' (' + detail.kode_akun + ') - pilihan lama'));

@@ -38,6 +38,9 @@
                         <div class="col-xs-12 col-sm-8">
                             <?php if ($field['type'] === 'select'): ?>
                                 <select id="<?php echo html_escape($name); ?>" name="<?php echo html_escape($name); ?>" class="form-control" <?php echo !empty($field['required']) ? 'required' : ''; ?>>
+                                    <?php if (isset($field['placeholder'])): ?>
+                                        <option value=""><?php echo html_escape($field['placeholder']); ?></option>
+                                    <?php endif; ?>
                                     <?php foreach ($field['options'] as $value => $label): ?>
                                         <option value="<?php echo html_escape((string) $value); ?>"><?php echo html_escape($label); ?></option>
                                     <?php endforeach; ?>
@@ -46,7 +49,7 @@
                                 <select id="<?php echo html_escape($name); ?>" name="<?php echo html_escape($name); ?>" class="form-control" <?php echo !empty($field['required']) ? 'required' : ''; ?>>
                                     <option value="">-- Pilih Akun --</option>
                                     <?php foreach ($accounts[$name] as $account): ?>
-                                        <option value="<?php echo html_escape($account->id_akun); ?>"><?php echo html_escape($account->kode_akun . ' - ' . $account->nama_akun); ?></option>
+                                        <option value="<?php echo $account->selectable ? html_escape($account->id_akun) : ''; ?>" <?php echo $account->selectable ? '' : 'disabled'; ?>><?php echo html_escape(str_repeat('- ', $account->depth) . $account->kode_akun . ' - ' . $account->nama_akun); ?></option>
                                     <?php endforeach; ?>
                                 </select>
                             <?php else: ?>
@@ -85,7 +88,7 @@
             ajax: { url: masterUrl + '/ajax_list', type: 'POST' },
             columnDefs: [{ targets: [0, -1], orderable: false }]
         });
-        $('#jenis_pengaturan').on('input', function () {
+        $('#jenis_pengaturan').on('change', function () {
             updateSettingOptions();
         });
         $('#form').on('submit', function (event) {
@@ -126,13 +129,16 @@
                 $('#form option[data-legacy]').remove();
                 $('#form_error').hide().text('');
                 if (masterId === 'id_pengaturan_akun') {
+                    if (!Object.prototype.hasOwnProperty.call(settingOptions, data.jenis_pengaturan)) {
+                        $('#jenis_pengaturan').append($('<option>').val(data.jenis_pengaturan).text(data.jenis_pengaturan + ' (pilihan lama)').attr('data-legacy', 'true'));
+                    }
                     $('#jenis_pengaturan').val(data.jenis_pengaturan);
                     updateSettingOptions();
                 }
                 [masterId].concat(masterFields).forEach(function (field) {
                     var input = $('#form').find('[name="' + field + '"]');
                     var value = data[field] === null ? '' : String(data[field]);
-                    if (input.is('select') && value && input.find('option').filter(function () { return this.value === value; }).length === 0) {
+                    if (Object.prototype.hasOwnProperty.call(accountOptions, field) && value && input.find('option').filter(function () { return this.value === value && !this.disabled; }).length === 0) {
                         allAccounts.forEach(function (account) {
                             if (String(account.id_akun) === value) {
                                 input.append($('<option>').val(value).text(account.kode_akun + ' - ' + account.nama_akun + ' (pilihan lama)').attr('data-legacy', 'true'));
@@ -152,13 +158,16 @@
         if (masterId !== 'id_pengaturan_akun') return;
         var select = $('#id_akun');
         var selected = select.val();
-        var key = $('#jenis_pengaturan').val().trim();
-        var choices = Object.prototype.hasOwnProperty.call(settingOptions, key) ? settingOptions[key] : accountOptions.id_akun;
+        var key = $('#jenis_pengaturan').val() || '';
+        var choices = Object.prototype.hasOwnProperty.call(settingOptions, key) ? settingOptions[key] : (key ? accountOptions.id_akun : []);
         select.empty().append($('<option>').val('').text('-- Pilih Akun --'));
         choices.forEach(function (account) {
-            select.append($('<option>').val(account.id_akun).text(account.kode_akun + ' - ' + account.nama_akun));
+            select.append($('<option>').val(account.selectable ? account.id_akun : '').prop('disabled', !account.selectable)
+                .text(new Array(account.depth + 1).join('- ') + account.kode_akun + ' - ' + account.nama_akun));
         });
-        if (selected) select.val(selected);
+        if (selected && select.find('option').filter(function () { return this.value === selected && !this.disabled; }).length) {
+            select.val(selected);
+        }
     }
 
     function delete_master(id) {

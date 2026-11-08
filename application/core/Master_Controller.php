@@ -18,13 +18,15 @@ abstract class Master_Controller extends MY_Controller
         $options = array();
         foreach ($this->config_master['fields'] as $name => $field) {
             if ($field['type'] === 'account') {
-                $options[$name] = $this->account_options($field);
+                $types = isset($field['account_types']) ? $field['account_types'] : array();
+                $roots = isset($field['account_roots']) ? $field['account_roots'] : array();
+                $options[$name] = $this->akun->get_display_options($types, $roots);
             }
         }
         $setting_options = array();
         if (isset($this->config_master['account_settings'])) {
             foreach ($this->config_master['account_settings'] as $key => $root) {
-                $setting_options[$key] = $this->akun->get_selectable(array(), array($root));
+                $setting_options[$key] = $this->akun->get_display_options(array(), array($root));
             }
         }
         $data = array('master' => $this->config_master, 'accounts' => $options, 'setting_options' => $setting_options, 'all_accounts' => $this->akun->get_all());
@@ -57,6 +59,8 @@ abstract class Master_Controller extends MY_Controller
                 $value = $record->$field;
                 if ($field === 'aktif') {
                     $value = $value ? 'Aktif' : 'Tidak Aktif';
+                } elseif ($this->config_master['fields'][$field]['type'] === 'select' && isset($this->config_master['fields'][$field]['options'][$value])) {
+                    $value = $this->config_master['fields'][$field]['options'][$value];
                 } elseif ($this->config_master['fields'][$field]['type'] === 'account') {
                     $value = isset($accounts[$value]) ? $accounts[$value] : '-';
                 }
@@ -162,7 +166,8 @@ abstract class Master_Controller extends MY_Controller
                     return false;
                 }
             } elseif ($field['type'] === 'select') {
-                if (!array_key_exists($value, $field['options'])) {
+                if (!array_key_exists($value, $field['options'])
+                    && !($record && isset($record->$name) && (string) $record->$name === $value && $name === 'jenis_pengaturan')) {
                     $this->error($field['label'] . ' tidak valid.', 400);
                     return false;
                 }

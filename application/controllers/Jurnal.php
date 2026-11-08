@@ -16,7 +16,7 @@ class Jurnal extends MY_Controller
     // Tampilkan halaman dengan template header & footer
     public function index()
     {
-        $data['akun_list'] = $this->akun->get_selectable();
+        $data['akun_list'] = $this->akun->get_display_options();
         $this->load->view('template/header');
         $this->load->view('jurnal_view', $data);
         $this->load->view('template/footer');
