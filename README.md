@@ -92,6 +92,16 @@ akun tujuan dan mengkredit akun asal (harus berbeda). Akun piutang usaha dan uta
 usaha ditolak sebagai akun lawan karena dikelola modul Penerimaan Piutang dan
 Pembayaran Utang. Pembatalan membuat jurnal pembalik.
 
+## Modal dan Prive
+
+Setoran modal mendebit akun kas/bank yang dipilih dan mengkredit akun Modal pada
+Pengaturan Akun. Prive mendebit akun ekuitas yang dipilih (gunakan akun Prive
+khusus bila tersedia) dan mengkredit akun kas/bank. Akun kas/bank harus berada
+di kelompok 1100, akun Modal di kelompok 3100, dan akun Prive harus akun ekuitas
+rinci, bukan akun induk atau akun Modal Usaha. Draft dapat diubah; posting membuat
+jurnal otomatis, dan pembatalan membuat jurnal pembalik. Transaksi menyimpan
+lampiran bukti PDF/JPG/PNG hingga 5 MB.
+
 ## Persediaan
 
 Menu Persediaan menampilkan saldo dan riwayat mutasi barang. Penyesuaian
