@@ -112,12 +112,15 @@ class Pembelian_service
             $total = 0;
             $net_total = 0;
             $tax_total = 0;
+            $account_history = array();
             foreach ($details as $detail) {
                 $product = $this->product($company, $detail->id_produk);
                 $net = $this->cents($detail->nilai_sebelum_pajak);
                 $net_total = $this->add_cents($net_total, $net);
                 $tax_total = $this->add_cents($tax_total, $this->cents($detail->nilai_pajak));
                 $total = $this->add_cents($total, $this->cents($detail->subtotal));
+                $tax_account = null;
+                $inventory = null;
 
                 if ($product->tipe_produk === 'barang') {
                     $inventory = $product->id_akun_persediaan
@@ -128,6 +131,7 @@ class Pembelian_service
                         ->update('detail_transaksi', array('id_akun' => $inventory)));
                     $this->add_journal($journal, $inventory, $net, 0);
                     $this->stock_in($company, $transaction->id_transaksi, $detail, $product, $net, $db);
+                    $value_account = $inventory;
                 } else {
                     if (!$product->id_akun_pembelian) {
                         throw new DomainException('Akun pembelian/beban untuk ' . $product->nama_produk . ' belum diatur pada master produk.');
@@ -136,6 +140,7 @@ class Pembelian_service
                     $this->ok($db->where('id_perusahaan', $company)->where('id_detail_transaksi', $detail->id_detail_transaksi)
                         ->update('detail_transaksi', array('id_akun' => $product->id_akun_pembelian)));
                     $this->add_journal($journal, $product->id_akun_pembelian, $net, 0);
+                    $value_account = $product->id_akun_pembelian;
                 }
 
                 if ($this->cents($detail->nilai_pajak) > 0) {
@@ -146,6 +151,12 @@ class Pembelian_service
                     $this->account($company, $tax_account, '1500');
                     $this->add_journal($journal, $tax_account, $this->cents($detail->nilai_pajak), 0);
                 }
+                $account_history[] = array(
+                    'id_perusahaan' => $company, 'id_transaksi' => $transaction->id_transaksi,
+                    'id_detail_transaksi' => $detail->id_detail_transaksi, 'tipe_produk' => $product->tipe_produk,
+                    'id_akun_nilai' => $value_account, 'id_akun_pajak' => $tax_account,
+                    'id_akun_persediaan' => $inventory, 'id_akun_beban_pokok' => null
+                );
             }
 
             if ($total !== $this->cents($transaction->total)
@@ -160,6 +171,10 @@ class Pembelian_service
                 $credit_account = $this->setting($company, 'utang_usaha', '2100');
             }
             $this->add_journal($journal, $credit_account, 0, $total);
+            foreach ($account_history as $row) {
+                $row['id_akun_penyelesaian'] = $credit_account;
+                $this->ok($db->insert('riwayat_akun_transaksi', $row));
+            }
 
             $normalized = array();
             foreach ($journal as $row) {
@@ -189,6 +204,13 @@ class Pembelian_service
                 $this->ok($query);
                 if ($query->row()) {
                     throw new DomainException('Pembelian sudah memiliki alokasi pembayaran dan tidak dapat dibatalkan.');
+                }
+                $query = $db->query("SELECT id_transaksi FROM transaksi WHERE id_perusahaan=?
+                    AND id_transaksi_asal=? AND jenis_transaksi='retur_pembelian' AND status='diposting'
+                    LIMIT 1 FOR UPDATE", array($company, $transaction->id_transaksi));
+                $this->ok($query);
+                if ($query->row()) {
+                    throw new DomainException('Pembelian memiliki retur terposting dan tidak dapat dibatalkan.');
                 }
                 $query = $db->query('SELECT * FROM mutasi_persediaan WHERE id_perusahaan=? AND id_transaksi=?
                     AND jenis_mutasi=\'masuk\' ORDER BY id_mutasi_persediaan DESC FOR UPDATE',

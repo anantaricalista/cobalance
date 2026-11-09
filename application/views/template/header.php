@@ -108,7 +108,7 @@
                             </li>
                         </ul>
                     </li>
-                    <li class="dropdown <?php if (in_array($this->router->fetch_class(), array('saldo_awal', 'penjualan', 'penerimaan_piutang', 'pembelian', 'pembayaran_utang', 'kas_bank', 'aset_tetap'))) echo 'active'; ?>">
+                    <li class="dropdown <?php if (in_array($this->router->fetch_class(), array('saldo_awal', 'penjualan', 'penerimaan_piutang', 'pembelian', 'pembayaran_utang', 'kas_bank', 'aset_tetap', 'persediaan', 'penyesuaian_persediaan', 'retur_persediaan'))) echo 'active'; ?>">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                             aria-expanded="false">
                             Transaksi <span class="caret"></span>
@@ -120,7 +120,9 @@
                             <li <?php if ($this->router->fetch_class() == 'pembayaran_utang') echo 'class="active"'; ?>><a href="<?php echo site_url('pembayaran_utang'); ?>">Pembayaran Utang</a></li>
                             <li <?php if ($this->router->fetch_class() == 'kas_bank') echo 'class="active"'; ?>><a href="<?php echo site_url('kas_bank'); ?>">Kas dan Bank</a></li>
                             <li <?php if ($this->router->fetch_class() == 'aset_tetap') echo 'class="active"'; ?>><a href="<?php echo site_url('aset_tetap'); ?>">Aset Tetap</a></li>
-                            <li class="disabled"><a aria-disabled="true">Persediaan (belum tersedia)</a></li>
+                            <li <?php if ($this->router->fetch_class() == 'persediaan') echo 'class="active"'; ?>><a href="<?php echo site_url('persediaan'); ?>">Persediaan</a></li>
+                            <li <?php if ($this->router->fetch_class() == 'penyesuaian_persediaan') echo 'class="active"'; ?>><a href="<?php echo site_url('penyesuaian_persediaan'); ?>">Penyesuaian Persediaan</a></li>
+                            <li <?php if ($this->router->fetch_class() == 'retur_persediaan') echo 'class="active"'; ?>><a href="<?php echo site_url('retur_persediaan'); ?>">Retur Pembelian/Penjualan</a></li>
                             <li class="disabled"><a aria-disabled="true">Modal dan Prive (belum tersedia)</a></li>
                             <li class="disabled"><a aria-disabled="true">Penyesuaian Akuntansi (belum tersedia)</a></li>
                             <li <?php if ($this->router->fetch_class() == 'saldo_awal') echo 'class="active"'; ?>><a href="<?php echo site_url('saldo_awal'); ?>">Saldo Awal</a></li>

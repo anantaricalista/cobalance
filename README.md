@@ -92,6 +92,34 @@ akun tujuan dan mengkredit akun asal (harus berbeda). Akun piutang usaha dan uta
 usaha ditolak sebagai akun lawan karena dikelola modul Penerimaan Piutang dan
 Pembayaran Utang. Pembatalan membuat jurnal pembalik.
 
+## Persediaan
+
+Menu Persediaan menampilkan saldo dan riwayat mutasi barang. Penyesuaian
+persediaan menyimpan satu produk per draft; stock opname membandingkan jumlah
+fisik dengan saldo saat posting. Penambahan menggunakan harga pokok rata-rata
+saat posting, atau nilai perolehan total yang diisi jika harga rata-rata tidak
+tersedia. Penyesuaian hanya dapat dibatalkan bila tidak ada mutasi stok berikutnya.
+
+Retur pembelian dan penjualan mencakup barang dan jasa, satu rincian transaksi
+asal per draft. Pajak dan nilai retur dihitung secara proporsional dari rincian
+asal; retur penjualan barang mengembalikan harga pokok historis, sementara
+retur pembelian barang menggunakan harga pokok rata-rata saat posting. Pilih
+akun pendapatan/beban untuk selisih antara harga pokok dan nilai faktur.
+Retur tunai menggunakan akun kas/bank asal; retur kredit mengurangi sisa
+tagihan dan ditolak bila nilainya melebihi sisa setelah pembayaran dan retur.
+Pembatalan menghasilkan jurnal pembalik dan, untuk barang, hanya diperbolehkan
+jika tidak ada mutasi stok berikutnya. Draft tidak dapat diedit; buat draft baru
+jika salah. Keduanya mendukung lampiran PDF/JPG/PNG hingga 5 MB.
+
+Retur membutuhkan tabel riwayat akun yang mencatat akun pada saat posting
+pembelian/penjualan. Sebelum menggunakan versi kode ini, jalankan
+`application/sql/20261109_riwayat_akun_transaksi.sql` satu kali pada database
+perusahaan, setelah mencadangkan database. Tanpa tabel tersebut, posting
+pembelian dan penjualan gagal dan seluruh perubahan transaksi dibatalkan.
+Riwayat hanya terbentuk untuk transaksi yang diposting setelah tabel dan
+kode ini tersedia; transaksi lama tanpa riwayat akun tidak dapat diretur melalui
+modul ini karena akun historis per rincian tidak dapat dipastikan dari master.
+
 ## Aset tetap
 
 Perolehan baru disimpan sebagai draft, mendukung pembayaran tunai atau kredit,
@@ -152,5 +180,6 @@ belum memiliki penyusutan atau pelepasan.
 Pembukaan yang dibatalkan tetap tersimpan sebagai riwayat; modul tidak
 mengizinkan pembuatan pembukaan baru setelah pembatalan.
 Lakukan pencadangan dan terapkan migrasi saldo awal yang disediakan terpisah
-sebelum menggunakan modul ini. SQL dan data database tidak disimpan di
-repository.
+sebelum menggunakan modul ini. Skema dasar dan data database tidak disimpan di
+repository; migrasi riwayat akun untuk pengembangan retur tersedia terpisah pada
+`application/sql/`.

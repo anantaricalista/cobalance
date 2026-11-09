@@ -56,7 +56,10 @@ class Penerimaan_piutang_service
             t.jatuh_tempo, t.total, t.total - COALESCE((SELECT SUM(a.jumlah) FROM alokasi_transaksi a
                 JOIN transaksi r ON r.id_perusahaan=a.id_perusahaan AND r.id_transaksi=a.id_transaksi
                 WHERE a.id_perusahaan=t.id_perusahaan AND a.id_transaksi_tagihan=t.id_transaksi
-                AND r.status='diposting' AND r.jenis_transaksi='penerimaan_piutang'), 0) AS sisa
+                AND r.status='diposting' AND r.jenis_transaksi='penerimaan_piutang'), 0)
+                - COALESCE((SELECT SUM(rt.total) FROM transaksi rt
+                    WHERE rt.id_perusahaan=t.id_perusahaan AND rt.id_transaksi_asal=t.id_transaksi
+                    AND rt.jenis_transaksi='retur_penjualan' AND rt.status='diposting'), 0) AS sisa
             FROM transaksi t WHERE t.id_perusahaan=? AND t.id_pelanggan=? AND t.status='diposting'
             AND (t.jenis_transaksi='saldo_awal_piutang'
                 OR (t.jenis_transaksi IN ('penjualan', 'pelepasan_aset') AND t.cara_pembayaran='kredit'))
@@ -223,7 +226,10 @@ class Penerimaan_piutang_service
                 t.status, COALESCE((SELECT SUM(a.jumlah) FROM alokasi_transaksi a
                     JOIN transaksi r ON r.id_perusahaan=a.id_perusahaan AND r.id_transaksi=a.id_transaksi
                     WHERE a.id_perusahaan=t.id_perusahaan AND a.id_transaksi_tagihan=t.id_transaksi
-                    AND r.status='diposting' AND r.jenis_transaksi='penerimaan_piutang'), 0) AS terbayar
+                    AND r.status='diposting' AND r.jenis_transaksi='penerimaan_piutang'), 0) AS terbayar,
+                COALESCE((SELECT SUM(rt.total) FROM transaksi rt WHERE rt.id_perusahaan=t.id_perusahaan
+                    AND rt.id_transaksi_asal=t.id_transaksi AND rt.jenis_transaksi='retur_penjualan'
+                    AND rt.status='diposting'), 0) AS diretur
                 FROM transaksi t WHERE t.id_perusahaan=? AND t.id_transaksi=? FOR UPDATE",
                 array($company, $row['id']));
             $this->ok($query);
@@ -237,7 +243,8 @@ class Penerimaan_piutang_service
             if ($date < $invoice->tanggal) {
                 throw new DomainException('Tanggal penerimaan tidak boleh sebelum tanggal tagihan.');
             }
-            if ($this->cents($row['jumlah']) > $this->cents($invoice->total) - $this->cents($invoice->terbayar)) {
+            if ($this->cents($row['jumlah']) > $this->cents($invoice->total)
+                - $this->cents($invoice->terbayar) - $this->cents($invoice->diretur)) {
                 throw new DomainException('Jumlah alokasi melebihi sisa piutang tagihan.');
             }
         }

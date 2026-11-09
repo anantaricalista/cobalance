@@ -56,7 +56,10 @@ class Pembayaran_utang_service
             t.jatuh_tempo, t.total, t.total - COALESCE((SELECT SUM(a.jumlah) FROM alokasi_transaksi a
                 JOIN transaksi r ON r.id_perusahaan=a.id_perusahaan AND r.id_transaksi=a.id_transaksi
                 WHERE a.id_perusahaan=t.id_perusahaan AND a.id_transaksi_tagihan=t.id_transaksi
-                AND r.status='diposting' AND r.jenis_transaksi='pembayaran_utang'), 0) AS sisa
+                AND r.status='diposting' AND r.jenis_transaksi='pembayaran_utang'), 0)
+                - COALESCE((SELECT SUM(rt.total) FROM transaksi rt
+                    WHERE rt.id_perusahaan=t.id_perusahaan AND rt.id_transaksi_asal=t.id_transaksi
+                    AND rt.jenis_transaksi='retur_pembelian' AND rt.status='diposting'), 0) AS sisa
             FROM transaksi t WHERE t.id_perusahaan=? AND t.id_pemasok=? AND t.status='diposting'
             AND (t.jenis_transaksi='saldo_awal_utang'
                 OR (t.jenis_transaksi IN ('pembelian', 'perolehan_aset') AND t.cara_pembayaran='kredit'))
@@ -223,7 +226,10 @@ class Pembayaran_utang_service
                 t.status, COALESCE((SELECT SUM(a.jumlah) FROM alokasi_transaksi a
                     JOIN transaksi r ON r.id_perusahaan=a.id_perusahaan AND r.id_transaksi=a.id_transaksi
                     WHERE a.id_perusahaan=t.id_perusahaan AND a.id_transaksi_tagihan=t.id_transaksi
-                    AND r.status='diposting' AND r.jenis_transaksi='pembayaran_utang'), 0) AS terbayar
+                    AND r.status='diposting' AND r.jenis_transaksi='pembayaran_utang'), 0) AS terbayar,
+                COALESCE((SELECT SUM(rt.total) FROM transaksi rt WHERE rt.id_perusahaan=t.id_perusahaan
+                    AND rt.id_transaksi_asal=t.id_transaksi AND rt.jenis_transaksi='retur_pembelian'
+                    AND rt.status='diposting'), 0) AS diretur
                 FROM transaksi t WHERE t.id_perusahaan=? AND t.id_transaksi=? FOR UPDATE",
                 array($company, $row['id']));
             $this->ok($query);
@@ -237,7 +243,8 @@ class Pembayaran_utang_service
             if ($date < $invoice->tanggal) {
                 throw new DomainException('Tanggal pembayaran tidak boleh sebelum tanggal tagihan.');
             }
-            if ($this->cents($row['jumlah']) > $this->cents($invoice->total) - $this->cents($invoice->terbayar)) {
+            if ($this->cents($row['jumlah']) > $this->cents($invoice->total)
+                - $this->cents($invoice->terbayar) - $this->cents($invoice->diretur)) {
                 throw new DomainException('Jumlah alokasi melebihi sisa utang tagihan.');
             }
         }

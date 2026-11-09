@@ -112,6 +112,7 @@ class Penjualan_service
             $total = 0;
             $net_total = 0;
             $tax_total = 0;
+            $account_history = array();
             foreach ($details as $detail) {
                 $product = $this->product($company, $detail->id_produk);
                 $revenue = $product->id_akun_pendapatan
@@ -122,6 +123,9 @@ class Penjualan_service
                 $net_total = $this->add_cents($net_total, $this->cents($detail->nilai_sebelum_pajak));
                 $tax_total = $this->add_cents($tax_total, $this->cents($detail->nilai_pajak));
                 $total = $this->add_cents($total, $this->cents($detail->subtotal));
+                $tax_account = null;
+                $inventory = null;
+                $cogs = null;
 
                 if ($this->cents($detail->nilai_pajak) > 0) {
                     $tax = $this->tax($company, $detail->id_pajak);
@@ -177,6 +181,12 @@ class Penjualan_service
                     $this->add_journal($journal, $cogs, $cost, 0);
                     $this->add_journal($journal, $inventory, 0, $cost);
                 }
+                $account_history[] = array(
+                    'id_perusahaan' => $company, 'id_transaksi' => $transaction->id_transaksi,
+                    'id_detail_transaksi' => $detail->id_detail_transaksi, 'tipe_produk' => $product->tipe_produk,
+                    'id_akun_nilai' => $revenue, 'id_akun_pajak' => $tax_account,
+                    'id_akun_persediaan' => $inventory, 'id_akun_beban_pokok' => $cogs
+                );
             }
 
             if ($total !== $this->cents($transaction->total)
@@ -191,6 +201,10 @@ class Penjualan_service
                 $debit_account = $this->setting($company, 'piutang_usaha', '1200');
             }
             $this->add_journal($journal, $debit_account, $total, 0);
+            foreach ($account_history as $row) {
+                $row['id_akun_penyelesaian'] = $debit_account;
+                $this->ok($db->insert('riwayat_akun_transaksi', $row));
+            }
 
             $normalized = array();
             foreach ($journal as $row) {
@@ -220,6 +234,13 @@ class Penjualan_service
                 $this->ok($query);
                 if ($query->row()) {
                     throw new DomainException('Penjualan sudah memiliki alokasi pembayaran dan tidak dapat dibatalkan.');
+                }
+                $query = $db->query("SELECT id_transaksi FROM transaksi WHERE id_perusahaan=?
+                    AND id_transaksi_asal=? AND jenis_transaksi='retur_penjualan' AND status='diposting'
+                    LIMIT 1 FOR UPDATE", array($company, $transaction->id_transaksi));
+                $this->ok($query);
+                if ($query->row()) {
+                    throw new DomainException('Penjualan memiliki retur terposting dan tidak dapat dibatalkan.');
                 }
                 $query = $db->query('SELECT * FROM mutasi_persediaan WHERE id_perusahaan=? AND id_transaksi=?
                     AND jenis_mutasi=\'keluar\' ORDER BY id_mutasi_persediaan DESC FOR UPDATE',
