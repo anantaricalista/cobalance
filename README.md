@@ -79,6 +79,15 @@ mendebit utang usaha dan mengkredit akun kas/bank (kelompok 1100). Pembatalan
 membuat jurnal pembalik dan mengembalikan sisa utang; pembelian atau saldo awal
 yang sudah punya pembayaran terposting tidak dapat dibatalkan.
 
+## Kas dan bank
+
+Modul ini mencatat kas masuk, kas keluar, dan transfer antar akun kas/bank (kelompok
+1100) sebagai draft sebelum posting. Kas masuk mendebit kas/bank dan mengkredit akun
+sumber; kas keluar mengkredit kas/bank dan mendebit akun tujuan; transfer mendebit
+akun tujuan dan mengkredit akun asal (harus berbeda). Akun piutang usaha dan utang
+usaha ditolak sebagai akun lawan karena dikelola modul Penerimaan Piutang dan
+Pembayaran Utang. Pembatalan membuat jurnal pembalik.
+
 ## Lampiran
 
 Bukti transaksi (PDF/JPG/PNG, maks. 5 MB, satu file per transaksi) disimpan di
