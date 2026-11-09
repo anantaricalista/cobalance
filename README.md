@@ -102,6 +102,13 @@ rinci, bukan akun induk atau akun Modal Usaha. Draft dapat diubah; posting membu
 jurnal otomatis, dan pembatalan membuat jurnal pembalik. Transaksi menyimpan
 lampiran bukti PDF/JPG/PNG hingga 5 MB.
 
+## Penyesuaian Akuntansi
+
+Penyesuaian akuntansi dicatat sebagai draft dengan dua baris atau lebih. Setiap baris
+menggunakan akun rinci, berisi debit atau kredit (tidak keduanya), dan total debit
+wajib sama dengan total kredit. Draft dapat diubah beserta lampirannya; posting
+membuat jurnal otomatis dan pembatalan membuat jurnal pembalik.
+
 ## Persediaan
 
 Menu Persediaan menampilkan saldo dan riwayat mutasi barang. Penyesuaian
