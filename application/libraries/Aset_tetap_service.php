@@ -1,5 +1,6 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
+require_once APPPATH . 'libraries/Aset_tetap_kalkulasi.php';
 
 class Aset_tetap_service
 {
@@ -12,7 +13,6 @@ class Aset_tetap_service
         $this->ci->load->library('session');
         $this->ci->load->library('transaksi_service');
         $this->ci->load->library('lampiran_service');
-        $this->ci->load->library('aset_tetap_kalkulasi');
     }
 
     public function daftar()
