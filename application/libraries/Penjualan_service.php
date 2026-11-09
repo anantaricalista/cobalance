@@ -11,13 +11,14 @@ class Penjualan_service
         $this->ci->load->database();
         $this->ci->load->library('session');
         $this->ci->load->library('transaksi_service');
+        $this->ci->load->library('lampiran_service');
     }
 
     public function daftar()
     {
         $perusahaan = $this->company();
         $query = $this->ci->db->query("SELECT t.id_transaksi, t.nomor_transaksi, t.tanggal, t.status,
-            t.cara_pembayaran, t.total, t.id_pelanggan, p.nama_pelanggan
+            t.cara_pembayaran, t.total, t.id_pelanggan, p.nama_pelanggan, t.lampiran_nama
             FROM transaksi t JOIN pelanggan p ON p.id_perusahaan=t.id_perusahaan AND p.id_pelanggan=t.id_pelanggan
             WHERE t.id_perusahaan=? AND t.jenis_transaksi='penjualan'
             ORDER BY t.tanggal DESC, t.id_transaksi DESC", array($perusahaan));
@@ -29,7 +30,7 @@ class Penjualan_service
     {
         $perusahaan = $this->company();
         $this->id($id);
-        $query = $this->ci->db->query("SELECT t.*, p.nama_pelanggan FROM transaksi t
+        $query = $this->ci->db->query("SELECT " . Lampiran_service::KOLOM_TRANSAKSI . ", p.nama_pelanggan FROM transaksi t
             JOIN pelanggan p ON p.id_perusahaan=t.id_perusahaan AND p.id_pelanggan=t.id_pelanggan
             WHERE t.id_perusahaan=? AND t.id_transaksi=? AND t.jenis_transaksi='penjualan'",
             array($perusahaan, $id));
@@ -48,7 +49,7 @@ class Penjualan_service
         return $transaction;
     }
 
-    public function simpan($id, $tanggal, $data)
+    public function simpan($id, $tanggal, $data, $lampiran = null, $hapus_lampiran = false)
     {
         $this->date($tanggal);
         if (!is_array($data)) {
@@ -63,12 +64,13 @@ class Penjualan_service
             $description = isset($data['deskripsi']) && is_string($data['deskripsi'])
                 ? trim($data['deskripsi']) : 'Penjualan';
             return $this->ci->transaksi_service->buat_draft('penjualan', $tanggal, $description,
-                function ($transaction_id, $company, $db) use ($tanggal, $data) {
+                function ($transaction_id, $company, $db) use ($tanggal, $data, $lampiran) {
                     $clean = $this->validate($company, $tanggal, $data);
                     $this->write_draft($transaction_id, $company, $clean, $db);
+                    $this->ci->lampiran_service->simpan($company, $transaction_id, $lampiran, false);
                 });
         }
-        return $this->ci->transaksi_service->atomic(function ($perusahaan) use ($id, $tanggal, $data) {
+        return $this->ci->transaksi_service->atomic(function ($perusahaan) use ($id, $tanggal, $data, $lampiran, $hapus_lampiran) {
             $data = $this->validate($perusahaan, $tanggal, $data);
             $db = $this->ci->db;
             $query = $db->query("SELECT * FROM transaksi WHERE id_perusahaan=? AND id_transaksi=?
@@ -86,6 +88,7 @@ class Penjualan_service
                     'total_pajak' => $data['total_pajak'], 'total' => $data['total'])));
             $this->ok($db->where('id_perusahaan', $perusahaan)->where('id_transaksi', $id)->delete('detail_transaksi'));
             $this->write_details($id, $perusahaan, $data, $db);
+            $this->ci->lampiran_service->simpan($perusahaan, $id, $lampiran, $hapus_lampiran);
             return array('id_transaksi' => (int) $id, 'nomor_transaksi' => $transaction->nomor_transaksi);
         });
     }
@@ -210,9 +213,10 @@ class Penjualan_service
                     throw new DomainException('Transaksi penjualan tidak ditemukan.');
                 }
                 $company = $transaction->id_perusahaan;
-                $query = $db->query('SELECT id_alokasi_transaksi FROM alokasi_transaksi
-                    WHERE id_perusahaan=? AND (id_transaksi=? OR id_transaksi_tagihan=?) LIMIT 1 FOR UPDATE',
-                    array($company, $transaction->id_transaksi, $transaction->id_transaksi));
+                $query = $db->query('SELECT a.id_alokasi_transaksi FROM alokasi_transaksi a
+                    JOIN transaksi r ON r.id_perusahaan=a.id_perusahaan AND r.id_transaksi=a.id_transaksi
+                    WHERE a.id_perusahaan=? AND a.id_transaksi_tagihan=? AND r.status=\'diposting\' LIMIT 1 FOR UPDATE',
+                    array($company, $transaction->id_transaksi));
                 $this->ok($query);
                 if ($query->row()) {
                     throw new DomainException('Penjualan sudah memiliki alokasi pembayaran dan tidak dapat dibatalkan.');

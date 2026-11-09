@@ -68,11 +68,15 @@ foreach ($cash_accounts as $account) {
             </table>
         </div>
     <?php endif; ?>
+    <?php if (!$editable && $transaction->lampiran_nama): ?>
+        <p><strong>Lampiran:</strong>
+            <a href="<?= site_url('lampiran/unduh/' . (int) $transaction->id_transaksi) ?>"><?= html_escape($transaction->lampiran_nama) ?></a></p>
+    <?php endif; ?>
 <?php endif; ?>
 
 <?php if (!$transaction || $editable): ?>
     <div id="sale-message" role="alert"></div>
-    <form id="sale-form">
+    <form id="sale-form" enctype="multipart/form-data">
         <fieldset>
             <input id="sale-id" type="hidden" value="<?= $transaction ? (int) $transaction->id_transaksi : '' ?>">
             <div class="row">
@@ -110,6 +114,17 @@ foreach ($cash_accounts as $account) {
                     <label for="sale-description">Keterangan</label>
                     <input class="form-control" id="sale-description" maxlength="255">
                 </div>
+            </div>
+            <div class="form-group">
+                <label for="sale-file">Lampiran bukti (PDF/JPG/PNG, maks. 5 MB)</label>
+                <input id="sale-file" type="file" accept="application/pdf,image/jpeg,image/png">
+                <?php if ($transaction && $transaction->lampiran_nama): ?>
+                    <p>Lampiran saat ini:
+                        <a href="<?= site_url('lampiran/unduh/' . (int) $transaction->id_transaksi) ?>"><?= html_escape($transaction->lampiran_nama) ?></a>
+                        <label><input type="checkbox" id="sale-remove-file"> Hapus lampiran</label>
+                    </p>
+                    <p class="text-muted">Memilih file baru akan menggantikan lampiran saat ini.</p>
+                <?php endif; ?>
             </div>
             <h4>Rincian barang dan jasa</h4>
             <div class="table-responsive">
@@ -152,7 +167,7 @@ foreach ($cash_accounts as $account) {
 <h4>Riwayat penjualan</h4>
 <div class="table-responsive">
     <table class="table table-striped table-bordered">
-        <thead><tr><th>Tanggal</th><th>Nomor</th><th>Pelanggan</th><th>Pembayaran</th><th>Total</th><th>Status</th><th>Aksi</th></tr></thead>
+        <thead><tr><th>Tanggal</th><th>Nomor</th><th>Pelanggan</th><th>Pembayaran</th><th>Total</th><th>Lampiran</th><th>Status</th><th>Aksi</th></tr></thead>
         <tbody>
         <?php foreach ($transactions as $item): ?>
             <tr>
@@ -161,12 +176,13 @@ foreach ($cash_accounts as $account) {
                 <td><?= html_escape($item->nama_pelanggan) ?></td>
                 <td><?= html_escape($item->cara_pembayaran === 'kredit' ? 'Kredit' : 'Tunai') ?></td>
                 <td>Rp <?= html_escape($item->total) ?></td>
+                <td><?php if ($item->lampiran_nama): ?><a href="<?= site_url('lampiran/unduh/' . (int) $item->id_transaksi) ?>">Unduh</a><?php else: ?>-<?php endif; ?></td>
                 <td><?= html_escape($item->status) ?></td>
                 <td><a class="btn btn-default btn-xs" href="<?= site_url('penjualan?id=' . (int) $item->id_transaksi) ?>">Lihat</a></td>
             </tr>
         <?php endforeach; ?>
         <?php if (!$transactions): ?>
-            <tr><td colspan="7" class="text-center">Belum ada transaksi penjualan.</td></tr>
+            <tr><td colspan="8" class="text-center">Belum ada transaksi penjualan.</td></tr>
         <?php endif; ?>
         </tbody>
     </table>
@@ -258,11 +274,19 @@ $(function () {
     }
 
     function request(url, data) {
+        var formData = new FormData();
+        Object.keys(data).forEach(function (key) { formData.append(key, data[key]); });
+        if (data.lampiran !== undefined) {
+            formData.delete('lampiran');
+            if (data.lampiran) formData.append('lampiran', data.lampiran);
+        }
         <?php if ($this->config->item('csrf_protection')): ?>
-        data[<?= json_encode($this->security->get_csrf_token_name()) ?>] = <?= json_encode($this->security->get_csrf_hash()) ?>;
+        formData.append(<?= json_encode($this->security->get_csrf_token_name()) ?>, <?= json_encode($this->security->get_csrf_hash()) ?>);
         <?php endif; ?>
         $('button').prop('disabled', true);
-        $.post(url, data).done(function () { location.href = <?= json_encode(site_url('penjualan')) ?>; }).fail(function (xhr) {
+        $.ajax({url: url, method: 'POST', data: formData, processData: false, contentType: false}).done(function () {
+            location.href = <?= json_encode(site_url('penjualan')) ?>;
+        }).fail(function (xhr) {
             $('#sale-message').empty().append($('<div class="alert alert-danger">').text(
                 xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : 'Permintaan gagal. Silakan coba kembali.'
             ));
@@ -287,7 +311,9 @@ $(function () {
             data.details.push(row);
         });
         request(<?= json_encode(site_url('penjualan/simpan')) ?>, {
-            id: $('#sale-id').val(), tanggal: $('#sale-date').val(), data: JSON.stringify(data)
+            id: $('#sale-id').val(), tanggal: $('#sale-date').val(), data: JSON.stringify(data),
+            hapus_lampiran: $('#sale-remove-file').prop('checked') ? '1' : '0',
+            lampiran: $('#sale-file')[0].files[0] || null
         });
     });
 

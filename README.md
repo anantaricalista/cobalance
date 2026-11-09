@@ -52,6 +52,22 @@ Pembatalan membuat jurnal pembalik dan mengembalikan stok hanya jika penjualan
 belum dialokasikan ke pembayaran dan belum ada mutasi stok sesudah penjualan
 untuk produk yang sama. Draft penjualan yang belum diposting dapat diubah.
 
+## Penerimaan piutang
+
+Penerimaan piutang dialokasikan ke tagihan pelanggan yang sudah diposting
+(penjualan kredit atau saldo awal piutang) dan tidak boleh melebihi sisa tagihan.
+Posting mendebit akun kas/bank (kelompok 1100) dan mengkredit piutang usaha.
+Pembatalan membuat jurnal pembalik dan mengembalikan sisa piutang; penjualan atau
+saldo awal yang sudah punya penerimaan terposting tidak dapat dibatalkan.
+
+## Lampiran
+
+Bukti transaksi (PDF/JPG/PNG, maks. 5 MB, satu file per transaksi) disimpan di
+database pada kolom `transaksi.lampiran` (LONGBLOB) beserta `lampiran_nama` dan
+`lampiran_tipe`. Lampiran hanya dapat diubah saat transaksi masih draft dan
+diunduh melalui `lampiran/unduh/{id_transaksi}`. Pastikan `max_allowed_packet`
+MariaDB cukup besar (misalnya 16M) dan query `ALTER TABLE` lampiran sudah dijalankan.
+
 ## Saldo awal
 
 Menu Transaksi → Saldo Awal mencatat satu pembukaan per perusahaan dengan

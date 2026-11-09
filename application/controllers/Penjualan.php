@@ -7,6 +7,7 @@ class Penjualan extends MY_Controller
     {
         parent::__construct();
         $this->load->library('penjualan_service');
+        $this->load->library('lampiran_service');
         $this->load->model('M_akun', 'akun');
     }
 
@@ -55,8 +56,10 @@ class Penjualan extends MY_Controller
         }
         $id = $this->input->post('id');
         $tanggal = $this->input->post('tanggal');
-        $this->perform(function () use ($id, $tanggal, $data) {
-            return $this->penjualan_service->simpan($id, $tanggal, $data);
+        $hapus = $this->input->post('hapus_lampiran') === '1';
+        $this->perform(function () use ($id, $tanggal, $data, $hapus) {
+            $lampiran = $this->lampiran_service->dari_unggahan('lampiran');
+            return $this->penjualan_service->simpan($id, $tanggal, $data, $lampiran, $hapus);
         });
     }
 
