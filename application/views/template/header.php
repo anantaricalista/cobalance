@@ -66,7 +66,7 @@
         .transaction-ui .content-container {
             padding-top: 18px;
             padding-bottom: 28px;
-            margin-bottom: 22px;
+            margin-bottom: 70px;
         }
 
         .transaction-ui h3 {
@@ -712,11 +712,6 @@
         .transaction-ui .opening-cancel-panel label {
             display: block;
             margin-bottom: 4px;
-        }
-
-        .transaction-ui .sticky-footer {
-            position: static;
-            margin-top: 28px;
         }
 
         @media (max-width: 767px) {
