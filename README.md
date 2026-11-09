@@ -60,6 +60,17 @@ Posting mendebit akun kas/bank (kelompok 1100) dan mengkredit piutang usaha.
 Pembatalan membuat jurnal pembalik dan mengembalikan sisa piutang; penjualan atau
 saldo awal yang sudah punya penerimaan terposting tidak dapat dibatalkan.
 
+## Pembelian
+
+Pembelian disimpan sebagai draft sebelum posting, dengan pemasok, pembayaran tunai
+atau kredit (kredit wajib jatuh tempo), serta pajak masukan per rincian. Posting
+membuat jurnal otomatis: barang mendebit akun persediaan dan menambah stok dengan
+harga pokok rata-rata baru; jasa mendebit akun pembelian/beban pada master produk
+(wajib diisi); pajak masukan mendebit akun pajak masukan; lawan jurnal adalah
+kas/bank (tunai) atau utang usaha (kredit). Pembatalan membuat jurnal pembalik dan
+mengembalikan stok hanya jika belum ada pembayaran utang terposting dan belum ada
+mutasi stok sesudah pembelian untuk produk yang sama.
+
 ## Lampiran
 
 Bukti transaksi (PDF/JPG/PNG, maks. 5 MB, satu file per transaksi) disimpan di
