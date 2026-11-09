@@ -123,6 +123,13 @@ menggunakan akun rinci, berisi debit atau kredit (tidak keduanya), dan total deb
 wajib sama dengan total kredit. Draft dapat diubah beserta lampirannya; posting
 membuat jurnal otomatis dan pembatalan membuat jurnal pembalik.
 
+## Jurnal Transaksi
+
+Menu Jurnal Transaksi bersifat baca-saja: jurnal hasil posting dapat dilihat dan
+diekspor, tetapi tidak dapat dibuat, diubah, atau dihapus langsung. Gunakan modul
+transaksi untuk mencatat aktivitas bisnis dan Penyesuaian Akuntansi untuk jurnal
+koreksi manual agar perubahan tetap melalui alur posting dan pembatalan.
+
 ## Persediaan
 
 Menu Persediaan menampilkan saldo dan riwayat mutasi barang. Penyesuaian

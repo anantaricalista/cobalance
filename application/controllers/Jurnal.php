@@ -8,17 +8,14 @@ class Jurnal extends MY_Controller
     {
         parent::__construct();
         $this->load->model('M_jurnal', 'jurnal');
-        // Untuk dropdown akun pada detail jurnal
-        $this->load->model('M_akun', 'akun');
         $this->load->helper('url');
     }
 
     // Tampilkan halaman dengan template header & footer
     public function index()
     {
-        $data['akun_list'] = $this->akun->get_display_options();
         $this->load->view('template/header');
-        $this->load->view('jurnal_view', $data);
+        $this->load->view('jurnal_view');
         $this->load->view('template/footer');
     }
 
@@ -26,11 +23,6 @@ class Jurnal extends MY_Controller
     public function ajax_list()
     {
         $list = $this->jurnal->get_datatables();
-        $ids = array();
-        foreach ($list as $item) {
-            $ids[] = $item->id_jurnal;
-        }
-        $generated = $this->jurnal->generated_ids($ids);
         $data = array();
         $no = $_POST['start'];
         foreach ($list as $jurnal) {
@@ -40,19 +32,9 @@ class Jurnal extends MY_Controller
             $row[] = $jurnal->tanggal;
             $row[] = html_escape($jurnal->deskripsi);
             $row[] = html_escape($jurnal->referensi);
-            // Hanya tampilkan ikon saja pada tombol aksi
-            $actions = '';
-            if (!isset($generated[$jurnal->id_jurnal])) {
-                $actions = '<a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Edit" onclick="edit_jurnal(' . "'" . $jurnal->id_jurnal . "'" . ')">
-                        <i class="glyphicon glyphicon-pencil"></i>
-                      </a>
-                      <a class="btn btn-sm btn-danger" href="javascript:void(0)" title="Hapus" onclick="delete_jurnal(' . "'" . $jurnal->id_jurnal . "'" . ')">
-                        <i class="glyphicon glyphicon-trash"></i>
-                      </a> ';
-            }
-            $row[] = $actions . '<a class="btn btn-sm btn-warning" target="_blank" href="' . site_url('jurnal/export_pdf/' . $jurnal->id_jurnal) . '" title="Export PDF">
-                        <i class="glyphicon glyphicon-file"></i>
-                      </a>';
+            $row[] = '<a class="btn btn-sm btn-default" target="_blank" href="' .
+                site_url('jurnal/export_pdf/' . (int) $jurnal->id_jurnal) .
+                '" title="Lihat atau unduh jurnal PDF"><i class="glyphicon glyphicon-file"></i> Lihat PDF</a>';
             $data[] = $row;
         }
         $output = array(
@@ -64,74 +46,26 @@ class Jurnal extends MY_Controller
         echo json_encode($output);
     }
 
-    // Ambil data jurnal (header dan detail) berdasarkan id untuk proses edit
+    // Endpoint edit lama dipertahankan agar klien lama menerima respons yang jelas.
     public function ajax_edit($id)
     {
-        $data = $this->jurnal->get_by_id($id);
-        if (!$data) {
-            return $this->error('Jurnal tidak ditemukan.', 404);
-        }
-        $data->detail = $this->jurnal->get_details($id);
-        echo json_encode($data);
+        return $this->read_only();
     }
 
-    // Proses insert jurnal transaksi beserta detailnya
+    // Endpoint mutasi lama ditutup: jurnal harus berasal dari modul transaksi.
     public function ajax_add()
     {
-        $header = array(
-            'tanggal' => $this->input->post('tanggal'),
-            'deskripsi' => $this->input->post('deskripsi'),
-            'referensi' => $this->input->post('referensi'),
-            'id_perusahaan' => $this->session->userdata('id_perusahaan')
-        );
-        $details = $this->details_from_input();
-        if ($details === false || !$this->valid_date($header['tanggal'])) {
-            return $this->error('Tanggal atau detail jurnal tidak valid. Pastikan akun dan nominal diisi dengan benar.', 400);
-        }
-        if (!$this->jurnal->save($header, $details)) {
-            return $this->error('Jurnal gagal disimpan.', 500);
-        }
-        echo json_encode(array("status" => TRUE));
+        return $this->read_only();
     }
 
-    // Proses update jurnal transaksi dan detailnya
     public function ajax_update()
     {
-        $id_jurnal = $this->input->post('id_jurnal');
-        if (!$this->jurnal->get_by_id($id_jurnal)) {
-            return $this->error('Jurnal tidak ditemukan.', 404);
-        }
-        if ($this->jurnal->is_generated($id_jurnal)) {
-            return $this->error('Jurnal transaksi otomatis tidak dapat diubah langsung.', 409);
-        }
-        $header = array(
-            'tanggal' => $this->input->post('tanggal'),
-            'deskripsi' => $this->input->post('deskripsi'),
-            'referensi' => $this->input->post('referensi')
-        );
-        $details = $this->details_from_input($id_jurnal);
-        if ($details === false || !$this->valid_date($header['tanggal'])) {
-            return $this->error('Tanggal atau detail jurnal tidak valid. Pastikan akun dan nominal diisi dengan benar.', 400);
-        }
-        if (!$this->jurnal->update($id_jurnal, $header, $details)) {
-            return $this->error('Jurnal gagal diperbarui.', 500);
-        }
-        echo json_encode(array("status" => TRUE));
+        return $this->read_only();
     }
 
-    // Proses hapus jurnal (detail akan terhapus otomatis jika foreign key sudah diset cascade)
     public function ajax_delete($id)
     {
-        if (!$this->jurnal->get_by_id($id)) {
-            return $this->error('Jurnal tidak ditemukan.', 404);
-        }
-        if ($this->jurnal->is_generated($id)) {
-            return $this->error('Jurnal transaksi otomatis tidak dapat dihapus langsung.', 409);
-        }
-        if (!$this->jurnal->delete_by_id($id)) {
-            return $this->error('Jurnal gagal dihapus.', 500);
-        }
-        echo json_encode(array("status" => TRUE));
+        return $this->read_only();
     }
 
     // Fitur Export PDF untuk data jurnal transaksi
@@ -157,52 +91,12 @@ class Jurnal extends MY_Controller
         $this->pdf->stream("jurnal_{$id}.pdf", array("Attachment" => 0));
     }
 
-    private function details_from_input($id_jurnal = null)
+    private function read_only()
     {
-        $accounts = $this->input->post('detail_akun');
-        $debits = $this->input->post('detail_debit');
-        $credits = $this->input->post('detail_kredit');
-        if ($accounts === null && $debits === null && $credits === null) {
-            return array();
-        }
-        if (!is_array($accounts) || !is_array($debits) || !is_array($credits)
-            || count($accounts) !== count($debits) || count($accounts) !== count($credits)) {
-            return false;
-        }
-        $allowed = array();
-        foreach ($this->akun->get_selectable() as $account) {
-            $allowed[$account->id_akun] = true;
-        }
-        if ($id_jurnal !== null) {
-            foreach ($this->jurnal->get_details($id_jurnal) as $detail) {
-                $allowed[$detail->id_akun] = true;
-            }
-        }
-        $details = array();
-        foreach ($accounts as $i => $account) {
-            if (!is_string($account) || !ctype_digit($account) || !isset($allowed[$account])
-                || !isset($debits[$i], $credits[$i]) || !$this->akun->get_by_id($account)
-                || !is_numeric($debits[$i]) || !is_numeric($credits[$i])
-                || $debits[$i] < 0 || $credits[$i] < 0) {
-                return false;
-            }
-            $details[] = array('id_akun' => $account, 'debit' => $debits[$i], 'kredit' => $credits[$i]);
-        }
-        return $details;
-    }
-
-    private function valid_date($value)
-    {
-        if (!is_string($value)) {
-            return false;
-        }
-        $date = DateTime::createFromFormat('!Y-m-d', $value);
-        return $date && $date->format('Y-m-d') === $value;
-    }
-
-    private function error($message, $code)
-    {
-        $this->output->set_status_header($code)->set_content_type('application/json')
-            ->set_output(json_encode(array('status' => false, 'message' => $message)));
+        $this->output->set_status_header(410)->set_content_type('application/json')
+            ->set_output(json_encode(array(
+                'status' => false,
+                'message' => 'Jurnal Transaksi hanya untuk melihat dan mengekspor jurnal. Buat penyesuaian melalui modul Penyesuaian Akuntansi.'
+            )));
     }
 }
