@@ -57,10 +57,204 @@
             margin-bottom: 70px;
             /* Sesuaikan dengan tinggi footer */
         }
+
+        .transaction-ui {
+            background: #f4f7fb;
+            color: #263248;
+        }
+
+        .transaction-ui .content-container {
+            padding-top: 18px;
+            padding-bottom: 28px;
+            margin-bottom: 22px;
+        }
+
+        .transaction-ui h3 {
+            margin: 8px 0 10px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #dfe7f1;
+            color: #183153;
+            font-size: 27px;
+            font-weight: 700;
+            letter-spacing: -.3px;
+        }
+
+        .transaction-ui h3 + p {
+            max-width: 900px;
+            margin-bottom: 20px;
+            color: #63738a;
+            line-height: 1.6;
+        }
+
+        .transaction-ui h4 {
+            margin: 24px 0 12px;
+            color: #243b5a;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .transaction-ui form[id$="-form"] {
+            margin: 18px 0 22px;
+            padding: 22px;
+            border: 1px solid #e0e7f0;
+            border-radius: 10px;
+            background: #fff;
+            box-shadow: 0 4px 14px rgba(27, 49, 79, .05);
+        }
+
+        .transaction-ui form[id$="-form"] fieldset {
+            min-width: 0;
+            border: 0;
+        }
+
+        .transaction-ui .form-group label {
+            color: #42536b;
+            font-weight: 600;
+        }
+
+        .transaction-ui .form-control {
+            min-height: 40px;
+            border-color: #d6dfeb;
+            border-radius: 6px;
+            box-shadow: none;
+        }
+
+        .transaction-ui .form-control:focus {
+            border-color: #4a93a5;
+            box-shadow: 0 0 0 3px rgba(74, 147, 165, .14);
+        }
+
+        .transaction-ui .table-responsive {
+            margin: 12px 0 22px;
+            border: 1px solid #e0e7f0;
+            border-radius: 9px;
+            background: #fff;
+            box-shadow: 0 3px 12px rgba(27, 49, 79, .04);
+        }
+
+        .transaction-ui .table {
+            margin-bottom: 0;
+            background: #fff;
+        }
+
+        .transaction-ui .table > thead > tr > th {
+            border-bottom: 1px solid #dce5ef;
+            background: #f5f8fc;
+            color: #42536b;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: .035em;
+            text-transform: uppercase;
+            vertical-align: middle;
+        }
+
+        .transaction-ui .table > tbody > tr > td {
+            vertical-align: middle;
+        }
+
+        .transaction-ui .table-striped > tbody > tr:nth-of-type(odd) {
+            background-color: #fbfcfe;
+        }
+
+        .transaction-ui .table-hover > tbody > tr:hover,
+        .transaction-ui .table-striped > tbody > tr:hover {
+            background-color: #f0f7fa;
+        }
+
+        .transaction-ui .btn {
+            border-radius: 6px;
+            font-weight: 600;
+            transition: box-shadow .15s ease, transform .15s ease;
+        }
+
+        .transaction-ui .btn:hover {
+            box-shadow: 0 3px 8px rgba(27, 49, 79, .12);
+            transform: translateY(-1px);
+        }
+
+        .transaction-ui .btn:disabled {
+            transform: none;
+        }
+
+        .transaction-ui .history-tools {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin: 0 0 10px;
+        }
+
+        .transaction-ui .history-tools .form-control {
+            max-width: 340px;
+        }
+
+        .transaction-ui .history-count {
+            color: #718198;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+
+        .transaction-ui .transaction-status {
+            display: inline-block;
+            padding: 4px 9px;
+            border-radius: 20px;
+            background: #eef2f7;
+            color: #516176;
+            font-size: 12px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .transaction-ui .transaction-status.is-draft {
+            background: #fff4d6;
+            color: #805c00;
+        }
+
+        .transaction-ui .transaction-status.is-posted {
+            background: #e4f5ea;
+            color: #23643a;
+        }
+
+        .transaction-ui .transaction-status.is-cancelled {
+            background: #fde9e8;
+            color: #a23c37;
+        }
+
+        .transaction-ui .alert {
+            border-radius: 7px;
+        }
+
+        .transaction-ui .sticky-footer {
+            position: static;
+            margin-top: 28px;
+        }
+
+        @media (max-width: 767px) {
+            .transaction-ui h3 {
+                font-size: 23px;
+            }
+
+            .transaction-ui form[id$="-form"] {
+                padding: 15px;
+            }
+
+            .transaction-ui .history-tools {
+                align-items: stretch;
+                flex-direction: column;
+            }
+
+            .transaction-ui .history-tools .form-control {
+                max-width: none;
+            }
+        }
     </style>
 </head>
 
-<body>
+<body class="<?php echo in_array($this->router->fetch_class(), array(
+    'penjualan', 'penerimaan_piutang', 'pembelian', 'pembayaran_utang', 'kas_bank', 'aset_tetap',
+    'persediaan', 'penyesuaian_persediaan', 'retur_persediaan', 'modal_prive', 'penyesuaian_akuntansi',
+    'saldo_awal', 'jurnal'
+), true) ? 'transaction-ui' : ''; ?>">
     <!-- Navigation Bar -->
     <nav class="navbar navbar-default sticky-header">
         <div class="container-fluid">
@@ -193,3 +387,4 @@
         <!-- DataTable JS -->
         <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
         <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap.min.js"></script>
+        <?php $this->load->view('template/transaction_ui'); ?>
