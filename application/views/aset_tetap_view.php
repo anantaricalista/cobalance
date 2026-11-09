@@ -221,6 +221,9 @@ $isDraft = $transaction && $transaction->status === 'draft';
 
 <script>
 $(function () {
+    $('#acq-cost, #acq-residual, #old-cost, #old-residual, #old-accum, #disposal-value').each(function () {
+        MoneyInput.init(this, this.value);
+    });
     var transaction = <?= json_encode($transaction, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
     var choices = <?= json_encode(array(
         'assetAccounts' => $account_options($accounts_asset),
@@ -308,12 +311,13 @@ $(function () {
             $('#disposal-due').val(transaction.jatuh_tempo || '');
         }
         function disposalPaymentChanged() {
-            var value = $('#disposal-value').val();
+            var value = MoneyInput.value($('#disposal-value')[0]);
             var mode = $('#disposal-payment').val();
             var noProceeds = !value || Number(value) === 0;
             $('#disposal-cash-wrap').toggle(!noProceeds && mode === 'tunai');
             $('#disposal-customer-wrap, #disposal-due-wrap').toggle(!noProceeds && mode === 'kredit');
-            $('#disposal-cash, #disposal-customer, #disposal-due').prop('required', !noProceeds);
+            $('#disposal-cash').prop('required', !noProceeds && mode === 'tunai');
+            $('#disposal-customer, #disposal-due').prop('required', !noProceeds && mode === 'kredit');
         }
         $('#disposal-value, #disposal-payment').on('change input', disposalPaymentChanged);
         disposalPaymentChanged();
@@ -324,7 +328,7 @@ $(function () {
         var data = {
             kode_aset: $('#acq-code').val(), nama_aset: $('#acq-name').val(),
             tanggal_perolehan: $('#acq-date').val(), tanggal_mulai_penyusutan: $('#acq-start').val(),
-            nilai_perolehan: $('#acq-cost').val(), nilai_residu: $('#acq-residual').val(),
+            nilai_perolehan: MoneyInput.value($('#acq-cost')[0]), nilai_residu: MoneyInput.value($('#acq-residual')[0]),
             umur_manfaat_bulan: $('#acq-life').val(), id_akun_aset: $('#acq-asset-account').val(),
             id_akun_akumulasi_penyusutan: $('#acq-accum-account').val(),
             id_akun_beban_penyusutan: $('#acq-expense-account').val(),
@@ -342,8 +346,8 @@ $(function () {
         var data = {
             kode_aset: $('#old-code').val(), nama_aset: $('#old-name').val(),
             tanggal_perolehan: $('#old-date').val(), tanggal_mulai_penyusutan: $('#old-start').val(),
-            nilai_perolehan: $('#old-cost').val(), nilai_residu: $('#old-residual').val(),
-            umur_manfaat_bulan: $('#old-life').val(), akumulasi_penyusutan_awal: $('#old-accum').val(),
+            nilai_perolehan: MoneyInput.value($('#old-cost')[0]), nilai_residu: MoneyInput.value($('#old-residual')[0]),
+            umur_manfaat_bulan: $('#old-life').val(), akumulasi_penyusutan_awal: MoneyInput.value($('#old-accum')[0]),
             id_akun_aset: $('#old-asset-account').val(), id_akun_akumulasi_penyusutan: $('#old-accum-account').val(),
             id_akun_beban_penyusutan: $('#old-expense-account').val()
         };
@@ -356,7 +360,7 @@ $(function () {
     $('#disposal-form').on('submit', function (event) {
         event.preventDefault();
         var data = {
-            id_aset_tetap: $('#disposal-asset').val(), nilai_pelepasan: $('#disposal-value').val(),
+            id_aset_tetap: $('#disposal-asset').val(), nilai_pelepasan: MoneyInput.value($('#disposal-value')[0]),
             cara_pembayaran: $('#disposal-payment').val(), id_akun_kas: $('#disposal-cash').val(),
             id_pelanggan: $('#disposal-customer').val(), jatuh_tempo: $('#disposal-due').val()
         };

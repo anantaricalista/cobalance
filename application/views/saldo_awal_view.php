@@ -129,6 +129,7 @@ $(function () {
                 if (field[0] === 'nama_aset') input.attr('maxlength', '255');
                 if (field[1] === 'integer') input.attr('inputmode', 'numeric');
                 input.val(values[field[0]] == null ? ((field[0] === 'debit' || field[0] === 'kredit' || field[0] === 'nilai_residu' || field[0] === 'akumulasi_penyusutan_awal') ? '0.00' : '') : values[field[0]]);
+                if (field[1] === 'money') MoneyInput.init(input[0], input.val());
             }
             input.attr('data-field', field[0]).prop('required', true);
             row.append($('<td>').append(input));
@@ -155,7 +156,7 @@ $(function () {
             data[kind] = [];
             $('#table-' + kind + ' tbody tr').each(function () {
                 var row = {};
-                $(this).find('[data-field]').each(function () { row[$(this).data('field')] = $(this).val(); });
+                $(this).find('[data-field]').each(function () { row[$(this).data('field')] = $(this).is('[data-money]') ? MoneyInput.value(this) : $(this).val(); });
                 data[kind].push(row);
             });
         });

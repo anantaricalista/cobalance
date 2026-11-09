@@ -179,6 +179,7 @@ $(function () {
             var tr = $('<tr>').attr('data-id', row.id_transaksi).attr('data-sisa', row.sisa);
             var amount = $('<input class="form-control" type="number" min="0.01" step="0.01" max="' + row.sisa + '">')
                 .val(saved[row.id_transaksi] != null ? saved[row.id_transaksi] : row.sisa).prop('disabled', saved[row.id_transaksi] == null);
+            MoneyInput.init(amount[0], amount.val());
             var check = $('<input type="checkbox">').prop('checked', saved[row.id_transaksi] != null).on('change', function () {
                 amount.prop('disabled', !this.checked).prop('required', this.checked);
             });
@@ -242,7 +243,7 @@ $(function () {
         $('#invoice-table tbody tr[data-id]').each(function () {
             var row = $(this);
             if (row.find('input[type=checkbox]').prop('checked')) {
-                allocations.push({id_transaksi_tagihan: row.data('id'), jumlah: row.find('input[type=number]').val()});
+                allocations.push({id_transaksi_tagihan: row.data('id'), jumlah: MoneyInput.value(row.find('[data-money]')[0])});
             }
         });
         if (!allocations.length) {

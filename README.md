@@ -1,5 +1,9 @@
 # cobalance
 
+Input nominal uang menggunakan format Indonesia, misalnya `1.000.000,50`
+(titik untuk ribuan dan koma untuk desimal, maksimal dua angka desimal).
+Jumlah barang, umur manfaat, dan persentase pajak tidak memakai format ini.
+
 ## Fondasi transaksi
 
 `Transaksi_service` adalah layanan internal untuk modul transaksi, bukan endpoint

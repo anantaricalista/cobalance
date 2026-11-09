@@ -91,13 +91,16 @@
         $('#jenis_pengaturan').on('change', function () {
             updateSettingOptions();
         });
+        <?php if ($master['route'] === 'produk'): ?>
+        MoneyInput.init($('#harga_jual')[0], $('#harga_jual').val());
+        <?php endif; ?>
         $('#form').on('submit', function (event) {
             event.preventDefault();
             $('#form_error').hide().text('');
             $('#btnSave').prop('disabled', true).text('Menyimpan...');
             $.ajax({
                 url: masterUrl + (save_method === 'add' ? '/ajax_add' : '/ajax_update'),
-                type: 'POST', data: $('#form').serialize(), dataType: 'json',
+                type: 'POST', data: MoneyInput.serialize($('#form')), dataType: 'json',
                 success: function () { $('#modal_form').modal('hide'); table.ajax.reload(null, false); },
                 error: function (xhr) { $('#form_error').text(error_message(xhr, 'Gagal menyimpan data.')).show(); },
                 complete: function () { $('#btnSave').prop('disabled', false).text('Simpan'); }
@@ -145,7 +148,8 @@
                             }
                         });
                     }
-                    input.val(value);
+                    if (input.is('[data-money]')) MoneyInput.set(input[0], value);
+                    else input.val(value);
                 });
                 $('#modal_title').text('Edit ' + masterTitle);
                 $('#modal_form').modal('show');

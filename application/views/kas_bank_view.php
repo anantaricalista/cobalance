@@ -172,8 +172,9 @@ $(function () {
         fillSelect(account, transfer ? options.cash : options.all, values.id_akun, '-- Pilih akun --');
         row.append($('<td>').append(account));
         row.append($('<td>').append($('<input class="form-control" maxlength="255" data-field="deskripsi">').val(values.deskripsi || '')));
-        row.append($('<td>').append($('<input class="form-control" type="number" min="0.01" step="0.01" required data-field="jumlah">')
-            .val(values.subtotal || values.jumlah || '')));
+        var amount = $('<input class="form-control" type="number" min="0.01" step="0.01" required data-field="jumlah">');
+        MoneyInput.init(amount[0], values.subtotal || values.jumlah || '');
+        row.append($('<td>').append(amount));
         row.append($('<td>').append($('<button type="button" class="btn btn-danger btn-xs">').text('Hapus')
             .on('click', function () { row.remove(); })));
         $('#cash-lines tbody').append(row);
@@ -231,7 +232,7 @@ $(function () {
         var details = [];
         $('#cash-lines tbody tr').each(function () {
             var row = {};
-            $(this).find('[data-field]').each(function () { row[$(this).data('field')] = $(this).val(); });
+            $(this).find('[data-field]').each(function () { row[$(this).data('field')] = $(this).is('[data-money]') ? MoneyInput.value(this) : $(this).val(); });
             details.push(row);
         });
         if (!details.length) {

@@ -214,7 +214,7 @@ $(function () {
         fillSelect(product, options.products, values.id_produk, '-- Pilih produk/jasa --');
         product.on('change', function () {
             var selected = options.products.filter(function (item) { return String(item.id) === product.val(); })[0];
-            if (selected) row.find('[data-field="harga"]').val(selected.price);
+            if (selected) MoneyInput.set(row.find('[data-field="harga"]')[0], selected.price);
         });
         row.append($('<td>').append(product));
         [
@@ -225,6 +225,7 @@ $(function () {
             var input = $('<input class="form-control" type="number" min="0" step="' + field[2] + '" required>');
             input.attr('data-field', field[0]).val(values[field[0]] == null ? field[1] : values[field[0]]);
             if (field[0] === 'jumlah') input.attr('min', '0.0001');
+            else MoneyInput.init(input[0], input.val());
             row.append($('<td>').append(input));
         });
         var mode = $('<select class="form-control" data-field="mode_pajak" required>')
@@ -307,7 +308,7 @@ $(function () {
         };
         $('#sale-lines tbody tr').each(function () {
             var row = {};
-            $(this).find('[data-field]').each(function () { row[$(this).data('field')] = $(this).val(); });
+            $(this).find('[data-field]').each(function () { row[$(this).data('field')] = $(this).is('[data-money]') ? MoneyInput.value(this) : $(this).val(); });
             data.details.push(row);
         });
         request(<?= json_encode(site_url('pembelian/simpan')) ?>, {

@@ -160,6 +160,7 @@
     }
 
     function save() {
+        if (!$('#form')[0].reportValidity()) return;
         var saveButtonContent = $('#btnSave').html();
         $('#btnSave').text('Menyimpan...');
         $('#btnSave').attr('disabled', true);
@@ -168,7 +169,7 @@
         $.ajax({
             url: url,
             type: "POST",
-            data: $('#form').serialize(),
+            data: MoneyInput.serialize($('#form')),
             dataType: "JSON",
             success: function (data) {
                 $('#modal_form').modal('hide');
@@ -204,8 +205,8 @@
         // Parameter detail opsional; jika ada, merupakan objek dengan properti: id_akun, debit, kredit.
         var row = '<tr>';
         row += '<td><select name="detail_akun[]" class="form-control"></select></td>';
-        row += '<td><input name="detail_debit[]" class="form-control" type="number" step="0.01" value="0"></td>';
-        row += '<td><input name="detail_kredit[]" class="form-control" type="number" step="0.01" value="0"></td>';
+        row += '<td><input name="detail_debit[]" class="form-control" type="number" min="0" step="0.01" value="0"></td>';
+        row += '<td><input name="detail_kredit[]" class="form-control" type="number" min="0" step="0.01" value="0"></td>';
         row += '<td style="text-align:center;"><button type="button" class="btn btn-danger btn-sm" onclick="remove_detail_row(this)"><i class="glyphicon glyphicon-trash"></i></button></td>';
         row += '</tr>';
 
@@ -225,6 +226,9 @@
             $row.find('input[name="detail_debit[]"]').val(detail.debit);
             $row.find('input[name="detail_kredit[]"]').val(detail.kredit);
         }
+        $row.find('input[name="detail_debit[]"], input[name="detail_kredit[]"]').each(function () {
+            MoneyInput.init(this, this.value);
+        });
         $('#detail_table tbody').append($row);
     }
 
