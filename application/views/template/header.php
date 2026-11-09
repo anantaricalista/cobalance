@@ -108,7 +108,7 @@
                             </li>
                         </ul>
                     </li>
-                    <li class="dropdown <?php if (in_array($this->router->fetch_class(), array('saldo_awal', 'penjualan', 'penerimaan_piutang', 'pembelian'))) echo 'active'; ?>">
+                    <li class="dropdown <?php if (in_array($this->router->fetch_class(), array('saldo_awal', 'penjualan', 'penerimaan_piutang', 'pembelian', 'pembayaran_utang'))) echo 'active'; ?>">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                             aria-expanded="false">
                             Transaksi <span class="caret"></span>
@@ -117,7 +117,7 @@
                             <li <?php if ($this->router->fetch_class() == 'penjualan') echo 'class="active"'; ?>><a href="<?php echo site_url('penjualan'); ?>">Penjualan</a></li>
                             <li <?php if ($this->router->fetch_class() == 'penerimaan_piutang') echo 'class="active"'; ?>><a href="<?php echo site_url('penerimaan_piutang'); ?>">Penerimaan Piutang</a></li>
                             <li <?php if ($this->router->fetch_class() == 'pembelian') echo 'class="active"'; ?>><a href="<?php echo site_url('pembelian'); ?>">Pembelian</a></li>
-                            <li class="disabled"><a aria-disabled="true">Pembayaran Utang (belum tersedia)</a></li>
+                            <li <?php if ($this->router->fetch_class() == 'pembayaran_utang') echo 'class="active"'; ?>><a href="<?php echo site_url('pembayaran_utang'); ?>">Pembayaran Utang</a></li>
                             <li class="disabled"><a aria-disabled="true">Kas dan Bank (belum tersedia)</a></li>
                             <li class="disabled"><a aria-disabled="true">Aset Tetap (belum tersedia)</a></li>
                             <li class="disabled"><a aria-disabled="true">Persediaan (belum tersedia)</a></li>

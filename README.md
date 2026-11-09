@@ -71,6 +71,14 @@ kas/bank (tunai) atau utang usaha (kredit). Pembatalan membuat jurnal pembalik d
 mengembalikan stok hanya jika belum ada pembayaran utang terposting dan belum ada
 mutasi stok sesudah pembelian untuk produk yang sama.
 
+## Pembayaran utang
+
+Pembayaran utang dialokasikan ke tagihan pemasok yang sudah diposting (pembelian
+kredit atau saldo awal utang) dan tidak boleh melebihi sisa tagihan. Posting
+mendebit utang usaha dan mengkredit akun kas/bank (kelompok 1100). Pembatalan
+membuat jurnal pembalik dan mengembalikan sisa utang; pembelian atau saldo awal
+yang sudah punya pembayaran terposting tidak dapat dibatalkan.
+
 ## Lampiran
 
 Bukti transaksi (PDF/JPG/PNG, maks. 5 MB, satu file per transaksi) disimpan di
