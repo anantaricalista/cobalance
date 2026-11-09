@@ -32,7 +32,9 @@ class Jurnal extends MY_Controller
             $row[] = $jurnal->tanggal;
             $row[] = html_escape($jurnal->deskripsi);
             $row[] = html_escape($jurnal->referensi);
-            $row[] = '<a class="btn btn-sm btn-default" target="_blank" href="' .
+            $row[] = '<button type="button" class="btn btn-sm btn-primary view-journal" data-jurnal-id="' .
+                (int) $jurnal->id_jurnal . '"><i class="glyphicon glyphicon-list-alt"></i> Lihat detail</button> ' .
+                '<a class="btn btn-sm btn-default" target="_blank" href="' .
                 site_url('jurnal/export_pdf/' . (int) $jurnal->id_jurnal) .
                 '" title="Lihat atau unduh jurnal PDF"><i class="glyphicon glyphicon-file"></i> Lihat PDF</a>';
             $data[] = $row;
@@ -50,6 +52,34 @@ class Jurnal extends MY_Controller
     public function ajax_edit($id)
     {
         return $this->read_only();
+    }
+
+    public function ajax_detail($id)
+    {
+        if ($this->input->method() !== 'get' || !is_string($id) || !ctype_digit($id) || (int) $id < 1) {
+            return $this->output->set_status_header(400)->set_content_type('application/json')
+                ->set_output(json_encode(array('status' => false, 'message' => 'ID jurnal tidak valid.')));
+        }
+        $journal = $this->jurnal->get_by_id($id);
+        if (!$journal) {
+            return $this->output->set_status_header(404)->set_content_type('application/json')
+                ->set_output(json_encode(array('status' => false, 'message' => 'Jurnal tidak ditemukan.')));
+        }
+        $details = array();
+        foreach ($this->jurnal->get_details($id) as $detail) {
+            $details[] = array(
+                'kode_akun' => $detail->kode_akun,
+                'nama_akun' => $detail->nama_akun,
+                'debit' => $detail->debit,
+                'kredit' => $detail->kredit
+            );
+        }
+        return $this->output->set_content_type('application/json')->set_output(json_encode(array(
+            'tanggal' => $journal->tanggal,
+            'deskripsi' => $journal->deskripsi,
+            'referensi' => $journal->referensi,
+            'details' => $details
+        )));
     }
 
     // Endpoint mutasi lama ditutup: jurnal harus berasal dari modul transaksi.
