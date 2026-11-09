@@ -1,17 +1,17 @@
 <h3>Jurnal Transaksi</h3>
-<p>Jurnal ini merupakan hasil posting transaksi dan hanya dapat dilihat atau diekspor. Untuk koreksi manual, gunakan
-    <a href="<?= site_url('penyesuaian_akuntansi') ?>">Penyesuaian Akuntansi</a>; jurnal transaksi tidak dapat dibuat,
-    diubah, atau dihapus langsung.</p>
+<p>Jurnal transaksi hanya dapat dilihat dan diekspor. Pilih <strong>Detail</strong> untuk memeriksa akun serta nilai
+    debit/kredit, atau <strong>PDF</strong> untuk membuka dokumen. Untuk koreksi manual, gunakan
+    <a href="<?= site_url('penyesuaian_akuntansi') ?>">Penyesuaian Akuntansi</a>.</p>
 
 <div class="table-responsive">
-    <table id="table" class="table table-striped table-bordered" cellspacing="0" width="100%">
+    <table id="table" class="table table-striped table-bordered table-hover" cellspacing="0" width="100%">
         <thead>
             <tr>
                 <th style="width:40px;">No</th>
                 <th>Tanggal</th>
                 <th>Deskripsi</th>
                 <th>Referensi</th>
-                <th style="width:150px; text-align:center;">Dokumen</th>
+                <th style="width:190px; text-align:center;">Aksi</th>
             </tr>
         </thead>
         <tbody></tbody>
@@ -65,8 +65,41 @@
                 "type": "POST"
             },
             "columnDefs": [
-                { "targets": [0, 4], "orderable": false }
-            ]
+                { "targets": [0, 4], "orderable": false },
+                {
+                    "targets": 1,
+                    "render": function (data, type) {
+                        if (type !== 'display' || !data) return data || '';
+                        var parts = data.split('-');
+                        if (parts.length !== 3) return $('<span>').text(data).html();
+                        var date = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+                        return isNaN(date.getTime()) ? $('<span>').text(data).html() :
+                            date.toLocaleDateString('id-ID', {day: '2-digit', month: 'long', year: 'numeric'});
+                    }
+                },
+                {
+                    "targets": 3,
+                    "render": function (data, type) {
+                        return type === 'display' && !data ? '<span class="text-muted">—</span>' : data;
+                    }
+                }
+            ],
+            "language": {
+                "processing": "Memuat jurnal...",
+                "search": "Cari:",
+                "lengthMenu": "Tampilkan _MENU_ jurnal",
+                "info": "Menampilkan _START_–_END_ dari _TOTAL_ jurnal",
+                "infoEmpty": "Belum ada jurnal",
+                "infoFiltered": "(disaring dari _MAX_ jurnal)",
+                "zeroRecords": "Jurnal tidak ditemukan",
+                "emptyTable": "Belum ada jurnal transaksi",
+                "paginate": {
+                    "first": "Pertama",
+                    "last": "Terakhir",
+                    "next": "Berikutnya",
+                    "previous": "Sebelumnya"
+                }
+            }
         });
 
         $('#table').on('click', '.view-journal', function () {

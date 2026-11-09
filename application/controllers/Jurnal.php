@@ -32,11 +32,12 @@ class Jurnal extends MY_Controller
             $row[] = $jurnal->tanggal;
             $row[] = html_escape($jurnal->deskripsi);
             $row[] = html_escape($jurnal->referensi);
-            $row[] = '<button type="button" class="btn btn-sm btn-primary view-journal" data-jurnal-id="' .
-                (int) $jurnal->id_jurnal . '"><i class="glyphicon glyphicon-list-alt"></i> Lihat detail</button> ' .
+            $row[] = '<div class="journal-actions">' .
+                '<button type="button" class="btn btn-sm btn-primary view-journal" data-jurnal-id="' .
+                (int) $jurnal->id_jurnal . '"><i class="glyphicon glyphicon-list-alt"></i> Detail</button>' .
                 '<a class="btn btn-sm btn-default" target="_blank" href="' .
                 site_url('jurnal/export_pdf/' . (int) $jurnal->id_jurnal) .
-                '" title="Lihat atau unduh jurnal PDF"><i class="glyphicon glyphicon-file"></i> Lihat PDF</a>';
+                '" title="Buka jurnal sebagai PDF"><i class="glyphicon glyphicon-file"></i> PDF</a></div>';
             $data[] = $row;
         }
         $output = array(

@@ -176,6 +176,20 @@
             transform: none;
         }
 
+        .transaction-ui .journal-actions {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            white-space: nowrap;
+        }
+
+        .transaction-ui #table th:last-child,
+        .transaction-ui #table td:last-child {
+            min-width: 190px;
+            text-align: center;
+        }
+
         .transaction-ui .history-tools {
             display: flex;
             align-items: center;
