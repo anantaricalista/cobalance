@@ -37,6 +37,21 @@ menggunakan layanan ini untuk menjaga konsistensi pembukaan dan jurnal.
 Jurnal hasil posting atau pembalik dilindungi dari edit dan hapus langsung.
 CRUD jurnal lama tetap tersedia sementara modul transaksi belum selesai.
 
+## Penjualan
+
+Modul Penjualan menyimpan transaksi sebagai draft sebelum posting. Penjualan tunai
+mendebit akun kas/bank yang dipilih; penjualan kredit mendebit akun piutang usaha
+dan memerlukan tanggal jatuh tempo. Setiap rincian menyimpan harga, potongan
+nominal per rincian, serta mode pajak: tidak dikenakan, termasuk pajak, atau belum
+termasuk pajak. Akun pendapatan, pajak keluaran, persediaan, dan beban pokok
+mengikuti akun pada produk atau pengaturan akun perusahaan.
+
+Posting membuat jurnal otomatis. Penjualan barang memeriksa saldo stok dan
+mencatat mutasi keluar dengan harga pokok rata-rata; jasa tidak mengubah stok.
+Pembatalan membuat jurnal pembalik dan mengembalikan stok hanya jika penjualan
+belum dialokasikan ke pembayaran dan belum ada mutasi stok sesudah penjualan
+untuk produk yang sama. Draft penjualan yang belum diposting dapat diubah.
+
 ## Saldo awal
 
 Menu Transaksi → Saldo Awal mencatat satu pembukaan per perusahaan dengan

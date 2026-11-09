@@ -108,13 +108,13 @@
                             </li>
                         </ul>
                     </li>
-                    <li class="dropdown <?php if ($this->router->fetch_class() == 'saldo_awal') echo 'active'; ?>">
+                    <li class="dropdown <?php if (in_array($this->router->fetch_class(), array('saldo_awal', 'penjualan'))) echo 'active'; ?>">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                             aria-expanded="false">
                             Transaksi <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu">
-                            <li class="disabled"><a aria-disabled="true">Penjualan (belum tersedia)</a></li>
+                            <li <?php if ($this->router->fetch_class() == 'penjualan') echo 'class="active"'; ?>><a href="<?php echo site_url('penjualan'); ?>">Penjualan</a></li>
                             <li class="disabled"><a aria-disabled="true">Penerimaan Piutang (belum tersedia)</a></li>
                             <li class="disabled"><a aria-disabled="true">Pembelian (belum tersedia)</a></li>
                             <li class="disabled"><a aria-disabled="true">Pembayaran Utang (belum tersedia)</a></li>
