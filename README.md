@@ -1,5 +1,10 @@
 # cobalance
 
+## Panduan pengguna
+
+Lihat [Panduan Pengguna Co-Balance](docs/PANDUAN_PENGGUNA.md) untuk alur dari
+login, pengaturan data awal, pencatatan transaksi, hingga membaca laporan.
+
 Input nominal uang menggunakan format Indonesia, misalnya `1.000.000,50`
 (titik untuk ribuan dan koma untuk desimal, maksimal dua angka desimal).
 Jumlah barang, umur manfaat, dan persentase pajak tidak memakai format ini.
