@@ -33,32 +33,87 @@ $product_options = array();
 foreach ($products as $product) $product_options[] = array('id' => $product->id_produk, 'label' => $product->kode_produk . ' - ' . $product->nama_produk, 'disabled' => !$product->aktif);
 ?>
 <h3>Saldo Awal</h3>
-<p>Gunakan satu tanggal pembukaan. Piutang, utang, dan persediaan dimasukkan melalui rincian masing-masing, bukan saldo akun.</p>
-<p>Jurnal perusahaan harus kosong sebelum posting. Selisih debit dan kredit dicatat pada akun ekuitas penyeimbang.</p>
-<p>Masukkan aset tetap pada rincian aset: nilai perolehan dan akumulasi penyusutan akan otomatis masuk jurnal. Jangan masukkan akun yang sama lagi pada Saldo Akun.</p>
+<div class="opening-overview">
+    <div class="opening-overview-copy">
+        <span class="opening-eyebrow">PERSIAPAN PEMBUKUAN</span>
+        <h4>Mulai dengan saldo yang tepat</h4>
+        <p>Catat posisi akun, tagihan, stok, dan aset pada tanggal pembukaan. Rincian operasional akan diposting bersama sebagai satu jurnal saldo awal.</p>
+    </div>
+    <div class="opening-status-card">
+        <span class="opening-status-icon glyphicon glyphicon-book" aria-hidden="true"></span>
+        <div>
+            <span class="opening-eyebrow"><?= $trx ? 'TRANSAKSI PEMBUKAAN' : 'STATUS PEMBUKAAN' ?></span>
+            <?php if ($trx): ?>
+                <strong><?= html_escape($trx->nomor_transaksi) ?></strong>
+                <span class="transaction-status <?= $trx->status === 'draft' ? 'is-draft' : ($trx->status === 'diposting' ? 'is-posted' : 'is-cancelled') ?>"><?= html_escape($trx->status) ?></span>
+            <?php else: ?>
+                <strong>Belum dibuat</strong>
+                <span class="text-muted">Isi rincian untuk menyiapkan saldo awal.</span>
+            <?php endif; ?>
+        </div>
+    </div>
+</div>
+<div class="opening-guidance" role="note">
+    <div class="opening-guidance-title"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> Sebelum mulai</div>
+    <div class="opening-guidance-grid">
+        <div><strong>Gunakan satu tanggal</strong><span>Semua saldo awal mengikuti tanggal pembukaan yang sama.</span></div>
+        <div><strong>Pilih rincian yang sesuai</strong><span>Piutang, utang, dan persediaan dicatat pada bagian masing-masing, bukan Saldo Akun.</span></div>
+        <div><strong>Perhatikan jurnal</strong><span>Jurnal perusahaan harus kosong. Selisih akan dicatat pada akun ekuitas penyeimbang.</span></div>
+        <div><strong>Hindari pencatatan ganda</strong><span>Nilai aset dan akumulasi penyusutan otomatis masuk jurnal; jangan catat ulang pada Saldo Akun.</span></div>
+    </div>
+</div>
 <?php if ($trx && $trx->status === 'diposting'): ?>
-    <p>Untuk aset lama yang nilainya sudah tercatat dalam Saldo Akun, gunakan <a href="<?= site_url('aset_tetap') ?>">pendaftaran aset lama</a> tanpa jurnal tambahan.</p>
-<?php endif; ?>
-<?php if ($trx): ?>
-    <p><strong>Nomor:</strong> <?= html_escape($trx->nomor_transaksi) ?> &nbsp; <strong>Status:</strong> <?= html_escape($trx->status) ?></p>
+    <div class="opening-legacy-note">
+        <span class="glyphicon glyphicon-link" aria-hidden="true"></span>
+        Untuk aset lama yang nilainya sudah tercatat dalam Saldo Akun, gunakan
+        <a href="<?= site_url('aset_tetap') ?>">pendaftaran aset lama</a> tanpa jurnal tambahan.
+    </div>
 <?php endif; ?>
 <div id="opening-message" role="alert"></div>
-<form id="opening-form">
+<form id="opening-form" class="opening-form">
     <fieldset <?= $editable ? '' : 'disabled' ?>>
-        <div class="row">
-            <div class="form-group col-sm-4">
+        <div class="opening-form-heading">
+            <div>
+                <span class="opening-eyebrow"><?= $editable ? 'FORMULIR PEMBUKAAN' : 'SALDO YANG TELAH DICATAT' ?></span>
+                <h4><?= $editable ? 'Rincian saldo awal' : 'Rincian transaksi' ?></h4>
+            </div>
+            <?php if ($trx): ?>
+                <span class="opening-date-label"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span> <?= html_escape($trx->tanggal) ?></span>
+            <?php endif; ?>
+        </div>
+        <div class="opening-basics">
+            <div class="form-group">
                 <label for="opening-date">Tanggal pembukaan</label>
                 <input class="form-control" id="opening-date" type="date" required value="<?= html_escape($trx ? $trx->tanggal : date('Y-m-d')) ?>">
             </div>
-            <div class="form-group col-sm-8">
+            <div class="form-group">
                 <label for="balancing-account">Akun ekuitas penyeimbang</label>
                 <select class="form-control" id="balancing-account" required></select>
             </div>
         </div>
+        <div class="opening-journal-preview" aria-live="polite">
+            <div class="opening-preview-heading">
+                <div><span class="opening-eyebrow">PRATINJAU JURNAL</span><strong>Perkiraan posting</strong></div>
+                <span class="opening-preview-account" id="opening-preview-account">Pilih akun penyeimbang</span>
+            </div>
+            <div class="opening-preview-grid">
+                <div><span>Debit sebelum penyeimbang</span><strong id="opening-preview-debit">Rp 0,00</strong></div>
+                <div><span>Kredit sebelum penyeimbang</span><strong id="opening-preview-credit">Rp 0,00</strong></div>
+                <div><span>Nilai akun penyeimbang</span><strong id="opening-preview-balance">Rp 0,00</strong></div>
+                <div class="opening-preview-total"><span>Total jurnal seimbang</span><strong id="opening-preview-total">Rp 0,00</strong></div>
+            </div>
+        </div>
         <?php foreach (array('akun' => 'Saldo akun', 'piutang' => 'Piutang per faktur', 'utang' => 'Utang per faktur', 'stok' => 'Persediaan per produk', 'aset' => 'Aset tetap') as $key => $title): ?>
-            <h4><?= html_escape($title) ?></h4>
+            <section class="opening-section" data-opening-kind="<?= $key ?>">
+                <div class="opening-section-heading">
+                    <div>
+                        <h4><?= html_escape($title) ?></h4>
+                        <span class="opening-section-hint" data-section-hint="<?= $key ?>"></span>
+                    </div>
+                    <span class="opening-row-count" data-row-count="<?= $key ?>">0 rincian</span>
+                </div>
             <div class="table-responsive">
-                <table class="table table-bordered table-condensed" id="table-<?= $key ?>">
+                <table class="table table-bordered table-condensed table-hover" id="table-<?= $key ?>">
                     <thead><tr>
                         <?php
                         $headers = array('akun' => array('Akun', 'Debit', 'Kredit'), 'piutang' => array('Pelanggan', 'Nomor faktur', 'Jatuh tempo', 'Jumlah'), 'utang' => array('Pemasok', 'Nomor faktur', 'Jatuh tempo', 'Jumlah'), 'stok' => array('Produk', 'Jumlah', 'Total nilai'),
@@ -70,24 +125,34 @@ foreach ($products as $product) $product_options[] = array('id' => $product->id_
                     <tbody></tbody>
                 </table>
             </div>
-            <?php if ($editable): ?><button type="button" class="btn btn-default add-row" data-kind="<?= $key ?>">Tambah <?= html_escape(strtolower($title)) ?></button><?php endif; ?>
+            <?php if ($editable): ?><button type="button" class="btn btn-default add-row" data-kind="<?= $key ?>"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Tambah <?= html_escape(strtolower($title)) ?></button><?php endif; ?>
+            </section>
         <?php endforeach; ?>
-        <?php if ($editable): ?><p style="margin-top:20px"><button type="submit" class="btn btn-primary">Simpan draft</button></p><?php endif; ?>
+        <?php if ($editable): ?>
+            <div class="opening-save-bar">
+                <span class="text-muted"><span class="glyphicon glyphicon-lock" aria-hidden="true"></span> Periksa kembali tanggal dan seluruh rincian sebelum menyimpan.</span>
+                <button type="submit" class="btn btn-primary btn-lg"><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span> Simpan draft saldo awal</button>
+            </div>
+        <?php endif; ?>
     </fieldset>
 </form>
 <?php if ($trx && $trx->status === 'draft'): ?>
-    <button type="button" id="post-opening" class="btn btn-success">Posting saldo awal yang tersimpan</button>
-    <p>Pastikan perubahan sudah disimpan sebelum posting.</p>
+    <div class="opening-action-panel">
+        <div><strong>Draft siap ditinjau?</strong><span>Pastikan semua perubahan telah disimpan sebelum posting.</span></div>
+        <button type="button" id="post-opening" class="btn btn-success"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Posting saldo awal</button>
+    </div>
 <?php elseif ($trx && $trx->status === 'diposting'): ?>
-    <h4>Pembatalan</h4>
-    <p>Pembatalan ditolak jika faktur telah dialokasikan, stok telah digunakan, atau aset sudah digunakan dalam penyusutan atau pelepasan. Setelah dibatalkan, pembukaan baru tidak dapat dibuat melalui modul ini.</p>
-    <form id="cancel-form" class="form-inline">
-        <label for="cancel-date">Tanggal</label>
-        <input id="cancel-date" type="date" class="form-control" required value="<?= date('Y-m-d') ?>">
-        <label for="cancel-reason">Alasan</label>
-        <input id="cancel-reason" class="form-control" required maxlength="255">
-        <button type="submit" class="btn btn-danger">Batalkan saldo awal</button>
-    </form>
+    <section class="opening-cancel-panel">
+        <h4><span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span> Pembatalan saldo awal</h4>
+        <p>Pembatalan membuat jurnal pembalik. Pembatalan ditolak jika faktur telah dialokasikan, stok telah digunakan, atau aset sudah dipakai untuk penyusutan atau pelepasan. Saldo awal baru tidak dapat dibuat melalui modul ini setelah transaksi dibatalkan.</p>
+        <form id="cancel-form" class="form-inline">
+            <div class="form-group"><label for="cancel-date">Tanggal pembatalan</label>
+                <input id="cancel-date" type="date" class="form-control" required value="<?= date('Y-m-d') ?>"></div>
+            <div class="form-group"><label for="cancel-reason">Alasan</label>
+                <input id="cancel-reason" class="form-control" required maxlength="255" placeholder="Jelaskan alasan pembatalan"></div>
+            <button type="submit" class="btn btn-danger">Batalkan saldo awal</button>
+        </form>
+    </section>
 <?php endif; ?>
 <script>
 $(function () {
@@ -105,6 +170,16 @@ $(function () {
             ['umur_manfaat_bulan', 'integer'], ['akumulasi_penyusutan_awal', 'money'],
             ['id_akun_aset', 'select'], ['id_akun_akumulasi_penyusutan', 'select'], ['id_akun_beban_penyusutan', 'select']]
     };
+    var sectionHints = {
+        akun: 'Saldo akun rincian, kecuali akun kontrol yang memiliki bagian khusus.',
+        piutang: 'Tambahkan satu baris untuk setiap faktur pelanggan yang masih harus dibayar.',
+        utang: 'Tambahkan satu baris untuk setiap faktur pemasok yang belum dilunasi.',
+        stok: 'Masukkan jumlah dan nilai total persediaan awal untuk setiap produk.',
+        aset: 'Nilai aset dan akumulasi penyusutan akan menghasilkan jurnal secara otomatis.'
+    };
+    Object.keys(sectionHints).forEach(function (kind) {
+        $('[data-section-hint="' + kind + '"]').text(sectionHints[kind]);
+    });
     function fillSelect(select, list, selected) {
         select.append($('<option>').val('').text('-- Pilih --'));
         list.forEach(function (item) {
@@ -113,7 +188,7 @@ $(function () {
         select.val(selected == null ? '' : String(selected));
     }
     fillSelect($('#balancing-account'), options.penyeimbang, opening.penyeimbang);
-    function addRow(kind, values) {
+    function addRow(kind, values, focusNew) {
         values = values || {};
         var row = $('<tr>');
         fields[kind].forEach(function (field) {
@@ -134,11 +209,64 @@ $(function () {
             input.attr('data-field', field[0]).prop('required', true);
             row.append($('<td>').append(input));
         });
-        if (editable) row.append($('<td>').append($('<button type="button" class="btn btn-danger btn-sm">').text('Hapus').on('click', function () { row.remove(); })));
+        if (editable) row.append($('<td>').append($('<button type="button" class="btn btn-danger btn-sm">')
+            .attr('aria-label', 'Hapus rincian ' + kind).append($('<span class="glyphicon glyphicon-trash" aria-hidden="true">'))
+            .on('click', function () { row.remove(); updateCounts(); })));
         $('#table-' + kind + ' tbody').append(row);
+        updateCounts();
+        updatePreview();
+        if (focusNew) row.find('input, select').first().trigger('focus');
+    }
+    function updateCounts() {
+        Object.keys(fields).forEach(function (kind) {
+            $('#table-' + kind + ' tbody .opening-empty-row').remove();
+            var count = $('#table-' + kind + ' tbody tr').length;
+            $('[data-row-count="' + kind + '"]').text(count + ' rincian');
+            $('#table-' + kind).toggleClass('opening-table-empty', count === 0);
+            if (count === 0) {
+                $('#table-' + kind + ' tbody').append($('<tr class="opening-empty-row">')
+                    .append($('<td>').attr('colspan', fields[kind].length + (editable ? 1 : 0))
+                        .addClass('text-center text-muted').text('Belum ada rincian. Gunakan tombol tambah untuk mengisi bagian ini.')));
+            }
+        });
+    }
+    function cents(value) {
+        var amount = String(value == null ? '' : value);
+        if (!/^\d+(?:\.\d{1,2})?$/.test(amount)) return 0;
+        var parts = amount.split('.');
+        return Number(parts[0]) * 100 + Number((parts[1] || '').padEnd(2, '0'));
+    }
+    function sumMoney(kind, field) {
+        var total = 0;
+        $('#table-' + kind + ' [data-field="' + field + '"]').each(function () {
+            total += cents($(this).is('[data-money]') ? MoneyInput.value(this) : $(this).val());
+        });
+        return total;
+    }
+    function displayMoney(value) {
+        var whole = String(Math.floor(value / 100)).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+        return 'Rp ' + whole + ',' + String(value % 100).padStart(2, '0');
+    }
+    function updatePreview() {
+        var debit = sumMoney('akun', 'debit') + sumMoney('piutang', 'jumlah')
+            + sumMoney('stok', 'nilai') + sumMoney('aset', 'nilai_perolehan');
+        var credit = sumMoney('akun', 'kredit') + sumMoney('utang', 'jumlah')
+            + sumMoney('aset', 'akumulasi_penyusutan_awal');
+        var difference = Math.abs(debit - credit);
+        var total = Math.max(debit, credit);
+        $('#opening-preview-debit').text(displayMoney(debit));
+        $('#opening-preview-credit').text(displayMoney(credit));
+        $('#opening-preview-balance').text(displayMoney(difference));
+        $('#opening-preview-total').text(displayMoney(total));
+        var account = $('#balancing-account option:selected').text();
+        $('#opening-preview-account').text(account && $('#balancing-account').val()
+            ? account : 'Pilih akun penyeimbang');
     }
     Object.keys(fields).forEach(function (kind) { (opening[kind] || []).forEach(function (row) { addRow(kind, row); }); });
-    $('.add-row').on('click', function () { addRow($(this).data('kind')); });
+    $('.add-row').on('click', function () { addRow($(this).data('kind'), null, true); });
+    $('#opening-form').on('input change', '[data-field], #balancing-account', updatePreview);
+    updateCounts();
+    updatePreview();
     function request(url, data) {
         <?php if ($this->config->item('csrf_protection')): ?>
         data[<?= json_encode($this->security->get_csrf_token_name()) ?>] = <?= json_encode($this->security->get_csrf_hash()) ?>;

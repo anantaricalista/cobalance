@@ -93,7 +93,7 @@
             font-weight: 600;
         }
 
-        .transaction-ui form[id$="-form"] {
+        .transaction-ui .content-container > form:not(.form-inline) {
             margin: 18px 0 22px;
             padding: 22px;
             border: 1px solid #e0e7f0;
@@ -102,7 +102,7 @@
             box-shadow: 0 4px 14px rgba(27, 49, 79, .05);
         }
 
-        .transaction-ui form[id$="-form"] fieldset {
+        .transaction-ui .content-container > form:not(.form-inline) fieldset {
             min-width: 0;
             border: 0;
         }
@@ -188,6 +188,26 @@
             max-width: 340px;
         }
 
+        .transaction-ui .history-search-group {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            width: min(100%, 520px);
+        }
+
+        .transaction-ui .history-search-group .form-control {
+            flex: 1 1 260px;
+            max-width: none;
+        }
+
+        .transaction-ui .history-clear {
+            flex-shrink: 0;
+        }
+
+        .transaction-ui .history-status-filter {
+            flex: 0 0 165px;
+        }
+
         .transaction-ui .history-count {
             color: #718198;
             font-size: 13px;
@@ -224,6 +244,462 @@
             border-radius: 7px;
         }
 
+        .transaction-ui .module-title {
+            margin-top: 8px;
+            padding: 18px 22px 14px;
+            border: 1px solid #e0e7f0;
+            border-bottom: 0;
+            border-radius: 10px 10px 0 0;
+            background: #fff;
+        }
+
+        .transaction-ui .module-intro {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px 22px;
+            margin: 0 0 22px;
+            padding: 0 22px 16px;
+            border: 1px solid #e0e7f0;
+            border-top: 0;
+            border-radius: 0 0 10px 10px;
+            background: #fff;
+            color: #63738a;
+        }
+
+        .transaction-ui .module-intro p {
+            flex: 1 1 280px;
+            margin: 0;
+            line-height: 1.6;
+        }
+
+        .transaction-ui .module-intro p:only-child {
+            flex-basis: 100%;
+        }
+
+        .transaction-ui .module-section-title {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            margin-top: 25px;
+            padding: 10px 13px;
+            border-left: 3px solid #54a2ae;
+            border-radius: 0 6px 6px 0;
+            background: #edf4f7;
+        }
+
+        .transaction-ui .module-section-title + p {
+            color: #6d7d91;
+        }
+
+        .transaction-ui .module-section-title + .table-responsive,
+        .transaction-ui .module-section-title + form {
+            margin-top: 10px;
+        }
+
+        .transaction-ui form[id*="cancel"] {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-end;
+            gap: 10px;
+            margin: 14px 0 22px;
+            padding: 16px;
+            border: 1px solid #efd9d7;
+            border-radius: 8px;
+            background: #fff9f8;
+        }
+
+        .transaction-ui form[id*="cancel"] .form-group {
+            margin: 0;
+        }
+
+        .transaction-ui form[id*="cancel"] label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .transaction-ui .opening-cancel-panel form[id*="cancel"] {
+            margin: 0;
+            padding: 0;
+            border: 0;
+            background: transparent;
+            box-shadow: none;
+        }
+
+        .transaction-ui table.table-hover > tbody > tr:hover {
+            background-color: #edf6f8;
+        }
+
+        .transaction-ui input[type="file"] {
+            max-width: 100%;
+            padding: 8px;
+            border: 1px dashed #c8d5e3;
+            border-radius: 6px;
+            background: #fafcff;
+        }
+
+        .transaction-ui button[type="submit"] .glyphicon,
+        .transaction-ui .btn .glyphicon {
+            margin-right: 4px;
+        }
+
+        .transaction-ui .opening-overview {
+            display: flex;
+            align-items: stretch;
+            justify-content: space-between;
+            gap: 18px;
+            margin: 18px 0;
+            padding: 24px;
+            border: 1px solid #dfe8ef;
+            border-radius: 12px;
+            background: linear-gradient(120deg, #fff 30%, #f0f8f8);
+            box-shadow: 0 5px 18px rgba(27, 49, 79, .05);
+        }
+
+        .transaction-ui .opening-overview-copy {
+            max-width: 690px;
+        }
+
+        .transaction-ui .opening-eyebrow {
+            display: block;
+            margin-bottom: 7px;
+            color: #52818d;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: .1em;
+        }
+
+        .transaction-ui .opening-overview h4,
+        .transaction-ui .opening-form-heading h4 {
+            margin: 0 0 8px;
+            color: #183153;
+            font-size: 21px;
+            font-weight: 700;
+        }
+
+        .transaction-ui .opening-overview-copy p {
+            margin: 0;
+            color: #63738a;
+            line-height: 1.6;
+        }
+
+        .transaction-ui .opening-status-card {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            min-width: 240px;
+            padding: 16px;
+            border: 1px solid #e0e9ef;
+            border-radius: 9px;
+            background: rgba(255, 255, 255, .85);
+        }
+
+        .transaction-ui .opening-status-card > div {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 5px;
+        }
+
+        .transaction-ui .opening-status-icon {
+            display: grid;
+            width: 42px;
+            height: 42px;
+            place-items: center;
+            border-radius: 50%;
+            background: #e8f4f4;
+            color: #387c89;
+            font-size: 18px;
+        }
+
+        .transaction-ui .opening-status-card strong {
+            color: #273b55;
+            font-size: 15px;
+        }
+
+        .transaction-ui .opening-guidance {
+            margin: 18px 0 22px;
+            padding: 18px 20px;
+            border: 1px solid #d8e7ed;
+            border-radius: 10px;
+            background: #f0f7fa;
+        }
+
+        .transaction-ui .opening-guidance-title {
+            margin-bottom: 14px;
+            color: #27576a;
+            font-weight: 700;
+        }
+
+        .transaction-ui .opening-guidance-title .glyphicon {
+            margin-right: 5px;
+        }
+
+        .transaction-ui .opening-guidance-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 13px 22px;
+        }
+
+        .transaction-ui .opening-guidance-grid > div {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            color: #63738a;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .transaction-ui .opening-guidance-grid strong {
+            color: #344b62;
+        }
+
+        .transaction-ui .opening-legacy-note {
+            margin: 16px 0;
+            padding: 12px 15px;
+            border-left: 3px solid #80a9d0;
+            border-radius: 0 6px 6px 0;
+            background: #f1f6fc;
+            color: #506b89;
+        }
+
+        .transaction-ui .opening-legacy-note .glyphicon {
+            margin-right: 6px;
+        }
+
+        .transaction-ui .opening-form {
+            padding: 0 !important;
+            overflow: hidden;
+        }
+
+        .transaction-ui .opening-form fieldset {
+            padding: 0 22px 22px;
+        }
+
+        .transaction-ui .opening-form-heading {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding: 20px 22px 16px;
+            border-bottom: 1px solid #e6ecf2;
+            background: #fbfcfe;
+        }
+
+        .transaction-ui .opening-form-heading h4 {
+            margin-bottom: 0;
+        }
+
+        .transaction-ui .opening-date-label {
+            padding: 8px 11px;
+            border: 1px solid #e0e8ef;
+            border-radius: 6px;
+            background: #fff;
+            color: #52647a;
+            font-size: 13px;
+        }
+
+        .transaction-ui .opening-date-label .glyphicon {
+            margin-right: 5px;
+            color: #538693;
+        }
+
+        .transaction-ui .opening-basics {
+            display: grid;
+            grid-template-columns: minmax(190px, 1fr) minmax(280px, 2fr);
+            gap: 15px;
+            padding: 0 22px;
+        }
+
+        .transaction-ui .opening-journal-preview {
+            margin: 0 22px 18px;
+            padding: 15px;
+            border: 1px solid #dfe8ef;
+            border-radius: 8px;
+            background: #f7fafc;
+        }
+
+        .transaction-ui .opening-preview-heading {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .transaction-ui .opening-preview-heading strong {
+            color: #30455f;
+        }
+
+        .transaction-ui .opening-preview-account {
+            overflow: hidden;
+            max-width: 55%;
+            padding: 5px 9px;
+            border-radius: 15px;
+            background: #e8f1f5;
+            color: #426374;
+            font-size: 12px;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .transaction-ui .opening-preview-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .transaction-ui .opening-preview-grid > div {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            min-width: 0;
+            padding: 10px;
+            border: 1px solid #e8edf2;
+            border-radius: 6px;
+            background: #fff;
+        }
+
+        .transaction-ui .opening-preview-grid span {
+            color: #718198;
+            font-size: 11px;
+            line-height: 1.4;
+        }
+
+        .transaction-ui .opening-preview-grid strong {
+            overflow: hidden;
+            color: #344b62;
+            font-size: 15px;
+            text-overflow: ellipsis;
+        }
+
+        .transaction-ui .opening-preview-grid .opening-preview-total {
+            border-color: #cee3d4;
+            background: #f4faf5;
+        }
+
+        .transaction-ui .opening-preview-total strong {
+            color: #23643a;
+        }
+
+        .transaction-ui .opening-section {
+            margin-top: 19px;
+            padding: 2px 16px 16px;
+            border: 1px solid #e4eaf1;
+            border-radius: 9px;
+            background: #fff;
+        }
+
+        .transaction-ui .opening-section-heading {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin: 0 -1px 5px;
+            padding: 12px 2px 11px;
+            border-bottom: 1px solid #edf0f4;
+        }
+
+        .transaction-ui .opening-section-heading h4 {
+            margin: 0 0 4px;
+        }
+
+        .transaction-ui .opening-section-hint {
+            display: block;
+            color: #77869a;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .transaction-ui .opening-row-count {
+            flex-shrink: 0;
+            padding: 5px 9px;
+            border-radius: 16px;
+            background: #eef3f7;
+            color: #52647a;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .transaction-ui .opening-section .table-responsive {
+            margin: 12px 0;
+        }
+
+        .transaction-ui .opening-section .table {
+            min-width: 650px;
+        }
+
+        .transaction-ui .opening-section[data-opening-kind="aset"] .table {
+            min-width: 1500px;
+        }
+
+        .transaction-ui .opening-section .form-control {
+            min-width: 105px;
+        }
+
+        .transaction-ui .opening-empty-row td {
+            height: 58px;
+            background: #fbfcfe;
+        }
+
+        .transaction-ui .opening-save-bar,
+        .transaction-ui .opening-action-panel {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            margin-top: 22px;
+            padding: 16px 18px;
+            border: 1px solid #e0e7f0;
+            border-radius: 9px;
+            background: #f8fafc;
+        }
+
+        .transaction-ui .opening-save-bar .text-muted,
+        .transaction-ui .opening-action-panel span {
+            color: #718198;
+            font-size: 13px;
+        }
+
+        .transaction-ui .opening-action-panel {
+            margin: 18px 0 26px;
+            border-color: #d7e8dc;
+            background: #f2f8f4;
+        }
+
+        .transaction-ui .opening-action-panel > div {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .transaction-ui .opening-cancel-panel {
+            margin: 20px 0;
+            padding: 18px;
+            border: 1px solid #f0d7d5;
+            border-radius: 9px;
+            background: #fff9f8;
+        }
+
+        .transaction-ui .opening-cancel-panel h4 {
+            margin: 0 0 8px;
+            color: #8d4944;
+        }
+
+        .transaction-ui .opening-cancel-panel p {
+            color: #765d5a;
+            line-height: 1.55;
+        }
+
+        .transaction-ui .opening-cancel-panel .form-inline .form-group {
+            margin: 8px 10px 8px 0;
+        }
+
+        .transaction-ui .opening-cancel-panel label {
+            display: block;
+            margin-bottom: 4px;
+        }
+
         .transaction-ui .sticky-footer {
             position: static;
             margin-top: 28px;
@@ -234,7 +710,7 @@
                 font-size: 23px;
             }
 
-            .transaction-ui form[id$="-form"] {
+            .transaction-ui .content-container > form:not(.form-inline) {
                 padding: 15px;
             }
 
@@ -245,6 +721,68 @@
 
             .transaction-ui .history-tools .form-control {
                 max-width: none;
+            }
+
+            .transaction-ui .history-search-group {
+                width: 100%;
+            }
+
+            .transaction-ui .history-status-filter {
+                flex: initial;
+                width: 100%;
+            }
+
+            .transaction-ui .opening-overview,
+            .transaction-ui .opening-save-bar,
+            .transaction-ui .opening-action-panel {
+                align-items: stretch;
+                flex-direction: column;
+            }
+
+            .transaction-ui .opening-status-card {
+                min-width: 0;
+            }
+
+            .transaction-ui .opening-guidance-grid,
+            .transaction-ui .opening-basics {
+                grid-template-columns: minmax(0, 1fr);
+            }
+
+            .transaction-ui .opening-preview-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .transaction-ui .opening-form fieldset {
+                padding: 0 14px 16px;
+            }
+
+            .transaction-ui .opening-form-heading {
+                align-items: flex-start;
+                flex-direction: column;
+                padding: 16px;
+            }
+
+            .transaction-ui .opening-basics {
+                padding: 0 14px;
+            }
+
+            .transaction-ui .opening-journal-preview {
+                margin-right: 14px;
+                margin-left: 14px;
+            }
+
+            .transaction-ui .opening-section {
+                padding-right: 10px;
+                padding-left: 10px;
+            }
+
+            .transaction-ui .opening-section-heading {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .transaction-ui .opening-save-bar .btn {
+                width: 100%;
             }
         }
     </style>
