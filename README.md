@@ -125,7 +125,11 @@ MariaDB cukup besar (misalnya 16M) dan query `ALTER TABLE` lampiran sudah dijala
 
 Menu Transaksi → Saldo Awal mencatat satu pembukaan per perusahaan dengan
 tanggal yang sama untuk seluruh rincian. Masukkan saldo akun umum, faktur
-piutang dan utang, serta jumlah dan total nilai per produk barang. Akun di
+piutang dan utang, jumlah dan total nilai per produk barang, serta aset tetap.
+Nilai perolehan dan akumulasi penyusutan aset pada rincian aset otomatis
+dijurnal; jangan memasukkan akun yang sama lagi pada saldo akun umum. Akumulasi
+yang dimasukkan mencakup bulan Saldo Awal, sehingga penyusutan berikutnya
+dimulai pada bulan sesudahnya. Akun di
 kelompok piutang, utang usaha, dan persediaan tidak boleh dimasukkan lagi
 sebagai saldo akun umum. Pilih akun ekuitas tanpa anak untuk mencatat selisih
 debit dan kredit. Pengaturan akun piutang usaha, utang usaha, dan persediaan
@@ -139,7 +143,8 @@ dibuat untuk pembukaan sebagai satu kesatuan. Nilai stok awal menghasilkan
 saldo dan mutasi persediaan dengan harga pokok rata-rata.
 
 Pembatalan menghasilkan jurnal pembalik dan hanya diperbolehkan jika rincian
-faktur belum dialokasikan dan persediaan belum memiliki mutasi lanjutan.
+faktur belum dialokasikan, persediaan belum memiliki mutasi lanjutan, dan aset
+belum memiliki penyusutan atau pelepasan.
 Pembukaan yang dibatalkan tetap tersimpan sebagai riwayat; modul tidak
 mengizinkan pembuatan pembukaan baru setelah pembatalan.
 Lakukan pencadangan dan terapkan migrasi saldo awal yang disediakan terpisah

@@ -11,18 +11,19 @@ class Saldo_awal_service
         $this->ci->load->database();
         $this->ci->load->library('session');
         $this->ci->load->library('transaksi_service');
+        $this->ci->load->library('aset_tetap_service');
     }
 
     public function get()
     {
         $p = $this->company();
         $db = $this->ci->db;
-        $q = $db->query('SELECT t.*, s.id_akun_penyeimbang FROM saldo_awal s JOIN transaksi t
+        $q = $db->query('SELECT ' . Lampiran_service::KOLOM_TRANSAKSI . ', s.id_akun_penyeimbang FROM saldo_awal s JOIN transaksi t
             ON t.id_perusahaan=s.id_perusahaan AND t.id_transaksi=s.id_transaksi WHERE s.id_perusahaan=?', array($p));
         $this->ok($q);
         $t = $q->row();
         $result = array('transaksi' => $t ?: null, 'penyeimbang' => $t ? $t->id_akun_penyeimbang : null,
-            'akun' => array(), 'piutang' => array(), 'utang' => array(), 'stok' => array());
+            'akun' => array(), 'piutang' => array(), 'utang' => array(), 'stok' => array(), 'aset' => array());
         if (!$t) {
             return $result;
         }
@@ -40,6 +41,12 @@ class Saldo_awal_service
         $q = $db->query('SELECT id_produk,jumlah,subtotal AS nilai FROM detail_transaksi WHERE id_perusahaan=? AND id_transaksi=? ORDER BY id_detail_transaksi', array($p, $t->id_transaksi));
         $this->ok($q);
         $result['stok'] = $q->result_array();
+        $q = $db->query('SELECT id_aset_tetap,kode_aset,nama_aset,tanggal_perolehan,tanggal_mulai_penyusutan,
+            nilai_perolehan,nilai_residu,umur_manfaat_bulan,id_akun_aset,id_akun_akumulasi_penyusutan,
+            id_akun_beban_penyusutan,akumulasi_penyusutan_awal FROM aset_tetap
+            WHERE id_perusahaan=? AND id_transaksi_perolehan=? ORDER BY id_aset_tetap', array($p, $t->id_transaksi));
+        $this->ok($q);
+        $result['aset'] = $q->result_array();
         return $result;
     }
 
@@ -48,7 +55,6 @@ class Saldo_awal_service
         $this->date($tanggal);
         return $this->ci->transaksi_service->atomic(function ($p, $user) use ($tanggal, $data) {
             $db = $this->ci->db;
-            $data = $this->validate($p, $data);
             $q = $db->query('SELECT t.* FROM saldo_awal s JOIN transaksi t ON t.id_perusahaan=s.id_perusahaan
                 AND t.id_transaksi=s.id_transaksi WHERE s.id_perusahaan=? FOR UPDATE', array($p));
             $this->ok($q);
@@ -56,6 +62,10 @@ class Saldo_awal_service
             if ($t && $t->status !== 'draft') {
                 throw new DomainException('Saldo awal yang sudah diposting atau dibatalkan tidak dapat diubah.');
             }
+            if ($t) {
+                $this->ok($db->where('id_perusahaan', $p)->where('id_transaksi_perolehan', $t->id_transaksi)->delete('aset_tetap'));
+            }
+            $data = $this->validate($p, $data, $tanggal);
             if (!$t) {
                 $q = $db->query('SELECT UUID() AS uuid');
                 $this->ok($q);
@@ -107,6 +117,9 @@ class Saldo_awal_service
                     'id_produk' => $row['id_produk'], 'deskripsi' => 'Persediaan awal', 'jumlah' => $row['jumlah'],
                     'nilai_sebelum_pajak' => $row['nilai'], 'subtotal' => $row['nilai'])));
             }
+            foreach ($data['aset'] as $row) {
+                $this->ci->aset_tetap_service->simpan_aset_saldo_awal($p, $id, $row);
+            }
             return array('id_transaksi' => $id, 'nomor_transaksi' => $nomor);
         });
     }
@@ -119,7 +132,7 @@ class Saldo_awal_service
             if ($t->jenis_transaksi !== 'saldo_awal' || !$data['transaksi'] || $data['transaksi']->id_transaksi != $t->id_transaksi) {
                 throw new DomainException('Transaksi saldo awal tidak ditemukan.');
             }
-            $data = $this->validate($p, $data);
+            $data = $this->validate($p, $data, $t->tanggal, true);
             $q = $db->query('SELECT id_jurnal FROM jurnal_transaksi WHERE id_perusahaan=? LIMIT 1 FOR UPDATE', array($p));
             $this->ok($q);
             if ($q->row()) {
@@ -135,6 +148,12 @@ class Saldo_awal_service
             $journal = array();
             foreach ($data['akun'] as $row) {
                 $journal[] = array('id_akun' => $row['id_akun'], 'debit' => $row['debit'], 'kredit' => $row['kredit']);
+            }
+            foreach ($data['aset'] as $row) {
+                $journal[] = array('id_akun' => $row['id_akun_aset'], 'debit' => $row['nilai_perolehan'], 'kredit' => '0');
+                if ($this->number($row['akumulasi_penyusutan_awal'], 2, 13) > 0) {
+                    $journal[] = array('id_akun' => $row['id_akun_akumulasi_penyusutan'], 'debit' => '0', 'kredit' => $row['akumulasi_penyusutan_awal']);
+                }
             }
             foreach (array('piutang', 'utang') as $type) {
                 if (!$data[$type]) {
@@ -207,12 +226,15 @@ class Saldo_awal_service
             if ($t->jenis_transaksi !== 'saldo_awal' || !$q->row()) {
                 throw new DomainException('Transaksi saldo awal tidak ditemukan.');
             }
-            $q = $db->query('SELECT id_aset_tetap FROM aset_tetap
-                WHERE id_perusahaan=? AND id_transaksi_perolehan=? LIMIT 1 FOR UPDATE',
+            $q = $db->query("SELECT a.id_aset_tetap FROM aset_tetap a
+                WHERE a.id_perusahaan=? AND a.id_transaksi_perolehan=?
+                AND (EXISTS (SELECT 1 FROM penyusutan_aset s WHERE s.id_perusahaan=a.id_perusahaan AND s.id_aset_tetap=a.id_aset_tetap)
+                OR EXISTS (SELECT 1 FROM pelepasan_aset p WHERE p.id_perusahaan=a.id_perusahaan AND p.id_aset_tetap=a.id_aset_tetap))
+                LIMIT 1 FOR UPDATE",
                 array($p, $t->id_transaksi));
             $this->ok($q);
             if ($q->row()) {
-                throw new DomainException('Saldo awal tidak dapat dibatalkan karena terdapat aset lama yang terdaftar.');
+                throw new DomainException('Saldo awal tidak dapat dibatalkan karena aset sudah digunakan dalam penyusutan atau pelepasan.');
             }
             $children = $db->query("SELECT id_transaksi FROM transaksi WHERE id_perusahaan=? AND id_transaksi_asal=? AND jenis_transaksi IN ('saldo_awal_piutang','saldo_awal_utang') FOR UPDATE", array($p, $t->id_transaksi));
             $this->ok($children);
@@ -254,17 +276,17 @@ class Saldo_awal_service
         });
     }
 
-    private function validate($p, $data)
+    private function validate($p, $data, $tanggal, $stored = false)
     {
-        if (!is_array($data) || !isset($data['penyeimbang']) || !isset($data['akun'], $data['piutang'], $data['utang'], $data['stok'])) {
+        if (!is_array($data) || !isset($data['penyeimbang']) || !isset($data['akun'], $data['piutang'], $data['utang'], $data['stok'], $data['aset'])) {
             throw new InvalidArgumentException('Data saldo awal tidak lengkap.');
         }
-        foreach (array('akun', 'piutang', 'utang', 'stok') as $key) {
+        foreach (array('akun', 'piutang', 'utang', 'stok', 'aset') as $key) {
             if (!is_array($data[$key]) || count($data[$key]) > 200) {
                 throw new InvalidArgumentException('Rincian saldo awal tidak valid atau melebihi 200 baris.');
             }
         }
-        if (!$data['akun'] && !$data['piutang'] && !$data['utang'] && !$data['stok']) {
+        if (!$data['akun'] && !$data['piutang'] && !$data['utang'] && !$data['stok'] && !$data['aset']) {
             throw new DomainException('Masukkan setidaknya satu rincian saldo awal.');
         }
         $this->id($data['penyeimbang']);
@@ -289,6 +311,23 @@ class Saldo_awal_service
             $k = $this->number($row['kredit'], 2, 13);
             if (($d === 0) === ($k === 0)) {
                 throw new DomainException('Setiap akun harus memiliki tepat satu nominal positif.');
+            }
+        }
+        unset($row);
+        $assetCodes = array();
+        foreach ($data['aset'] as &$row) {
+            if (!is_array($row) || ($stored && !isset($row['id_aset_tetap']))) {
+                throw new InvalidArgumentException('Rincian aset tidak valid.');
+            }
+            $row = $this->ci->aset_tetap_service->validasi_saldo_awal($p, $tanggal, $row,
+                $stored ? $row['id_aset_tetap'] : null);
+            $code = function_exists('mb_strtolower') ? mb_strtolower($row['kode_aset'], 'UTF-8') : strtolower($row['kode_aset']);
+            if (isset($assetCodes[$code])) {
+                throw new DomainException('Kode aset saldo awal tidak boleh berulang.');
+            }
+            $assetCodes[$code] = true;
+            if (isset($seen[$row['id_akun_aset']]) || isset($seen[$row['id_akun_akumulasi_penyusutan']])) {
+                throw new DomainException('Akun aset dan akumulasi yang dipakai dalam rincian aset tidak boleh diisi lagi pada Saldo Akun.');
             }
         }
         unset($row);

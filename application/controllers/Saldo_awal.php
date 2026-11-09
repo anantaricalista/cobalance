@@ -18,6 +18,9 @@ class Saldo_awal extends MY_Controller
             'accounts' => $this->akun->get_display_options(),
             'control_accounts' => $this->akun->get_selectable(array(), array('1200', '2100', '1700')),
             'equity_accounts' => $this->akun->get_display_options(array('Ekuitas')),
+            'asset_accounts' => $this->akun->get_display_options(array(), array('1800')),
+            'accumulated_accounts' => $this->akun->get_display_options(array(), array('1900')),
+            'expense_accounts' => $this->akun->get_display_options(array('Beban')),
             'customers' => $this->db->where('id_perusahaan', $perusahaan)->order_by('nama_pelanggan')->get('pelanggan')->result(),
             'suppliers' => $this->db->where('id_perusahaan', $perusahaan)->order_by('nama_pemasok')->get('pemasok')->result(),
             'products' => $this->db->where('id_perusahaan', $perusahaan)->where('tipe_produk', 'barang')->order_by('nama_produk')->get('produk')->result()

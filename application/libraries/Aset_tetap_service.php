@@ -20,7 +20,7 @@ class Aset_tetap_service
         $company = $this->company();
         $query = $this->ci->db->query("SELECT a.*, t.status AS status_perolehan, t.nomor_transaksi,
             t.lampiran_nama, COALESCE(d.akumulasi, 0) + a.akumulasi_penyusutan_awal AS akumulasi_tercatat,
-            COALESCE(p.nilai_buku, a.nilai_perolehan - a.akumulasi_penyusutan_awal) AS nilai_buku
+            COALESCE(p.nilai_buku, a.nilai_perolehan - a.akumulasi_penyusutan_awal - COALESCE(d.akumulasi, 0)) AS nilai_buku
             FROM aset_tetap a
             JOIN transaksi t ON t.id_perusahaan=a.id_perusahaan AND t.id_transaksi=a.id_transaksi_perolehan
             LEFT JOIN (
@@ -158,7 +158,6 @@ class Aset_tetap_service
             throw new InvalidArgumentException('Data aset lama tidak valid.');
         }
         return $this->ci->transaksi_service->atomic(function ($company) use ($data) {
-            $clean = $this->validate_asset($company, $data, null);
             $db = $this->ci->db;
             $opening = $db->query("SELECT t.id_transaksi, t.tanggal FROM saldo_awal s
                 JOIN transaksi t ON t.id_perusahaan=s.id_perusahaan AND t.id_transaksi=s.id_transaksi
@@ -168,15 +167,30 @@ class Aset_tetap_service
             if (!$balance) {
                 throw new DomainException('Saldo Awal harus diposting sebelum aset lama didaftarkan.');
             }
-            if ($clean['tanggal_mulai_penyusutan'] > $balance->tanggal) {
-                throw new DomainException('Tanggal mulai penyusutan aset lama tidak boleh setelah tanggal Saldo Awal.');
-            }
-            $clean['akumulasi_penyusutan_awal'] = $this->optional_money(isset($data['akumulasi_penyusutan_awal'])
-                ? $data['akumulasi_penyusutan_awal'] : '0');
-            $this->calculator($clean, $balance->tanggal, $clean['akumulasi_penyusutan_awal']);
+            $clean = $this->validasi_saldo_awal($company, $balance->tanggal, $data);
             $this->ok($db->insert('aset_tetap', $this->asset_row($company, $balance->id_transaksi, $clean)));
             return array('id_aset_tetap' => $db->insert_id());
         });
+    }
+
+    public function validasi_saldo_awal($company, $tanggal, $data, $assetId = null)
+    {
+        if (!is_array($data)) {
+            throw new InvalidArgumentException('Data aset lama tidak valid.');
+        }
+        $clean = $this->validate_asset($company, $data, $assetId);
+        if ($clean['tanggal_perolehan'] > $tanggal) {
+            throw new DomainException('Tanggal perolehan aset lama tidak boleh setelah tanggal Saldo Awal.');
+        }
+        $clean['akumulasi_penyusutan_awal'] = $this->optional_money(isset($data['akumulasi_penyusutan_awal'])
+            ? $data['akumulasi_penyusutan_awal'] : '0');
+        $this->calculator($clean, $tanggal, $clean['akumulasi_penyusutan_awal']);
+        return $clean;
+    }
+
+    public function simpan_aset_saldo_awal($company, $transactionId, $clean)
+    {
+        $this->ok($this->ci->db->insert('aset_tetap', $this->asset_row($company, $transactionId, $clean)));
     }
 
     public function posting($id)
@@ -607,7 +621,7 @@ class Aset_tetap_service
         }
         $code = $this->text($data['kode_aset'], 50, 'Kode aset');
         $name = $this->text($data['nama_aset'], 255, 'Nama aset');
-        if ($code === '' || $name === '') {
+        if ($code === null || $name === null) {
             throw new InvalidArgumentException('Kode dan nama aset wajib diisi.');
         }
         $this->date($data['tanggal_perolehan']);
@@ -790,6 +804,10 @@ class Aset_tetap_service
 
     private function assert_contiguous($base, $asset, $posted, $endPeriod, $openingDate)
     {
+        if ($this->cents($asset->akumulasi_penyusutan_awal)
+            === $this->cents($asset->nilai_perolehan) - $this->cents($asset->nilai_residu)) {
+            return;
+        }
         $start = max($this->month($asset->tanggal_mulai_penyusutan), $this->next_period($openingDate));
         $startIndex = $this->month_index($start);
         $expected = $startIndex;
