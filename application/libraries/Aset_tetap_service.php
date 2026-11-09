@@ -924,6 +924,9 @@ class Aset_tetap_service
         if (!$account) {
             throw new DomainException('Akun aset tetap tidak ditemukan.');
         }
+        if ($type !== null && $account->tipe_akun !== $type) {
+            throw new DomainException('Tipe akun tidak sesuai untuk transaksi aset tetap.');
+        }
         $children = $this->ci->db->query('SELECT id_akun FROM akun
             WHERE id_perusahaan=? AND id_akun_induk=? LIMIT 1 FOR UPDATE', array($company, $id));
         $this->ok($children);
@@ -939,9 +942,6 @@ class Aset_tetap_service
             $seen[$account->id_akun] = true;
             if ($root !== null && $account->kode_akun === $root) {
                 $found = true;
-            }
-            if ($type !== null && $account->tipe_akun !== $type) {
-                throw new DomainException('Tipe akun tidak sesuai untuk transaksi aset tetap.');
             }
             if (!$account->id_akun_induk) {
                 break;
