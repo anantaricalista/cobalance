@@ -58,7 +58,8 @@ class Penerimaan_piutang_service
                 WHERE a.id_perusahaan=t.id_perusahaan AND a.id_transaksi_tagihan=t.id_transaksi
                 AND r.status='diposting' AND r.jenis_transaksi='penerimaan_piutang'), 0) AS sisa
             FROM transaksi t WHERE t.id_perusahaan=? AND t.id_pelanggan=? AND t.status='diposting'
-            AND (t.jenis_transaksi='saldo_awal_piutang' OR (t.jenis_transaksi='penjualan' AND t.cara_pembayaran='kredit'))
+            AND (t.jenis_transaksi='saldo_awal_piutang'
+                OR (t.jenis_transaksi IN ('penjualan', 'pelepasan_aset') AND t.cara_pembayaran='kredit'))
             HAVING sisa > 0 ORDER BY t.tanggal, t.id_transaksi", array($company, $customer));
         $this->ok($query);
         return $query->result_array();
@@ -229,7 +230,8 @@ class Penerimaan_piutang_service
             $invoice = $query->row();
             if (!$invoice || (string) $invoice->id_pelanggan !== (string) $customer || $invoice->status !== 'diposting'
                 || !($invoice->jenis_transaksi === 'saldo_awal_piutang'
-                    || ($invoice->jenis_transaksi === 'penjualan' && $invoice->cara_pembayaran === 'kredit'))) {
+                    || (in_array($invoice->jenis_transaksi, array('penjualan', 'pelepasan_aset'), true)
+                        && $invoice->cara_pembayaran === 'kredit'))) {
                 throw new DomainException('Tagihan tidak ditemukan, bukan milik pelanggan ini, atau belum diposting.');
             }
             if ($date < $invoice->tanggal) {

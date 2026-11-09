@@ -18,7 +18,8 @@ class Pengaturan_akun extends Master_Controller
             'beban_pokok_penjualan' => '5100',
             'pendapatan_default' => '4000',
             'modal' => '3100',
-            'rugi_pelepasan_aset' => '9000'
+            'rugi_pelepasan_aset' => '9000',
+            'laba_pelepasan_aset' => '8000'
         ),
         'fields' => array(
             'jenis_pengaturan' => array('label' => 'Jenis Pengaturan', 'type' => 'select', 'placeholder' => '-- Pilih Jenis Pengaturan --', 'options' => array(
@@ -31,7 +32,8 @@ class Pengaturan_akun extends Master_Controller
                 'beban_pokok_penjualan' => 'Beban Pokok Penjualan',
                 'pendapatan_default' => 'Pendapatan Default',
                 'modal' => 'Modal',
-                'rugi_pelepasan_aset' => 'Rugi Pelepasan Aset'
+                'rugi_pelepasan_aset' => 'Rugi Pelepasan Aset',
+                'laba_pelepasan_aset' => 'Laba Pelepasan Aset'
             ), 'required' => true),
             'id_akun' => array('label' => 'Akun', 'type' => 'account', 'required' => true)
         )

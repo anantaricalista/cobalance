@@ -88,6 +88,31 @@ akun tujuan dan mengkredit akun asal (harus berbeda). Akun piutang usaha dan uta
 usaha ditolak sebagai akun lawan karena dikelola modul Penerimaan Piutang dan
 Pembayaran Utang. Pembatalan membuat jurnal pembalik.
 
+## Aset tetap
+
+Perolehan baru disimpan sebagai draft, mendukung pembayaran tunai atau kredit,
+dan mencatat aset pada kelompok 1800. Aset lama dapat didaftarkan tanpa jurnal
+tambahan jika sudah tercermin pada Saldo Awal; masukkan akumulasi penyusutan
+sampai bulan Saldo Awal agar jadwal berikutnya dimulai pada bulan sesudahnya.
+Penyusutan menggunakan metode garis lurus dan diakui satu bulan penuh mulai
+bulan tanggal mulai penyusutan. Buat dan posting periode secara berurutan.
+
+Pelepasan aset mencatat penyusutan satu bulan penuh pada bulan pelepasan (jika
+belum diposting untuk bulan itu), lalu menghitung nilai buku dan laba/rugi.
+Hasil pelepasan dapat diterima tunai, secara kredit, atau tanpa hasil. Transaksi
+perolehan, penyusutan, dan pelepasan mendukung lampiran serta pembatalan dengan
+jurnal pembalik; pembatalan ditolak jika akan merusak rangkaian penyusutan atau
+tagihan sudah memiliki pembayaran/penerimaan. Tambahkan pengaturan akun Laba
+Pelepasan Aset (kelompok 8000) di Pengaturan Akun untuk pelepasan yang menghasilkan
+laba; pengaturan Rugi Pelepasan Aset harus mengarah ke kelompok 9000.
+
+Sebelum menggunakan modul, tambahkan kolom akumulasi penyusutan awal:
+
+```sql
+ALTER TABLE aset_tetap
+    ADD COLUMN akumulasi_penyusutan_awal DECIMAL(15,2) NOT NULL DEFAULT 0.00;
+```
+
 ## Lampiran
 
 Bukti transaksi (PDF/JPG/PNG, maks. 5 MB, satu file per transaksi) disimpan di

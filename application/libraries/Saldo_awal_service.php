@@ -207,6 +207,13 @@ class Saldo_awal_service
             if ($t->jenis_transaksi !== 'saldo_awal' || !$q->row()) {
                 throw new DomainException('Transaksi saldo awal tidak ditemukan.');
             }
+            $q = $db->query('SELECT id_aset_tetap FROM aset_tetap
+                WHERE id_perusahaan=? AND id_transaksi_perolehan=? LIMIT 1 FOR UPDATE',
+                array($p, $t->id_transaksi));
+            $this->ok($q);
+            if ($q->row()) {
+                throw new DomainException('Saldo awal tidak dapat dibatalkan karena terdapat aset lama yang terdaftar.');
+            }
             $children = $db->query("SELECT id_transaksi FROM transaksi WHERE id_perusahaan=? AND id_transaksi_asal=? AND jenis_transaksi IN ('saldo_awal_piutang','saldo_awal_utang') FOR UPDATE", array($p, $t->id_transaksi));
             $this->ok($children);
             foreach ($children->result() as $child) {
