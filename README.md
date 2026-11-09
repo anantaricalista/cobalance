@@ -1,5 +1,14 @@
 # cobalance
 
+## Logging
+
+CodeIgniter logging is disabled by default (`$config['log_threshold'] = 0`) to
+prevent application log files from growing continuously on the server. PHP or
+web-server logs configured outside CodeIgniter are not affected. Existing log
+files are not removed automatically; archive or remove them separately when safe.
+To temporarily diagnose a production issue, set the threshold to `1` for errors
+only, then disable it again after investigation.
+
 ## Panduan pengguna
 
 Lihat [Panduan Pengguna Co-Balance](docs/PANDUAN_PENGGUNA.md) untuk alur dari
