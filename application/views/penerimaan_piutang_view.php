@@ -17,7 +17,7 @@ foreach ($cash_accounts as $account) {
 }
 ?>
 <h3>Penerimaan Piutang</h3>
-<p class="text-muted" role="note">Nominal: gunakan titik untuk ribuan dan koma untuk desimal, misalnya <strong>1.000,50</strong>. Angka diformat setelah kolom ditinggalkan.</p>
+<p class="text-muted" role="note">Nominal: pemisah ribuan ditambahkan otomatis; gunakan koma untuk desimal, misalnya <strong>1.000,50</strong>.</p>
 <p>Penerimaan dialokasikan ke tagihan pelanggan (penjualan kredit atau saldo awal piutang). Saat diposting, jurnal otomatis mendebit kas/bank dan mengkredit piutang usaha.</p>
 
 <?php if ($transaction): ?>

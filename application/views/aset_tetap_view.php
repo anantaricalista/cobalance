@@ -30,7 +30,7 @@ foreach ($customers as $customer) {
 $isDraft = $transaction && $transaction->status === 'draft';
 ?>
 <h3>Aset Tetap</h3>
-<p class="text-muted" role="note">Nominal: gunakan titik untuk ribuan dan koma untuk desimal, misalnya <strong>1.000,50</strong>. Angka diformat setelah kolom ditinggalkan.</p>
+<p class="text-muted" role="note">Nominal: pemisah ribuan ditambahkan otomatis; gunakan koma untuk desimal, misalnya <strong>1.000,50</strong>.</p>
 <p>Kelola perolehan tunai/kredit, pendaftaran aset lama yang sudah dicatat melalui Saldo Awal, penyusutan garis lurus, dan pelepasan aset.</p>
 <div id="asset-message" role="alert"></div>
 

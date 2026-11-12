@@ -18,7 +18,7 @@ foreach ($cash_accounts as $account) {
 }
 ?>
 <h3>Modal dan Prive</h3>
-<p class="text-muted" role="note">Nominal: gunakan titik untuk ribuan dan koma untuk desimal, misalnya <strong>1.000,50</strong>. Angka diformat setelah kolom ditinggalkan.</p>
+<p class="text-muted" role="note">Nominal: pemisah ribuan ditambahkan otomatis; gunakan koma untuk desimal, misalnya <strong>1.000,50</strong>.</p>
 <p>Setoran modal mendebit kas/bank dan mengkredit akun Modal pada Pengaturan Akun. Prive mendebit akun ekuitas yang dipilih dan mengkredit kas/bank.</p>
 <p><a href="<?= site_url('modal_prive') ?>">Transaksi baru</a></p>
 <div id="capital-message" role="alert"></div>

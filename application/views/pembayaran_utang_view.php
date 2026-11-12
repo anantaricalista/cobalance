@@ -17,7 +17,7 @@ foreach ($cash_accounts as $account) {
 }
 ?>
 <h3>Pembayaran Utang</h3>
-<p class="text-muted" role="note">Nominal: gunakan titik untuk ribuan dan koma untuk desimal, misalnya <strong>1.000,50</strong>. Angka diformat setelah kolom ditinggalkan.</p>
+<p class="text-muted" role="note">Nominal: pemisah ribuan ditambahkan otomatis; gunakan koma untuk desimal, misalnya <strong>1.000,50</strong>.</p>
 <p>Pembayaran dialokasikan ke tagihan pemasok (pembelian kredit atau saldo awal utang). Saat diposting, jurnal otomatis mendebit utang usaha dan mengkredit kas/bank.</p>
 
 <?php if ($transaction): ?>

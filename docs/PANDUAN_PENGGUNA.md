@@ -93,8 +93,9 @@ Alur transaksi umumnya:
 2. Periksa jumlah, pajak, akun, dan total. Nominal uang menggunakan format
    Indonesia: titik untuk ribuan dan koma untuk desimal, misalnya `1.000.000,50`.
    Untuk Rp 12,50 masukkan `12,50`, bukan `12.50`; `1.000` berarti seribu,
-   bukan satu. Nominal diformat saat kolom ditinggalkan; penulisan titik ribuan
-   yang tidak lengkap akan ditolak.
+   bukan satu. Pemisah ribuan ditambahkan otomatis saat mengetik; gunakan koma
+   untuk desimal. Nilai yang ditempel harus menggunakan format Indonesia dan
+   maksimal dua angka desimal.
    Kolom jumlah barang dan tarif pajak menggunakan titik sebagai pemisah desimal.
    Gunakan browser modern yang mendukung JavaScript `BigInt` untuk perhitungan
    nominal yang akurat.

@@ -13,7 +13,7 @@ $map = function ($accounts) {
 };
 ?>
 <h3>Kas dan Bank</h3>
-<p class="text-muted" role="note">Nominal: gunakan titik untuk ribuan dan koma untuk desimal, misalnya <strong>1.000,50</strong>. Angka diformat setelah kolom ditinggalkan.</p>
+<p class="text-muted" role="note">Nominal: pemisah ribuan ditambahkan otomatis; gunakan koma untuk desimal, misalnya <strong>1.000,50</strong>.</p>
 <p>Catat kas masuk, kas keluar, dan transfer antar akun kas/bank. Posting membuat jurnal otomatis. Piutang dan utang usaha tidak dipilih di sini; gunakan modul Penerimaan Piutang dan Pembayaran Utang.</p>
 
 <?php if ($transaction): ?>

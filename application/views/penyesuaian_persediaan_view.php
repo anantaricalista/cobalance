@@ -1,5 +1,5 @@
 <h3>Penyesuaian Persediaan</h3>
-<p class="text-muted" role="note">Nominal: gunakan titik untuk ribuan dan koma untuk desimal, misalnya <strong>1.000,50</strong>. Angka diformat setelah kolom ditinggalkan.</p>
+<p class="text-muted" role="note">Nominal: pemisah ribuan ditambahkan otomatis; gunakan koma untuk desimal, misalnya <strong>1.000,50</strong>.</p>
 <p>Setiap transaksi untuk satu produk. Stock opname menggunakan jumlah fisik yang dimasukkan dan membandingkannya dengan saldo pada saat posting.</p>
 <p><a href="<?= site_url('persediaan') ?>">Saldo dan riwayat stok</a> | <a href="<?= site_url('penyesuaian_persediaan') ?>">Penyesuaian baru</a></p>
 <div id="adjustment-message" role="alert"></div>

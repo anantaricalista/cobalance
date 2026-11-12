@@ -10,7 +10,7 @@ foreach ($accounts as $account) {
 }
 ?>
 <h3>Penyesuaian Akuntansi</h3>
-<p class="text-muted" role="note">Nominal: gunakan titik untuk ribuan dan koma untuk desimal, misalnya <strong>1.000,50</strong>. Angka diformat setelah kolom ditinggalkan.</p>
+<p class="text-muted" role="note">Nominal: pemisah ribuan ditambahkan otomatis; gunakan koma untuk desimal, misalnya <strong>1.000,50</strong>.</p>
 <p>Catat jurnal manual untuk koreksi atau penyesuaian. Setiap transaksi wajib seimbang dan hanya dapat menggunakan akun rinci.</p>
 <p><a href="<?= site_url('penyesuaian_akuntansi') ?>">Transaksi baru</a></p>
 <div id="adjustment-message" role="alert"></div>

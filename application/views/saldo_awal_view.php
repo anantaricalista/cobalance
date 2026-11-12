@@ -33,7 +33,7 @@ $product_options = array();
 foreach ($products as $product) $product_options[] = array('id' => $product->id_produk, 'label' => $product->kode_produk . ' - ' . $product->nama_produk, 'disabled' => !$product->aktif);
 ?>
 <h3>Saldo Awal</h3>
-<p class="text-muted" role="note">Nominal: gunakan titik untuk ribuan dan koma untuk desimal, misalnya <strong>1.000,50</strong>. Angka diformat setelah kolom ditinggalkan.</p>
+<p class="text-muted" role="note">Nominal: pemisah ribuan ditambahkan otomatis; gunakan koma untuk desimal, misalnya <strong>1.000,50</strong>.</p>
 <div class="opening-overview">
     <div class="opening-overview-copy">
         <span class="opening-eyebrow">PERSIAPAN PEMBUKUAN</span>

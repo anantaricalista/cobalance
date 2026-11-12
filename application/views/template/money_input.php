@@ -1,8 +1,7 @@
 <script>
 window.MoneyInput = (function ($) {
-    function canonical(value) {
-        return value.replace(/\./g, '').replace(',', '.');
-    }
+    var instances = new WeakMap();
+    var maxAmount = '9999999999999.99';
 
     function validFormat(value) {
         return /^(?:\d+|\d{1,3}(?:\.\d{3})+)(?:,\d{1,2})?$/.test(value);
@@ -35,16 +34,19 @@ window.MoneyInput = (function ($) {
     }
 
     function validate(input) {
-        var value = input.value;
-        var number = canonical(value);
+        var number = instances.get(input).getNumericString();
         var message = '';
-        if (value && !validFormat(value)) {
-            message = 'Gunakan koma untuk desimal dan titik untuk ribuan, misalnya 1.000,50.';
-        } else if (value && ((input.getAttribute('min') !== null && cents(number) < cents(input.getAttribute('min'))) ||
+        if (number && (cents(number) > cents(maxAmount) ||
+            (input.getAttribute('min') !== null && cents(number) < cents(input.getAttribute('min'))) ||
             (input.getAttribute('max') !== null && cents(number) > cents(input.getAttribute('max'))))) {
             message = 'Nominal berada di luar batas yang diizinkan.';
         }
         input.setCustomValidity(message);
+    }
+
+    function reject(input, message) {
+        input.setCustomValidity(message);
+        input.reportValidity();
     }
 
     function init(input, initial) {
@@ -52,11 +54,41 @@ window.MoneyInput = (function ($) {
         $input.attr('type', 'text').attr('inputmode', 'decimal').attr('data-money', '1')
             .attr('placeholder', 'Contoh: 1.000,50')
             .attr('title', 'Gunakan koma untuk desimal dan titik untuk ribuan, misalnya 1.000,50.');
-        $input.on('input', function () {
-            validate(this);
+        input.value = '';
+        var instance = new AutoNumeric(input, '', {
+            digitGroupSeparator: '.',
+            decimalCharacter: ',',
+            decimalCharacterAlternative: null,
+            decimalPlaces: 2,
+            minimumValue: '0',
+            maximumValue: maxAmount,
+            overrideMinMaxLimits: 'ignore',
+            emptyInputBehavior: 'null',
+            selectOnFocus: false,
+            unformatOnHover: false,
+            modifyValueOnWheel: false,
+            modifyValueOnUpDownArrow: false,
+            createLocalList: false
         });
-        $input.on('blur', function () {
-            if (this.value && validFormat(this.value)) this.value = display(canonical(this.value));
+        instances.set(input, instance);
+        input.addEventListener('keydown', function (event) {
+            if (event.key === '.' && !event.ctrlKey && !event.metaKey && !event.altKey) {
+                event.preventDefault();
+                event.stopImmediatePropagation();
+                reject(input, 'Gunakan koma untuk desimal; titik ribuan ditambahkan otomatis.');
+            }
+        }, true);
+        input.addEventListener('paste', function (event) {
+            var pasted = event.clipboardData && event.clipboardData.getData('text/plain');
+            var combined = input.value.slice(0, input.selectionStart) + pasted + input.value.slice(input.selectionEnd);
+            if (!pasted || !validFormat(pasted) ||
+                !/^\d*(?:,\d{0,2})?$/.test(combined.replace(/\./g, ''))) {
+                event.preventDefault();
+                event.stopImmediatePropagation();
+                reject(input, 'Tempel nominal dalam format Indonesia, misalnya 1.000,50, dengan maksimal dua desimal.');
+            }
+        }, true);
+        $input.on('input keyup blur change paste', function () {
             validate(this);
         });
         set(input, initial == null ? '' : initial);
@@ -64,13 +96,16 @@ window.MoneyInput = (function ($) {
 
     function set(input, value) {
         var text = String(value == null ? '' : value);
-        input.value = display(text);
+        if (text && !/^\d+(?:\.\d{1,2})?$/.test(text)) {
+            throw new Error('Nilai nominal awal tidak valid.');
+        }
+        instances.get(input).set(text === '' ? null : text);
         validate(input);
     }
 
     function value(input) {
-        if (!input.value) return '';
-        return validFormat(input.value) ? canonical(input.value) : 'invalid';
+        var raw = instances.get(input).getNumericString();
+        return raw == null ? '' : raw;
     }
 
     function serialize(form) {
