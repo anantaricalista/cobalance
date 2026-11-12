@@ -67,30 +67,17 @@ class Auth extends CI_Controller
             return;
         }
 
-        if (strcasecmp(trim($username), 'system') === 0) {
-            $system_password = $this->system_password();
-            if (is_string($system_password) && $system_password !== ''
-                && hash_equals($system_password, $password)) {
-                $this->session->sess_regenerate(true);
-                $this->session->set_userdata(array('system_admin' => true, 'username' => 'system'));
-                redirect('System/Perusahaan');
-                return;
-            }
-            if (!is_string($system_password) || $system_password === '') {
-                log_message('error', 'Password system admin belum dikonfigurasi.');
-            }
-            $this->session->set_flashdata('error', 'Username atau password salah.');
-            redirect('auth');
-            return;
-        }
-
-        $user = $this->User_model->get_by_username($username);
+        $is_system = strcasecmp(trim($username), 'system') === 0;
+        $user = $this->User_model->get_by_username($is_system ? 'system' : $username);
         $legacy = $user && preg_match('/\A[0-9a-f]{32}\z/', $user->password);
         $valid = $legacy
             ? hash_equals($user->password, md5(md5($password)))
             : password_verify($password, $user ? $user->password : $this->dummy_hash);
 
-        if ($valid) {
+        $eligible = $user && ($is_system
+            ? $user->id_perusahaan === null && $user->role === 'admin'
+            : $user->id_perusahaan !== null && $user->nama_perusahaan !== null);
+        if ($valid && $eligible) {
             if ($legacy || password_needs_rehash($user->password, PASSWORD_DEFAULT)) {
                 $hash = password_hash($password, PASSWORD_DEFAULT);
                 if ($hash === false || !$this->User_model->upgrade_password($user->id_pengguna, $user->password, $hash)) {
@@ -99,6 +86,15 @@ class Auth extends CI_Controller
                 }
             }
             $this->session->sess_regenerate(true);
+            if ($is_system) {
+                $this->session->set_userdata(array(
+                    'system_admin' => true,
+                    'id_system_admin' => $user->id_pengguna,
+                    'username' => $user->username
+                ));
+                redirect('System/Perusahaan');
+                return;
+            }
             $this->session->set_userdata(array(
                 'id_pengguna' => $user->id_pengguna,
                 'username' => $user->username,
@@ -118,29 +114,5 @@ class Auth extends CI_Controller
     {
         $this->session->sess_destroy();
         redirect('auth');
-    }
-
-    private function system_password()
-    {
-        $password = getenv('COBALANCE_SYSTEM_PASSWORD');
-        if ($password !== false) {
-            return $password;
-        }
-
-        $path = FCPATH . '.env';
-        if (!file_exists($path)) {
-            return false;
-        }
-        if (!is_readable($path)) {
-            show_error('Konfigurasi system admin tidak dapat dibaca. Hubungi administrator.', 503);
-            return false;
-        }
-        $settings = parse_ini_file($path, false, INI_SCANNER_RAW);
-        if ($settings === false || !isset($settings['COBALANCE_SYSTEM_PASSWORD'])
-            || !is_string($settings['COBALANCE_SYSTEM_PASSWORD'])) {
-            show_error('Konfigurasi system admin tidak valid. Hubungi administrator.', 503);
-            return false;
-        }
-        return $settings['COBALANCE_SYSTEM_PASSWORD'];
     }
 }

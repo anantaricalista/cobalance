@@ -10,6 +10,13 @@ class Perusahaan extends CI_Controller
             show_error('Akses hanya untuk system admin.', 403);
             exit;
         }
+        $this->load->model('M_pengguna', 'system_user');
+        $id = $this->session->userdata('id_system_admin');
+        if (!$id || !$this->system_user->is_system_admin($id)) {
+            $this->session->sess_destroy();
+            redirect('auth');
+            exit;
+        }
         $this->load->model('System/M_perusahaan_system', 'system_company');
     }
 

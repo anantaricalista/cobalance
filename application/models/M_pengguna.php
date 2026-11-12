@@ -17,9 +17,17 @@ class M_pengguna extends CI_Model
         $this->db->from('pengguna p');
         $this->db->join('perusahaan', 'p.id_perusahaan = perusahaan.id_perusahaan', 'left');
         $this->db->where('p.username', $username);
-        $this->db->where('p.username !=', 'system');
         $query = $this->db->get();
         return $query->row();
+    }
+
+    public function is_system_admin($id)
+    {
+        return $this->db->where('id_pengguna', $id)
+            ->where('username', 'system')
+            ->where('id_perusahaan', null)
+            ->where('role', 'admin')
+            ->count_all_results('pengguna') === 1;
     }
 
     public function upgrade_password($id, $old_hash, $new_hash)
