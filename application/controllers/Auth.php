@@ -68,7 +68,7 @@ class Auth extends CI_Controller
         }
 
         if (strcasecmp(trim($username), 'system') === 0) {
-            $system_password = getenv('COBALANCE_SYSTEM_PASSWORD');
+            $system_password = $this->system_password();
             if (is_string($system_password) && $system_password !== ''
                 && hash_equals($system_password, $password)) {
                 $this->session->sess_regenerate(true);
@@ -118,5 +118,29 @@ class Auth extends CI_Controller
     {
         $this->session->sess_destroy();
         redirect('auth');
+    }
+
+    private function system_password()
+    {
+        $password = getenv('COBALANCE_SYSTEM_PASSWORD');
+        if ($password !== false) {
+            return $password;
+        }
+
+        $path = FCPATH . '.env';
+        if (!file_exists($path)) {
+            return false;
+        }
+        if (!is_readable($path)) {
+            show_error('Konfigurasi system admin tidak dapat dibaca. Hubungi administrator.', 503);
+            return false;
+        }
+        $settings = parse_ini_file($path, false, INI_SCANNER_RAW);
+        if ($settings === false || !isset($settings['COBALANCE_SYSTEM_PASSWORD'])
+            || !is_string($settings['COBALANCE_SYSTEM_PASSWORD'])) {
+            show_error('Konfigurasi system admin tidak valid. Hubungi administrator.', 503);
+            return false;
+        }
+        return $settings['COBALANCE_SYSTEM_PASSWORD'];
     }
 }

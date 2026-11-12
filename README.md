@@ -40,14 +40,22 @@ CSRF global masih perlu disiapkan terpisah untuk seluruh modul.
 
 ## System admin dan perusahaan
 
-System admin masuk melalui halaman login biasa dengan username `system`. Atur
-`COBALANCE_SYSTEM_PASSWORD` di environment proses PHP/web server; akun ini
-tidak disimpan di database. Jangan memasukkan password ke source code atau Git,
-dan pastikan variabel tersedia pada proses PHP, bukan hanya shell administrator.
-Tanpa variabel tersebut, login system admin tidak aktif. Lindungi konfigurasi
-server, gunakan HTTPS, dan ganti password jika pernah terpapar. Username `system`
-dicadangkan; ganti username tersebut pada akun perusahaan yang sudah ada sebelum
-mengaktifkan fitur ini.
+System admin masuk melalui halaman login biasa dengan username `system`. Akun ini
+tidak disimpan di database. Atur `COBALANCE_SYSTEM_PASSWORD` di environment proses
+PHP/web server atau salin `.env.example` menjadi `.env` di root aplikasi dan
+isi password di dalam tanda kutip. Nilai environment proses didahulukan bila
+keduanya tersedia. File `.env` tidak masuk Git dan harus dibuat pada setiap server;
+batasi hak bacanya untuk pengguna proses PHP dan administrator server.
+
+File `.htaccess` melarang akses HTTP ke `.env` pada Apache 2.4 bila aturan
+`AllowOverride` aktif. Untuk Nginx atau server lain, konfigurasi server wajib
+menolak akses HTTP ke `.env` dan file `.env.*` sebelum file tersebut dibuat.
+Jangan gunakan server pengembangan PHP untuk menyajikan root ini: server tersebut
+tidak menerapkan `.htaccess`. Pastikan akses HTTP ke `.env` ditolak sebelum
+penggunaan. Jangan memasukkan password ke source code atau Git. Tanpa password,
+login system admin tidak aktif. Gunakan HTTPS dan ganti password jika pernah
+terpapar. Username `system` dicadangkan; ganti username tersebut pada akun
+perusahaan yang sudah ada sebelum mengaktifkan fitur ini.
 
 Cadangkan database, lalu jalankan `application/sql/20261112_satu_admin_perusahaan.sql`
 setelah migrasi login. Migrasi menegakkan paling banyak satu pengguna ber-role
