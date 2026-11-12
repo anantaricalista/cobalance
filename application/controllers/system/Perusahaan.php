@@ -17,7 +17,7 @@ class Perusahaan extends CI_Controller
             redirect('auth');
             exit;
         }
-        $this->load->model('System/M_perusahaan_system', 'system_company');
+        $this->load->model('system/M_perusahaan_system', 'system_company');
     }
 
     public function index()
@@ -27,7 +27,7 @@ class Perusahaan extends CI_Controller
             $token = bin2hex(random_bytes(32));
             $this->session->set_userdata('system_form_token', $token);
         }
-        $this->load->view('System/perusahaan', array(
+        $this->load->view('system/perusahaan', array(
             'companies' => $this->system_company->daftar(),
             'form_token' => $token
         ));
@@ -74,7 +74,7 @@ class Perusahaan extends CI_Controller
             return;
         }
         $this->session->set_flashdata('success', 'Perusahaan, admin, dan master akun berhasil dibuat.');
-        redirect('System/Perusahaan');
+        redirect('system/perusahaan');
     }
 
     public function logout()
@@ -101,6 +101,6 @@ class Perusahaan extends CI_Controller
     private function fail($message)
     {
         $this->session->set_flashdata('error', $message);
-        redirect('System/Perusahaan');
+        redirect('system/perusahaan');
     }
 }

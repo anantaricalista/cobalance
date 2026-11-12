@@ -16,7 +16,7 @@ class Auth extends CI_Controller
     public function index()
     {
         if ($this->session->userdata('system_admin') === true) {
-            redirect('System/Perusahaan');
+            redirect('system/perusahaan');
             return;
         }
         if ($this->session->userdata('id_pengguna')) {
@@ -31,7 +31,7 @@ class Auth extends CI_Controller
     public function login()
     {
         if ($this->session->userdata('system_admin') === true) {
-            redirect('System/Perusahaan');
+            redirect('system/perusahaan');
             return;
         }
         if ($this->session->userdata('id_pengguna')) {
@@ -92,7 +92,7 @@ class Auth extends CI_Controller
                     'id_system_admin' => $user->id_pengguna,
                     'username' => $user->username
                 ));
-                redirect('System/Perusahaan');
+                redirect('system/perusahaan');
                 return;
             }
             $this->session->set_userdata(array(

@@ -23,7 +23,7 @@
 <body>
     <header class="system-bar">
         <div class="container">
-            <form class="pull-right" action="<?= site_url('System/Perusahaan/logout') ?>" method="post">
+            <form class="pull-right" action="<?= site_url('system/perusahaan/logout') ?>" method="post">
                 <input type="hidden" name="system_form_token" value="<?= html_escape($form_token) ?>">
                 <?php if ($this->config->item('csrf_protection')): ?>
                     <input type="hidden" name="<?= html_escape($this->security->get_csrf_token_name()) ?>" value="<?= html_escape($this->security->get_csrf_hash()) ?>">
@@ -44,7 +44,7 @@
         <section class="system-panel">
             <h2>Tambah Perusahaan</h2>
             <p class="help">Setiap perusahaan dibuat bersama satu admin dan salinan master akun dari perusahaan ID 1.</p>
-            <form action="<?= site_url('System/Perusahaan/simpan') ?>" method="post">
+            <form action="<?= site_url('system/perusahaan/simpan') ?>" method="post">
                 <input type="hidden" name="system_form_token" value="<?= html_escape($form_token) ?>">
                 <?php if ($this->config->item('csrf_protection')): ?>
                     <input type="hidden" name="<?= html_escape($this->security->get_csrf_token_name()) ?>" value="<?= html_escape($this->security->get_csrf_hash()) ?>">
