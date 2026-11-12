@@ -139,21 +139,29 @@ foreach ($products as $product) $product_options[] = array('id' => $product->id_
 </form>
 <?php if ($trx && $trx->status === 'draft'): ?>
     <div class="opening-action-panel">
-        <div><strong>Draft siap ditinjau?</strong><span>Pastikan semua perubahan telah disimpan sebelum posting.</span></div>
-        <button type="button" id="post-opening" class="btn btn-success"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Posting saldo awal</button>
+        <?php if ($this->can_post_transactions): ?>
+            <div><strong>Draft siap ditinjau?</strong><span>Pastikan semua perubahan telah disimpan sebelum posting.</span></div>
+            <button type="button" id="post-opening" class="btn btn-success"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Posting saldo awal</button>
+        <?php else: ?>
+            <div><strong>Draft tersimpan</strong><span>Menunggu posting oleh Akuntansi atau Admin Perusahaan.</span></div>
+        <?php endif; ?>
     </div>
 <?php elseif ($trx && $trx->status === 'diposting'): ?>
-    <section class="opening-cancel-panel">
-        <h4><span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span> Pembatalan saldo awal</h4>
-        <p>Pembatalan membuat jurnal pembalik. Pembatalan ditolak jika faktur telah dialokasikan, stok telah digunakan, atau aset sudah dipakai untuk penyusutan atau pelepasan. Saldo awal baru tidak dapat dibuat melalui modul ini setelah transaksi dibatalkan.</p>
-        <form id="cancel-form" class="form-inline">
-            <div class="form-group"><label for="cancel-date">Tanggal pembatalan</label>
-                <input id="cancel-date" type="date" class="form-control" required value="<?= date('Y-m-d') ?>"></div>
-            <div class="form-group"><label for="cancel-reason">Alasan</label>
-                <input id="cancel-reason" class="form-control" required maxlength="255" placeholder="Jelaskan alasan pembatalan"></div>
-            <button type="submit" class="btn btn-danger">Batalkan saldo awal</button>
-        </form>
-    </section>
+    <?php if ($this->can_post_transactions): ?>
+        <section class="opening-cancel-panel">
+            <h4><span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span> Pembatalan saldo awal</h4>
+            <p>Pembatalan membuat jurnal pembalik. Pembatalan ditolak jika faktur telah dialokasikan, stok telah digunakan, atau aset sudah dipakai untuk penyusutan atau pelepasan. Saldo awal baru tidak dapat dibuat melalui modul ini setelah transaksi dibatalkan.</p>
+            <form id="cancel-form" class="form-inline">
+                <div class="form-group"><label for="cancel-date">Tanggal pembatalan</label>
+                    <input id="cancel-date" type="date" class="form-control" required value="<?= date('Y-m-d') ?>"></div>
+                <div class="form-group"><label for="cancel-reason">Alasan</label>
+                    <input id="cancel-reason" class="form-control" required maxlength="255" placeholder="Jelaskan alasan pembatalan"></div>
+                <button type="submit" class="btn btn-danger">Batalkan saldo awal</button>
+            </form>
+        </section>
+    <?php else: ?>
+        <p class="text-muted">Pembatalan transaksi hanya dapat dilakukan oleh Akuntansi atau Admin Perusahaan.</p>
+    <?php endif; ?>
 <?php endif; ?>
 <script>
 $(function () {

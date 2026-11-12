@@ -152,18 +152,26 @@ foreach ($cash_accounts as $account) {
 <?php endif; ?>
 
 <?php if ($transaction && $transaction->status === 'draft'): ?>
-    <button type="button" id="post-sale" class="btn btn-success">Posting penjualan tersimpan</button>
-    <p>Pastikan draft sudah disimpan sebelum melakukan posting.</p>
+    <?php if ($this->can_post_transactions): ?>
+        <button type="button" id="post-sale" class="btn btn-success">Posting penjualan tersimpan</button>
+        <p>Pastikan draft sudah disimpan sebelum melakukan posting.</p>
+    <?php else: ?>
+        <p class="text-info" role="status">Draft tersimpan dan menunggu posting oleh Akuntansi atau Admin Perusahaan.</p>
+    <?php endif; ?>
 <?php elseif ($transaction && $transaction->status === 'diposting'): ?>
-    <h4>Pembatalan</h4>
-    <p>Pembatalan ditolak jika penjualan sudah dialokasikan atau persediaan telah berubah setelah transaksi ini.</p>
-    <form id="cancel-sale" class="form-inline">
-        <label for="cancel-date">Tanggal</label>
-        <input id="cancel-date" type="date" class="form-control" required value="<?= date('Y-m-d') ?>">
-        <label for="cancel-reason">Alasan</label>
-        <input id="cancel-reason" class="form-control" required maxlength="255">
-        <button type="submit" class="btn btn-danger">Batalkan penjualan</button>
-    </form>
+    <?php if ($this->can_post_transactions): ?>
+        <h4>Pembatalan</h4>
+        <p>Pembatalan ditolak jika penjualan sudah dialokasikan atau persediaan telah berubah setelah transaksi ini.</p>
+        <form id="cancel-sale" class="form-inline">
+            <label for="cancel-date">Tanggal</label>
+            <input id="cancel-date" type="date" class="form-control" required value="<?= date('Y-m-d') ?>">
+            <label for="cancel-reason">Alasan</label>
+            <input id="cancel-reason" class="form-control" required maxlength="255">
+            <button type="submit" class="btn btn-danger">Batalkan penjualan</button>
+        </form>
+    <?php else: ?>
+        <p class="text-muted">Pembatalan transaksi hanya dapat dilakukan oleh Akuntansi atau Admin Perusahaan.</p>
+    <?php endif; ?>
 <?php endif; ?>
 
 <h4>Riwayat penjualan</h4>

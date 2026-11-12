@@ -3,6 +3,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 class MY_Controller extends CI_Controller
 {
+    public $can_post_transactions = false;
+
     public function __construct()
     {
         parent::__construct();
@@ -16,9 +18,14 @@ class MY_Controller extends CI_Controller
             redirect('auth');
         }
         $role = $this->session->userdata('role');
+        $this->can_post_transactions = in_array($role, array('admin', 'akuntansi'), true);
         if (isset(self::$role_scope[$role]) && !in_array($this->router->fetch_class(), self::$role_scope[$role]['classes'], true)) {
             redirect(self::$role_scope[$role]['home']);
             exit;
+        }
+        if (in_array($this->router->fetch_method(), array('posting', 'batalkan'), true)
+            && !$this->can_post_transactions) {
+            show_error('Hanya Akuntansi atau Admin Perusahaan yang dapat mem-posting atau membatalkan transaksi.', 403);
         }
     }
 

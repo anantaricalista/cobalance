@@ -18,17 +18,25 @@
     <?php endif; ?>
     <?php if ($transaction->status === 'draft'): ?>
         <p>Nilai akhir dihitung saat posting. Draft tidak dapat diubah; buat draft baru jika ada kesalahan.</p>
-        <button id="return-post" class="btn btn-success" type="button">Posting retur</button>
+        <?php if ($this->can_post_transactions): ?>
+            <button id="return-post" class="btn btn-success" type="button">Posting retur</button>
+        <?php else: ?>
+            <p class="text-info" role="status">Draft tersimpan dan menunggu posting oleh Akuntansi atau Admin Perusahaan.</p>
+        <?php endif; ?>
     <?php elseif ($transaction->status === 'diposting'): ?>
-        <h4>Pembatalan</h4>
-        <p>Retur barang hanya dapat dibatalkan bila tidak ada mutasi stok berikutnya untuk produk tersebut.</p>
-        <form id="return-cancel" class="form-inline">
-            <label for="return-cancel-date">Tanggal</label>
-            <input id="return-cancel-date" type="date" class="form-control" value="<?= date('Y-m-d') ?>" required>
-            <label for="return-cancel-reason">Alasan</label>
-            <input id="return-cancel-reason" class="form-control" maxlength="255" required>
-            <button type="submit" class="btn btn-danger">Batalkan</button>
-        </form>
+        <?php if ($this->can_post_transactions): ?>
+            <h4>Pembatalan</h4>
+            <p>Retur barang hanya dapat dibatalkan bila tidak ada mutasi stok berikutnya untuk produk tersebut.</p>
+            <form id="return-cancel" class="form-inline">
+                <label for="return-cancel-date">Tanggal</label>
+                <input id="return-cancel-date" type="date" class="form-control" value="<?= date('Y-m-d') ?>" required>
+                <label for="return-cancel-reason">Alasan</label>
+                <input id="return-cancel-reason" class="form-control" maxlength="255" required>
+                <button type="submit" class="btn btn-danger">Batalkan</button>
+            </form>
+        <?php else: ?>
+            <p class="text-muted">Pembatalan transaksi hanya dapat dilakukan oleh Akuntansi atau Admin Perusahaan.</p>
+        <?php endif; ?>
     <?php endif; ?>
 <?php else: ?>
     <form id="return-form" enctype="multipart/form-data">

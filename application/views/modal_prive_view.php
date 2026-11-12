@@ -64,19 +64,27 @@ foreach ($cash_accounts as $account) {
             <button type="submit" class="btn btn-primary">Perbarui draft</button>
         </form>
     <?php elseif ($transaction->status === 'diposting'): ?>
-        <h4>Pembatalan</h4>
-        <p>Pembatalan membuat jurnal pembalik.</p>
-        <form id="capital-cancel" class="form-inline">
-            <label for="cancel-date">Tanggal</label>
-            <input id="cancel-date" type="date" class="form-control" value="<?= date('Y-m-d') ?>" required>
-            <label for="cancel-reason">Alasan</label>
-            <input id="cancel-reason" class="form-control" maxlength="255" required>
-            <button type="submit" class="btn btn-danger">Batalkan transaksi</button>
-        </form>
+        <?php if ($this->can_post_transactions): ?>
+            <h4>Pembatalan</h4>
+            <p>Pembatalan membuat jurnal pembalik.</p>
+            <form id="capital-cancel" class="form-inline">
+                <label for="cancel-date">Tanggal</label>
+                <input id="cancel-date" type="date" class="form-control" value="<?= date('Y-m-d') ?>" required>
+                <label for="cancel-reason">Alasan</label>
+                <input id="cancel-reason" class="form-control" maxlength="255" required>
+                <button type="submit" class="btn btn-danger">Batalkan transaksi</button>
+            </form>
+        <?php else: ?>
+            <p class="text-muted">Pembatalan transaksi hanya dapat dilakukan oleh Akuntansi atau Admin Perusahaan.</p>
+        <?php endif; ?>
     <?php endif; ?>
     <?php if ($transaction->status === 'draft'): ?>
-        <p>Pastikan draft telah diperbarui sebelum posting.</p>
-        <button id="capital-post" type="button" class="btn btn-success">Posting transaksi tersimpan</button>
+        <?php if ($this->can_post_transactions): ?>
+            <p>Pastikan draft telah diperbarui sebelum posting.</p>
+            <button id="capital-post" type="button" class="btn btn-success">Posting transaksi tersimpan</button>
+        <?php else: ?>
+            <p class="text-info" role="status">Draft tersimpan dan menunggu posting oleh Akuntansi atau Admin Perusahaan.</p>
+        <?php endif; ?>
     <?php endif; ?>
 <?php else: ?>
     <form id="capital-form" enctype="multipart/form-data">

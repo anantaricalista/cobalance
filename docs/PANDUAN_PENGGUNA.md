@@ -21,7 +21,9 @@ Sebelum mencatat transaksi, buka menu **Master** dan lengkapi data berikut:
    **Admin Perusahaan**, **User**, **Kasir**, **Penjualan**, **Purchasing**,
    **Gudang**, **Keuangan**, **Akuntansi**, atau **Manajer / Pemilik**. Role
    Gudang dan Purchasing memiliki tampilan serta pembatasan akses khusus;
-   role lainnya belum dibatasi. Perusahaan hanya memiliki satu admin;
+   role lainnya belum dibatasi pada tingkat modul. Hanya Admin Perusahaan dan
+   Akuntansi yang dapat mem-posting atau membatalkan transaksi. Perusahaan hanya
+   memiliki satu admin;
    memilih Admin untuk pengguna lain akan memindahkan role admin saat ini menjadi
    User. Password baru minimal 8 karakter; password saat mengedit boleh dikosongkan
    agar tidak berubah.
@@ -103,7 +105,9 @@ Alur transaksi umumnya:
 4. Simpan sebagai **draft**. Buka draft dari riwayat untuk memeriksa atau
    memperbaikinya sebelum diposting.
 5. Pilih **Posting** setelah data benar. Aplikasi membuat jurnal secara otomatis
-   untuk transaksi yang mendukung posting.
+   untuk transaksi yang mendukung posting. Hanya Admin Perusahaan dan Akuntansi
+   yang dapat melakukan posting atau pembatalan; role lain menyimpan draft untuk
+   ditinjau dan diposting oleh salah satu role tersebut.
 
 Penjualan kredit dan pembelian kredit membuat tagihan. Catat penerimaan piutang
 atau pembayaran utang melalui modul alokasi yang sesuai; pilih tagihan dan

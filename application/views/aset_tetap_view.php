@@ -173,13 +173,21 @@ $isDraft = $transaction && $transaction->status === 'draft';
 <?php endif; ?>
 
 <?php if ($transaction && $transaction->status === 'draft'): ?>
-    <button type="button" class="btn btn-success" id="post-asset-transaction" data-id="<?= (int) $transaction->id_transaksi ?>">Posting transaksi</button>
+    <?php if ($this->can_post_transactions): ?>
+        <button type="button" class="btn btn-success" id="post-asset-transaction" data-id="<?= (int) $transaction->id_transaksi ?>">Posting transaksi</button>
+    <?php else: ?>
+        <p class="text-info" role="status">Draft tersimpan dan menunggu posting oleh Akuntansi atau Admin Perusahaan.</p>
+    <?php endif; ?>
 <?php elseif ($transaction && $transaction->status === 'diposting'): ?>
-    <form id="cancel-asset-transaction" class="form-inline">
-        <label for="asset-cancel-date">Tanggal pembatalan</label><input class="form-control" id="asset-cancel-date" type="date" required value="<?= date('Y-m-d') ?>">
-        <label for="asset-cancel-reason">Alasan</label><input class="form-control" id="asset-cancel-reason" maxlength="255" required>
-        <button class="btn btn-danger" type="submit">Batalkan transaksi</button>
-    </form>
+    <?php if ($this->can_post_transactions): ?>
+        <form id="cancel-asset-transaction" class="form-inline">
+            <label for="asset-cancel-date">Tanggal pembatalan</label><input class="form-control" id="asset-cancel-date" type="date" required value="<?= date('Y-m-d') ?>">
+            <label for="asset-cancel-reason">Alasan</label><input class="form-control" id="asset-cancel-reason" maxlength="255" required>
+            <button class="btn btn-danger" type="submit">Batalkan transaksi</button>
+        </form>
+    <?php else: ?>
+        <p class="text-muted">Pembatalan transaksi hanya dapat dilakukan oleh Akuntansi atau Admin Perusahaan.</p>
+    <?php endif; ?>
 <?php endif; ?>
 
 <?php if ($asset): ?>

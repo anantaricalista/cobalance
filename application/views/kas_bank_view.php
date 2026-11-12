@@ -107,18 +107,26 @@ $map = function ($accounts) {
 <?php endif; ?>
 
 <?php if ($transaction && $transaction->status === 'draft'): ?>
-    <button type="button" id="post-cash" class="btn btn-success">Posting transaksi tersimpan</button>
-    <p>Pastikan draft sudah disimpan sebelum melakukan posting.</p>
+    <?php if ($this->can_post_transactions): ?>
+        <button type="button" id="post-cash" class="btn btn-success">Posting transaksi tersimpan</button>
+        <p>Pastikan draft sudah disimpan sebelum melakukan posting.</p>
+    <?php else: ?>
+        <p class="text-info" role="status">Draft tersimpan dan menunggu posting oleh Akuntansi atau Admin Perusahaan.</p>
+    <?php endif; ?>
 <?php elseif ($transaction && $transaction->status === 'diposting'): ?>
-    <h4>Pembatalan</h4>
-    <p>Pembatalan membuat jurnal pembalik.</p>
-    <form id="cancel-cash" class="form-inline">
-        <label for="cancel-date">Tanggal</label>
-        <input id="cancel-date" type="date" class="form-control" required value="<?= date('Y-m-d') ?>">
-        <label for="cancel-reason">Alasan</label>
-        <input id="cancel-reason" class="form-control" required maxlength="255">
-        <button type="submit" class="btn btn-danger">Batalkan transaksi</button>
-    </form>
+    <?php if ($this->can_post_transactions): ?>
+        <h4>Pembatalan</h4>
+        <p>Pembatalan membuat jurnal pembalik.</p>
+        <form id="cancel-cash" class="form-inline">
+            <label for="cancel-date">Tanggal</label>
+            <input id="cancel-date" type="date" class="form-control" required value="<?= date('Y-m-d') ?>">
+            <label for="cancel-reason">Alasan</label>
+            <input id="cancel-reason" class="form-control" required maxlength="255">
+            <button type="submit" class="btn btn-danger">Batalkan transaksi</button>
+        </form>
+    <?php else: ?>
+        <p class="text-muted">Pembatalan transaksi hanya dapat dilakukan oleh Akuntansi atau Admin Perusahaan.</p>
+    <?php endif; ?>
 <?php endif; ?>
 
 <h4>Riwayat kas dan bank</h4>
