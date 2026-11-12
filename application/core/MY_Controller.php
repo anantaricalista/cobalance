@@ -15,9 +15,16 @@ class MY_Controller extends CI_Controller
         if (!$this->session->userdata('id_pengguna')) {
             redirect('auth');
         }
-        if ($this->session->userdata('role') === 'gudang') {
-            redirect('gudang/beranda');
+        $role = $this->session->userdata('role');
+        if (isset(self::$role_scope[$role]) && !in_array($this->router->fetch_class(), self::$role_scope[$role]['classes'], true)) {
+            redirect(self::$role_scope[$role]['home']);
             exit;
         }
     }
+
+    // Role terbatas hanya boleh membuka controller modul perusahaan yang terdaftar di sini.
+    public static $role_scope = array(
+        'gudang' => array('home' => 'gudang/beranda', 'classes' => array()),
+        'purchasing' => array('home' => 'purchasing/beranda', 'classes' => array('pembelian', 'pembayaran_utang'))
+    );
 }

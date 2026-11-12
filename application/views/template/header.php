@@ -814,7 +814,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="<?php echo site_url($this->session->userdata('role') === 'gudang' ? 'gudang/beranda' : ''); ?>">Co-Balance</a>
+                <a class="navbar-brand" href="<?php echo site_url(isset(MY_Controller::$role_scope[$this->session->userdata('role')]) ? MY_Controller::$role_scope[$this->session->userdata('role')]['home'] : ''); ?>">Co-Balance</a>
             </div>
             <!-- Menu Items -->
             <div class="collapse navbar-collapse" id="navbar-menu">
@@ -823,6 +823,14 @@
                     <li <?php if ($this->router->fetch_class() == 'beranda') echo 'class="active"'; ?>><a href="<?php echo site_url('gudang/beranda'); ?>">Beranda</a></li>
                     <li <?php if ($this->router->fetch_class() == 'stok') echo 'class="active"'; ?>><a href="<?php echo site_url('gudang/stok'); ?>">Stok Barang</a></li>
                     <li <?php if ($this->router->fetch_class() == 'opname') echo 'class="active"'; ?>><a href="<?php echo site_url('gudang/opname'); ?>">Stock Opname</a></li>
+                </ul>
+                <?php elseif ($this->session->userdata('role') === 'purchasing'): ?>
+                <ul class="nav navbar-nav">
+                    <li <?php if ($this->router->fetch_directory() == 'purchasing/' && $this->router->fetch_class() == 'beranda') echo 'class="active"'; ?>><a href="<?php echo site_url('purchasing/beranda'); ?>">Beranda</a></li>
+                    <li <?php if ($this->router->fetch_class() == 'pembelian') echo 'class="active"'; ?>><a href="<?php echo site_url('pembelian'); ?>">Pembelian</a></li>
+                    <li <?php if ($this->router->fetch_class() == 'pembayaran_utang') echo 'class="active"'; ?>><a href="<?php echo site_url('pembayaran_utang'); ?>">Pembayaran Utang</a></li>
+                    <li <?php if ($this->router->fetch_directory() == 'purchasing/' && $this->router->fetch_class() == 'pemasok') echo 'class="active"'; ?>><a href="<?php echo site_url('purchasing/pemasok'); ?>">Pemasok</a></li>
+                    <li <?php if ($this->router->fetch_directory() == 'purchasing/' && $this->router->fetch_class() == 'produk') echo 'class="active"'; ?>><a href="<?php echo site_url('purchasing/produk'); ?>">Produk</a></li>
                 </ul>
                 <?php else: ?>
                 <ul class="nav navbar-nav">

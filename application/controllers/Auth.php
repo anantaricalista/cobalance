@@ -103,7 +103,8 @@ class Auth extends CI_Controller
                 'nama_perusahaan' => $user->nama_perusahaan,
                 'role' => $user->role
             ));
-            redirect($user->role === 'gudang' ? 'gudang/beranda' : 'dashboard');
+            $scope = MY_Controller::$role_scope;
+            redirect(isset($scope[$user->role]) ? $scope[$user->role]['home'] : 'dashboard');
         } else {
             $this->session->set_flashdata('error', 'Username atau password salah.');
             redirect('auth');

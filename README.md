@@ -78,6 +78,13 @@ Pengguna role `gudang` diarahkan ke `gudang/beranda` dan setiap upaya membuka
 modul perusahaan lain dialihkan kembali ke sana; modul gudang hanya dapat dibuka
 role `gudang` dan `admin`.
 
+Modul Purchasing (`controllers|models|views/purchasing`) menyediakan beranda, serta
+daftar pemasok dan produk baca-saja (tanpa harga jual). Pengguna role `purchasing`
+juga memakai modul Pembelian dan Pembayaran Utang yang sudah ada. Pembatasan
+role ditetapkan di `MY_Controller::$role_scope`: role `purchasing` hanya dapat
+membuka controller `pembelian` dan `pembayaran_utang`, selebihnya dialihkan ke
+`purchasing/beranda`. Tidak ada migrasi baru.
+
 System admin dapat membuat perusahaan beserta satu admin dan menyalin seluruh
 master akun perusahaan ID 1, termasuk hubungan induknya, dalam satu transaksi.
 Perusahaan ID 1 harus tersedia dan mempunyai hierarki akun yang valid. Salinan
