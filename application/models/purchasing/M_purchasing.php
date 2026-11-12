@@ -21,18 +21,6 @@ class M_purchasing extends CI_Model
             'pemasok' => (int) $supplier->jumlah);
     }
 
-    public function pemasok($search = '')
-    {
-        $sql = 'SELECT kode_pemasok, nama_pemasok, telepon, email, aktif FROM pemasok WHERE id_perusahaan=?';
-        $params = array($this->company());
-        if ($search !== '') {
-            $like = '%' . $this->db->escape_like_str($search) . '%';
-            $sql .= ' AND (kode_pemasok LIKE ? OR nama_pemasok LIKE ? OR telepon LIKE ? OR email LIKE ?)';
-            array_push($params, $like, $like, $like, $like);
-        }
-        return $this->db->query($sql . ' ORDER BY kode_pemasok, id_pemasok LIMIT 500', $params)->result();
-    }
-
     // Harga jual sengaja tidak diambil untuk area purchasing.
     public function produk($search = '')
     {

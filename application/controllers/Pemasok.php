@@ -11,6 +11,12 @@ class Pemasok extends MY_Controller
 
     public function index()
     {
+        if ($this->session->userdata('role') === 'purchasing') {
+            $token = $this->session->userdata('pemasok_form_token');
+            if (!is_string($token) || $token === '') {
+                $this->session->set_userdata('pemasok_form_token', bin2hex(random_bytes(32)));
+            }
+        }
         $this->load->view('template/header');
         $this->load->view('pemasok_view');
         $this->load->view('template/footer');
@@ -29,15 +35,19 @@ class Pemasok extends MY_Controller
         $rows = array();
         foreach ($this->pemasok->get_datatables($search, $column, $direction, $start, $length) as $pemasok) {
             $id = (int) $pemasok->id_pemasok;
+            $actions = '<button type="button" class="btn btn-sm btn-default supplier-edit" title="Edit pemasok" aria-label="Edit pemasok" onclick="edit_pemasok(' . $id . ')"><i class="glyphicon glyphicon-pencil"></i> Edit</button>';
+            if ($this->session->userdata('role') !== 'purchasing') {
+                $actions .= ' <button type="button" class="btn btn-sm btn-default supplier-delete" title="Hapus pemasok" aria-label="Hapus pemasok" onclick="delete_pemasok(' . $id . ')"><i class="glyphicon glyphicon-trash"></i></button>';
+            }
             $rows[] = array(
                 ++$start,
                 html_escape($pemasok->kode_pemasok),
                 html_escape($pemasok->nama_pemasok),
                 html_escape($pemasok->telepon === null ? '' : $pemasok->telepon),
                 html_escape($pemasok->email === null ? '' : $pemasok->email),
-                $pemasok->aktif ? 'Aktif' : 'Tidak Aktif',
-                '<button type="button" class="btn btn-sm btn-primary" title="Edit" onclick="edit_pemasok(' . $id . ')"><i class="glyphicon glyphicon-pencil"></i></button> '
-                . '<button type="button" class="btn btn-sm btn-danger" title="Hapus" onclick="delete_pemasok(' . $id . ')"><i class="glyphicon glyphicon-trash"></i></button>'
+                $pemasok->aktif ? '<span class="supplier-status is-active">Aktif</span>'
+                    : '<span class="supplier-status is-inactive">Tidak Aktif</span>',
+                $actions
             );
         }
         $this->json(array(
@@ -62,6 +72,9 @@ class Pemasok extends MY_Controller
         if (!$this->require_post()) {
             return;
         }
+        if (!$this->verify_purchasing_token()) {
+            return;
+        }
         $data = $this->supplier_data();
         if ($data === false) {
             return;
@@ -73,6 +86,9 @@ class Pemasok extends MY_Controller
     public function ajax_update()
     {
         if (!$this->require_post()) {
+            return;
+        }
+        if (!$this->verify_purchasing_token()) {
             return;
         }
         $id = $this->input->post('id_pemasok');
@@ -88,6 +104,9 @@ class Pemasok extends MY_Controller
 
     public function ajax_delete($id)
     {
+        if ($this->session->userdata('role') === 'purchasing') {
+            return $this->error('Purchasing tidak memiliki akses untuk menghapus pemasok.', 403);
+        }
         if (!$this->require_post()) {
             return;
         }
@@ -138,6 +157,20 @@ class Pemasok extends MY_Controller
     {
         if ($this->input->method() !== 'post') {
             $this->error('Metode permintaan tidak diizinkan.', 405);
+            return false;
+        }
+        return true;
+    }
+
+    private function verify_purchasing_token()
+    {
+        if ($this->session->userdata('role') !== 'purchasing') {
+            return true;
+        }
+        $token = $this->input->post('pemasok_form_token');
+        $expected = $this->session->userdata('pemasok_form_token');
+        if (!is_string($token) || !is_string($expected) || $expected === '' || !hash_equals($expected, $token)) {
+            $this->error('Token formulir tidak valid. Muat ulang halaman.', 403);
             return false;
         }
         return true;

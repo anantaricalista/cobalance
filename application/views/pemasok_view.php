@@ -1,15 +1,56 @@
-<div class="row" style="margin-bottom:10px;">
-    <div class="col-xs-12 col-sm-6">
-        <h1>Data Pemasok</h1>
-    </div>
-    <div class="col-xs-12 col-sm-6 text-right" style="padding-top:20px;">
-        <button type="button" class="btn btn-success btn-sm" onclick="add_pemasok()">
-            <i class="glyphicon glyphicon-plus"></i> Tambah Pemasok
+<style>
+    .supplier-page { color: #263b51; padding: 14px 0 30px; }
+    .supplier-hero { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 20px; }
+    .supplier-eyebrow { color: #087c80; font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+    .supplier-hero h1 { margin: 6px 0 8px; font-size: 30px; font-weight: 700; color: #183153; }
+    .supplier-hero p, .supplier-hint { color: #5e7084; line-height: 1.5; margin: 0; }
+    .supplier-add { border: 0; border-radius: 7px; padding: 11px 16px; background: #087d82; font-weight: 600; white-space: nowrap; }
+    .supplier-add:hover, .supplier-add:focus { background: #06696d; }
+    .supplier-panel { padding: 22px; background: #fff; border: 1px solid #e0e8ee; border-radius: 10px; box-shadow: 0 4px 18px rgba(27, 49, 79, .07); }
+    .supplier-panel h2 { font-size: 18px; font-weight: 700; margin: 0 0 6px; color: #183153; }
+    .supplier-panel .dataTables_wrapper { margin-top: 20px; }
+    .supplier-panel .table-responsive { border: 0; margin: 0; }
+    .supplier-panel .table { margin-top: 12px !important; }
+    .supplier-panel .table > thead > tr > th { background: #f3f8f9; border-bottom: 1px solid #dce8ea; font-size: 12px; color: #4a6070; white-space: nowrap; }
+    .supplier-panel .table > tbody > tr > td { vertical-align: middle; }
+    .supplier-status { display: inline-block; padding: 4px 9px; border-radius: 20px; font-size: 12px; font-weight: 700; white-space: nowrap; }
+    .supplier-status.is-active { color: #126540; background: #e4f5ea; }
+    .supplier-status.is-inactive { color: #5d6570; background: #eef1f4; }
+    .supplier-edit { color: #08767a; border-color: #b6dadd; font-weight: 600; }
+    .supplier-delete { color: #a63c3c; }
+    .supplier-modal .modal-content { border: 0; border-radius: 10px; overflow: hidden; }
+    .supplier-modal .modal-header { padding: 20px 24px; background: #f3f9f9; }
+    .supplier-modal .modal-title { color: #183153; font-weight: 700; }
+    .supplier-modal .modal-body { padding: 24px; }
+    .supplier-modal .control-label { color: #42586c; }
+    .supplier-modal .form-control { border-color: #cddbe0; border-radius: 6px; box-shadow: none; }
+    .supplier-modal .form-control:focus { border-color: #168a8e; box-shadow: 0 0 0 3px rgba(22, 138, 142, .12); }
+    .supplier-modal .modal-footer { padding: 15px 24px; }
+    @media (max-width: 767px) {
+        .supplier-hero { align-items: flex-start; flex-direction: column; }
+        .supplier-add { width: 100%; }
+        .supplier-panel { padding: 16px; }
+        .supplier-modal .control-label { text-align: left; }
+    }
+</style>
+
+<div class="supplier-page">
+    <div class="supplier-hero">
+        <div>
+            <span class="supplier-eyebrow">Master data</span>
+            <h1>Data Pemasok</h1>
+            <p>Kelola informasi dan status pemasok untuk transaksi pembelian.</p>
+        </div>
+        <button type="button" class="btn btn-success supplier-add" onclick="add_pemasok()">
+            <i class="glyphicon glyphicon-plus" aria-hidden="true"></i> Tambah Pemasok
         </button>
     </div>
-</div>
 
-<div class="table-responsive">
+    <div id="supplier_message" role="status" aria-live="polite"></div>
+    <div class="supplier-panel">
+        <h2>Daftar Pemasok</h2>
+        <p class="supplier-hint">Cari pemasok berdasarkan kode, nama, atau kontak. Pemasok tidak aktif tidak dapat dipilih untuk pembelian baru.</p>
+        <div class="table-responsive">
     <table id="table" class="table table-striped table-bordered" cellspacing="0" width="100%">
         <thead>
             <tr>
@@ -24,19 +65,25 @@
         </thead>
         <tbody></tbody>
     </table>
+        </div>
+    </div>
 </div>
 
-<div class="modal fade" id="modal_form" role="dialog" aria-labelledby="modal_title">
+<div class="modal fade supplier-modal" id="modal_form" role="dialog" aria-modal="true" aria-labelledby="modal_title">
     <div class="modal-dialog">
         <div class="modal-content">
             <form id="form" class="form-horizontal">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span>&times;</span></button>
                     <h3 class="modal-title" id="modal_title">Form Pemasok</h3>
+                    <p class="supplier-hint">Kode dan nama wajib diisi. Lengkapi kontak agar mudah dihubungi.</p>
                 </div>
                 <div class="modal-body">
                     <div id="form_error" class="alert alert-danger" role="alert" style="display:none;"></div>
                     <input type="hidden" name="id_pemasok">
+                    <?php if ($this->session->userdata('role') === 'purchasing'): ?>
+                        <input type="hidden" name="pemasok_form_token" value="<?= html_escape($this->session->userdata('pemasok_form_token')) ?>">
+                    <?php endif; ?>
                     <div class="form-group">
                         <label for="kode_pemasok" class="control-label col-xs-12 col-sm-3">Kode Pemasok</label>
                         <div class="col-xs-12 col-sm-9">
@@ -74,12 +121,13 @@
                                 <option value="1">Aktif</option>
                                 <option value="0">Tidak Aktif</option>
                             </select>
+                            <span class="help-block">Pilih Tidak Aktif jika pemasok tidak lagi digunakan.</span>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" id="btnSave" class="btn btn-primary btn-sm">Simpan</button>
-                    <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
+                    <button type="submit" id="btnSave" class="btn btn-primary">Simpan</button>
                 </div>
             </form>
         </div>
@@ -99,6 +147,17 @@
                 url: <?php echo json_encode(site_url('pemasok/ajax_list')); ?>,
                 type: 'POST'
             },
+            language: {
+                processing: 'Memuat data...',
+                search: 'Cari:',
+                lengthMenu: 'Tampilkan _MENU_ data',
+                info: 'Menampilkan _START_–_END_ dari _TOTAL_ pemasok',
+                infoEmpty: 'Tidak ada pemasok',
+                infoFiltered: '(disaring dari _MAX_ pemasok)',
+                zeroRecords: 'Pemasok tidak ditemukan.',
+                emptyTable: 'Belum ada pemasok.',
+                paginate: { first: 'Pertama', last: 'Terakhir', next: 'Berikutnya', previous: 'Sebelumnya' }
+            },
             columnDefs: [{ targets: [0, -1], orderable: false }]
         });
 
@@ -115,6 +174,8 @@
                 dataType: 'json',
                 success: function () {
                     $('#modal_form').modal('hide');
+                    $('#supplier_message').empty().append($('<div class="alert alert-success">').text(
+                        save_method === 'add' ? 'Pemasok berhasil ditambahkan.' : 'Data pemasok berhasil diperbarui.'));
                     table.ajax.reload(null, false);
                 },
                 error: function (xhr) {
@@ -170,6 +231,7 @@
             type: 'POST',
             dataType: 'json',
             success: function () {
+                $('#supplier_message').empty().append($('<div class="alert alert-success">').text('Pemasok berhasil dihapus.'));
                 table.ajax.reload(null, false);
             },
             error: function (xhr) {

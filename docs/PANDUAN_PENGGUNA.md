@@ -20,7 +20,8 @@ Sebelum mencatat transaksi, buka menu **Master** dan lengkapi data berikut:
 2. **Pengguna** — kelola akun yang dapat masuk ke perusahaan ini dan pilih role
    **Admin Perusahaan**, **User**, **Kasir**, **Penjualan**, **Purchasing**,
    **Gudang**, **Keuangan**, **Akuntansi**, atau **Manajer / Pemilik**. Role
-   belum membatasi akses modul dan belum memiliki tampilan khusus. Perusahaan hanya memiliki satu admin;
+   Gudang dan Purchasing memiliki tampilan serta pembatasan akses khusus;
+   role lainnya belum dibatasi. Perusahaan hanya memiliki satu admin;
    memilih Admin untuk pengguna lain akan memindahkan role admin saat ini menjadi
    User. Password baru minimal 8 karakter; password saat mengedit boleh dikosongkan
    agar tidak berubah.
@@ -37,6 +38,11 @@ Sebelum mencatat transaksi, buka menu **Master** dan lengkapi data berikut:
 
 Pastikan semua pilihan akun benar dan aktif sebelum transaksi diposting. Jika
 pilihan akun belum tersedia, periksa kembali akun dan pengaturannya.
+
+Pengguna Purchasing dapat membuka menu **Pemasok** untuk menambah dan mengedit
+pemasok, termasuk mengubah statusnya menjadi aktif atau tidak aktif. Penghapusan
+permanen dilakukan oleh pengguna perusahaan lain yang berwenang; pemasok yang
+sudah digunakan dalam transaksi tidak dapat dihapus.
 
 ## 3. Masukkan saldo awal (perusahaan yang sudah memiliki saldo)
 

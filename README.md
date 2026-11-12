@@ -68,7 +68,7 @@ karena migrasi akan gagal. Perusahaan lama tanpa admin tidak diubah otomatis.
 Untuk pilihan role tambahan di Master Pengguna, cadangkan database lalu jalankan
 `application/sql/20261112_role_pengguna.sql` pada setiap database setelah migrasi
 admin perusahaan. Role lama `admin` dan `user` tetap dipertahankan. Role ini
-belum membatasi akses, kecuali role `gudang` (lihat di bawah): role lain yang
+belum membatasi akses, kecuali role `gudang` dan `purchasing` (lihat di bawah): role lain yang
 login masih dapat membuka modul perusahaan, termasuk Master Pengguna.
 
 Modul Gudang (`controllers|models|views/gudang`) menyediakan beranda, stok barang
@@ -78,11 +78,13 @@ Pengguna role `gudang` diarahkan ke `gudang/beranda` dan setiap upaya membuka
 modul perusahaan lain dialihkan kembali ke sana; modul gudang hanya dapat dibuka
 role `gudang` dan `admin`.
 
-Modul Purchasing (`controllers|models|views/purchasing`) menyediakan beranda, serta
-daftar pemasok dan produk baca-saja (tanpa harga jual). Pengguna role `purchasing`
+Modul Purchasing (`controllers|models|views/purchasing`) menyediakan beranda,
+daftar produk baca-saja (tanpa harga jual), serta melihat, menambah, mengedit,
+dan mengubah status pemasok melalui Master Pemasok. Penghapusan permanen tetap
+dilakukan oleh pengguna perusahaan lain yang berwenang. Pengguna role `purchasing`
 juga memakai modul Pembelian dan Pembayaran Utang yang sudah ada. Pembatasan
 role ditetapkan di `MY_Controller::$role_scope`: role `purchasing` hanya dapat
-membuka controller `pembelian` dan `pembayaran_utang`, selebihnya dialihkan ke
+membuka controller `pembelian`, `pembayaran_utang`, dan `pemasok`, selebihnya dialihkan ke
 `purchasing/beranda`. Tidak ada migrasi baru.
 
 System admin dapat membuat perusahaan beserta satu admin dan menyalin seluruh
