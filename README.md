@@ -68,8 +68,15 @@ karena migrasi akan gagal. Perusahaan lama tanpa admin tidak diubah otomatis.
 Untuk pilihan role tambahan di Master Pengguna, cadangkan database lalu jalankan
 `application/sql/20261112_role_pengguna.sql` pada setiap database setelah migrasi
 admin perusahaan. Role lama `admin` dan `user` tetap dipertahankan. Role ini
-belum membatasi akses: setiap pengguna perusahaan yang login masih dapat membuka
-modul perusahaan, termasuk Master Pengguna.
+belum membatasi akses, kecuali role `gudang` (lihat di bawah): role lain yang
+login masih dapat membuka modul perusahaan, termasuk Master Pengguna.
+
+Modul Gudang (`controllers|models|views/gudang`) menyediakan beranda, stok barang
+tanpa nilai rupiah, kartu stok, dan usulan stock opname yang tidak mengubah stok
+atau jurnal. Jalankan `application/sql/20261113_gudang_usulan_opname.sql`.
+Pengguna role `gudang` diarahkan ke `gudang/beranda` dan setiap upaya membuka
+modul perusahaan lain dialihkan kembali ke sana; modul gudang hanya dapat dibuka
+role `gudang` dan `admin`.
 
 System admin dapat membuat perusahaan beserta satu admin dan menyalin seluruh
 master akun perusahaan ID 1, termasuk hubungan induknya, dalam satu transaksi.

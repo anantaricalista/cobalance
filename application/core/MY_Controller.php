@@ -15,5 +15,9 @@ class MY_Controller extends CI_Controller
         if (!$this->session->userdata('id_pengguna')) {
             redirect('auth');
         }
+        if ($this->session->userdata('role') === 'gudang') {
+            redirect('gudang/beranda');
+            exit;
+        }
     }
 }

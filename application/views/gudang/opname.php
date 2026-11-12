@@ -1,0 +1,41 @@
+<h3>Stock Opname</h3>
+<?php if ($this->session->flashdata('sukses')): ?><div class="alert alert-success"><?= html_escape($this->session->flashdata('sukses')) ?></div><?php endif; ?>
+<?php if ($this->session->flashdata('error')): ?><div class="alert alert-danger"><?= html_escape($this->session->flashdata('error')) ?></div><?php endif; ?>
+<p>Catat hasil hitung fisik. Usulan tidak mengubah stok atau jurnal; penyesuaian diproses oleh akuntansi/admin.</p>
+<form method="post" action="<?= site_url('gudang/opname/simpan') ?>" class="form-horizontal">
+    <input type="hidden" name="gudang_form_token" value="<?= html_escape($form_token) ?>">
+    <?php if ($this->config->item('csrf_protection')): ?>
+        <input type="hidden" name="<?= html_escape($this->security->get_csrf_token_name()) ?>" value="<?= html_escape($this->security->get_csrf_hash()) ?>">
+    <?php endif; ?>
+    <div class="form-group"><label class="col-sm-2 control-label">Produk</label><div class="col-sm-6">
+        <select name="produk" class="form-control" required>
+            <option value="">-- Pilih produk --</option>
+            <?php foreach ($produk as $p): if (!$p->aktif) { continue; } ?>
+                <option value="<?= (int) $p->id_produk ?>"><?= html_escape($p->kode_produk . ' - ' . $p->nama_produk . ' (sistem: ' . $p->jumlah . ' ' . $p->satuan . ')') ?></option>
+            <?php endforeach; ?>
+        </select></div></div>
+    <div class="form-group"><label class="col-sm-2 control-label">Jumlah fisik</label><div class="col-sm-3">
+        <input type="text" name="jumlah_fisik" class="form-control" inputmode="decimal" pattern="\d{1,14}(\.\d{1,4})?" required></div></div>
+    <div class="form-group"><label class="col-sm-2 control-label">Catatan</label><div class="col-sm-6">
+        <input type="text" name="catatan" class="form-control" maxlength="255" required></div></div>
+    <div class="form-group"><div class="col-sm-offset-2 col-sm-6"><button type="submit" class="btn btn-primary">Kirim usulan</button></div></div>
+</form>
+<h4>Riwayat usulan</h4>
+<div class="table-responsive">
+    <table class="table table-striped table-bordered">
+        <thead><tr><th>Waktu</th><th>Produk</th><th>Sistem</th><th>Fisik</th><th>Selisih</th><th>Catatan</th><th>Oleh</th><th>Status</th></tr></thead>
+        <tbody>
+        <?php foreach ($usulan as $u): ?>
+            <tr>
+                <td><?= html_escape($u->dibuat_pada) ?></td>
+                <td><?= html_escape($u->kode_produk . ' - ' . $u->nama_produk) ?></td>
+                <td><?= html_escape($u->jumlah_sistem) ?></td><td><?= html_escape($u->jumlah_fisik) ?></td>
+                <td><?= html_escape(number_format((float) $u->jumlah_fisik - (float) $u->jumlah_sistem, 4, '.', '')) ?></td>
+                <td><?= html_escape($u->catatan) ?></td><td><?= html_escape($u->nama_lengkap) ?></td>
+                <td><?= html_escape($u->status) ?></td>
+            </tr>
+        <?php endforeach; ?>
+        <?php if (!$usulan): ?><tr><td colspan="8">Belum ada usulan.</td></tr><?php endif; ?>
+        </tbody>
+    </table>
+</div>

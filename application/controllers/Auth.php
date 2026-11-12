@@ -103,7 +103,7 @@ class Auth extends CI_Controller
                 'nama_perusahaan' => $user->nama_perusahaan,
                 'role' => $user->role
             ));
-            redirect('dashboard');
+            redirect($user->role === 'gudang' ? 'gudang/beranda' : 'dashboard');
         } else {
             $this->session->set_flashdata('error', 'Username atau password salah.');
             redirect('auth');

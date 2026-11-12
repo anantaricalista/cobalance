@@ -814,10 +814,17 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="<?php echo site_url(); ?>">Co-Balance</a>
+                <a class="navbar-brand" href="<?php echo site_url($this->session->userdata('role') === 'gudang' ? 'gudang/beranda' : ''); ?>">Co-Balance</a>
             </div>
             <!-- Menu Items -->
             <div class="collapse navbar-collapse" id="navbar-menu">
+                <?php if ($this->session->userdata('role') === 'gudang'): ?>
+                <ul class="nav navbar-nav">
+                    <li <?php if ($this->router->fetch_class() == 'beranda') echo 'class="active"'; ?>><a href="<?php echo site_url('gudang/beranda'); ?>">Beranda</a></li>
+                    <li <?php if ($this->router->fetch_class() == 'stok') echo 'class="active"'; ?>><a href="<?php echo site_url('gudang/stok'); ?>">Stok Barang</a></li>
+                    <li <?php if ($this->router->fetch_class() == 'opname') echo 'class="active"'; ?>><a href="<?php echo site_url('gudang/opname'); ?>">Stock Opname</a></li>
+                </ul>
+                <?php else: ?>
                 <ul class="nav navbar-nav">
                     <li class="dropdown <?php if (in_array($this->router->fetch_class(), array('akun', 'pengguna', 'pelanggan', 'pemasok', 'produk', 'pajak', 'pengaturan_akun')))
                         echo 'active'; ?>">
@@ -911,6 +918,7 @@
                         </ul>
                     </li>
                 </ul>
+                <?php endif; ?>
                 <!-- Right-side: tampilkan nama perusahaan dan logout (hanya ikon) -->
                 <ul class="nav navbar-nav navbar-right">
                     <li>
