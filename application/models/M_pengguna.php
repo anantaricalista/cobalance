@@ -170,7 +170,7 @@ class M_pengguna extends CI_Model
         }
     }
 
-    public function delete_company_user($company, $id)
+    public function delete_company_user($company, $id, $actor_id)
     {
         $debug = $this->db->db_debug;
         $this->db->db_debug = false;
@@ -198,6 +198,9 @@ class M_pengguna extends CI_Model
             $user = $query->row();
             if (!$user) {
                 throw new DomainException('Pengguna tidak ditemukan pada perusahaan ini.');
+            }
+            if ($user->role === 'admin' && (int) $user->id_pengguna === (int) $actor_id) {
+                throw new DomainException('Admin perusahaan tidak dapat menghapus akunnya sendiri. Tetapkan admin pengganti dan masuk dengan akun tersebut terlebih dahulu.');
             }
             if ($user->role === 'admin') {
                 $admin_query = $this->db->query(

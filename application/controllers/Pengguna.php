@@ -126,8 +126,9 @@ class Pengguna extends MY_Controller
         if (!$this->valid_id($id)) {
             return $this->error('ID pengguna tidak valid.', 400);
         }
+        $actor_id = (int) $this->session->userdata('id_pengguna');
         try {
-            $this->pengguna->delete_company_user($this->company_id(), (int) $id);
+            $this->pengguna->delete_company_user($this->company_id(), (int) $id, $actor_id);
         } catch (DomainException $e) {
             return $this->error($e->getMessage(), 409);
         } catch (RuntimeException $e) {
