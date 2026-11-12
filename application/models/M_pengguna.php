@@ -17,6 +17,7 @@ class M_pengguna extends CI_Model
         $this->db->from('pengguna p');
         $this->db->join('perusahaan', 'p.id_perusahaan = perusahaan.id_perusahaan', 'left');
         $this->db->where('p.username', $username);
+        $this->db->where('p.username !=', 'system');
         $query = $this->db->get();
         return $query->row();
     }

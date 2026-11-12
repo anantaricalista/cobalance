@@ -15,6 +15,10 @@ class Auth extends CI_Controller
 
     public function index()
     {
+        if ($this->session->userdata('system_admin') === true) {
+            redirect('System/Perusahaan');
+            return;
+        }
         if ($this->session->userdata('id_pengguna')) {
             redirect('dashboard');
             return;
@@ -26,6 +30,14 @@ class Auth extends CI_Controller
 
     public function login()
     {
+        if ($this->session->userdata('system_admin') === true) {
+            redirect('System/Perusahaan');
+            return;
+        }
+        if ($this->session->userdata('id_pengguna')) {
+            redirect('dashboard');
+            return;
+        }
         if ($this->input->method() !== 'post') {
             show_error('Metode tidak diizinkan.', 405);
             return;
@@ -51,6 +63,23 @@ class Auth extends CI_Controller
             || strlen($username) > 400 || $password === '' || strlen($password) > 72
             || strpos($password, "\0") !== false) {
             $this->session->set_flashdata('error', 'Username atau password tidak valid. Password maksimal 72 byte.');
+            redirect('auth');
+            return;
+        }
+
+        if (strcasecmp(trim($username), 'system') === 0) {
+            $system_password = getenv('COBALANCE_SYSTEM_PASSWORD');
+            if (is_string($system_password) && $system_password !== ''
+                && hash_equals($system_password, $password)) {
+                $this->session->sess_regenerate(true);
+                $this->session->set_userdata(array('system_admin' => true, 'username' => 'system'));
+                redirect('System/Perusahaan');
+                return;
+            }
+            if (!is_string($system_password) || $system_password === '') {
+                log_message('error', 'Password system admin belum dikonfigurasi.');
+            }
+            $this->session->set_flashdata('error', 'Username atau password salah.');
             redirect('auth');
             return;
         }

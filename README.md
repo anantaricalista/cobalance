@@ -38,6 +38,31 @@ Gunakan HTTPS di server dan aktifkan `$config['cookie_secure'] = TRUE` setelah
 HTTPS tersedia. Perlindungan token formulir diterapkan pada login; pengaturan
 CSRF global masih perlu disiapkan terpisah untuk seluruh modul.
 
+## System admin dan perusahaan
+
+System admin masuk melalui halaman login biasa dengan username `system`. Atur
+`COBALANCE_SYSTEM_PASSWORD` di environment proses PHP/web server; akun ini
+tidak disimpan di database. Jangan memasukkan password ke source code atau Git,
+dan pastikan variabel tersedia pada proses PHP, bukan hanya shell administrator.
+Tanpa variabel tersebut, login system admin tidak aktif. Lindungi konfigurasi
+server, gunakan HTTPS, dan ganti password jika pernah terpapar. Username `system`
+dicadangkan; ganti username tersebut pada akun perusahaan yang sudah ada sebelum
+mengaktifkan fitur ini.
+
+Cadangkan database, lalu jalankan `application/sql/20261112_satu_admin_perusahaan.sql`
+setelah migrasi login. Migrasi menegakkan paling banyak satu pengguna ber-role
+`admin` per perusahaan; pengguna ber-role lain tidak dibatasi. Jika suatu
+perusahaan sudah memiliki lebih dari satu admin, selesaikan duplikatnya dahulu
+karena migrasi akan gagal. Perusahaan lama tanpa admin tidak diubah otomatis.
+
+System admin dapat membuat perusahaan beserta satu admin dan menyalin seluruh
+master akun perusahaan ID 1, termasuk hubungan induknya, dalam satu transaksi.
+Perusahaan ID 1 harus tersedia dan mempunyai hierarki akun yang valid. Salinan
+tidak mencakup pengaturan akun, pelanggan, produk, atau data transaksi; admin
+perusahaan perlu menyiapkan pengaturan akun dan data master lainnya sebelum
+menggunakan modul transaksi. System admin tidak dapat mengakses modul perusahaan:
+mencoba membuka modul tersebut akan mengakhiri sesi system admin.
+
 ## Fondasi transaksi
 
 `Transaksi_service` adalah layanan internal untuk modul transaksi, bukan endpoint
