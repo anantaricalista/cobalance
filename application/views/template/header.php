@@ -819,7 +819,7 @@
             <!-- Menu Items -->
             <div class="collapse navbar-collapse" id="navbar-menu">
                 <ul class="nav navbar-nav">
-                    <li class="dropdown <?php if (in_array($this->router->fetch_class(), array('akun', 'pelanggan', 'pemasok', 'produk', 'pajak', 'pengaturan_akun')))
+                    <li class="dropdown <?php if (in_array($this->router->fetch_class(), array('akun', 'pengguna', 'pelanggan', 'pemasok', 'produk', 'pajak', 'pengaturan_akun')))
                         echo 'active'; ?>">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                             aria-expanded="false">
@@ -829,6 +829,10 @@
                             <li <?php if ($this->router->fetch_class() == 'akun')
                                 echo 'class="active"'; ?>>
                                 <a href="<?php echo site_url('akun'); ?>">Akun</a>
+                            </li>
+                            <li <?php if ($this->router->fetch_class() == 'pengguna')
+                                echo 'class="active"'; ?>>
+                                <a href="<?php echo site_url('pengguna'); ?>">Pengguna</a>
                             </li>
                             <li <?php if ($this->router->fetch_class() == 'pelanggan')
                                 echo 'class="active"'; ?>>

@@ -17,14 +17,19 @@ Sebelum mencatat transaksi, buka menu **Master** dan lengkapi data berikut:
 
 1. **Akun** — periksa Bagan Akun. Tambahkan akun yang diperlukan dengan tipe dan
    akun induk yang sesuai. Transaksi memakai akun rincian, bukan akun induk.
-2. **Pelanggan** dan **Pemasok** — masukkan pihak yang akan muncul pada penjualan,
+2. **Pengguna** — kelola akun yang dapat masuk ke perusahaan ini dan pilih role
+   **Admin Perusahaan** atau **User**. Perusahaan hanya memiliki satu admin;
+   memilih Admin untuk pengguna lain akan memindahkan role admin saat ini menjadi
+   User. Password baru minimal 8 karakter; password saat mengedit boleh dikosongkan
+   agar tidak berubah.
+3. **Pelanggan** dan **Pemasok** — masukkan pihak yang akan muncul pada penjualan,
    pembelian, penerimaan piutang, atau pembayaran utang.
-3. **Produk dan Jasa** — buat item barang atau jasa, satuan, harga jual, dan akun
+4. **Produk dan Jasa** — buat item barang atau jasa, satuan, harga jual, dan akun
    terkait. Barang memerlukan akun persediaan dan beban pokok; jasa memerlukan
    akun pembelian/beban. Akun pendapatan dapat diatur per item.
-4. **Pajak** — masukkan kode, nama, tarif, serta akun pajak masukan dan/atau
+5. **Pajak** — masukkan kode, nama, tarif, serta akun pajak masukan dan/atau
    keluaran jika digunakan.
-5. **Pengaturan Akun** — hubungkan jenis pengaturan ke akun rincian yang sesuai,
+6. **Pengaturan Akun** — hubungkan jenis pengaturan ke akun rincian yang sesuai,
    misalnya Kas dan Bank, Piutang Usaha, Utang Usaha, Persediaan, Pajak,
    Beban Pokok Penjualan, Pendapatan Default, dan Modal.
 
