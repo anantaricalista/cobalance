@@ -18,6 +18,26 @@ Input nominal uang menggunakan format Indonesia, misalnya `1.000.000,50`
 (titik untuk ribuan dan koma untuk desimal, maksimal dua angka desimal).
 Jumlah barang, umur manfaat, dan persentase pajak tidak memakai format ini.
 
+## Keamanan login
+
+Sebelum memperbarui aplikasi, cadangkan database dan jalankan
+`application/sql/20261112_login_security.sql` satu kali. Login memerlukan tabel
+ini untuk membatasi percobaan; tanpa migrasi, login tidak dapat digunakan. Pastikan
+kolom `pengguna.password` bertipe `VARCHAR(255)` agar hash baru tidak terpotong.
+
+Password baru menggunakan `password_hash()` dan diverifikasi dengan
+`password_verify()`. Akun dengan hash lama `md5(md5(password))` tetap dapat
+login dan otomatis diperbarui setelah password benar. Password maksimal 72 byte;
+akun lama dengan password lebih panjang perlu direset oleh administrator.
+Login dibatasi menjadi 10 percobaan per alamat IP dalam jendela 15 menit,
+termasuk login yang berhasil. Pengguna dalam satu jaringan dapat berbagi batas
+ini; pastikan konfigurasi proxy CodeIgniter benar agar alamat IP yang digunakan
+sesuai. Catatan IP lama dibersihkan secara berkala saat ada login.
+
+Gunakan HTTPS di server dan aktifkan `$config['cookie_secure'] = TRUE` setelah
+HTTPS tersedia. Perlindungan token formulir diterapkan pada login; pengaturan
+CSRF global masih perlu disiapkan terpisah untuk seluruh modul.
+
 ## Fondasi transaksi
 
 `Transaksi_service` adalah layanan internal untuk modul transaksi, bukan endpoint

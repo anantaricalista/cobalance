@@ -29,15 +29,20 @@
 <body>
     <div class="container">
         <form class="form-signin" action="<?php echo site_url('auth/login'); ?>" method="post">
+            <input type="hidden" name="login_token" value="<?php echo html_escape($login_token); ?>">
+            <?php if ($this->config->item('csrf_protection')): ?>
+                <input type="hidden" name="<?php echo html_escape($this->security->get_csrf_token_name()); ?>"
+                    value="<?php echo html_escape($this->security->get_csrf_hash()); ?>">
+            <?php endif; ?>
             <h2 class="form-signin-heading">Co - Balance</h2>
             <?php if ($this->session->flashdata('error')): ?>
                 <div class="alert alert-danger">
                     <?php echo $this->session->flashdata('error'); ?>
                 </div>
             <?php endif; ?>
-            <input type="text" name="username" class="form-control" placeholder="Username" required autofocus>
+            <input type="text" name="username" class="form-control" placeholder="Username" autocomplete="username" maxlength="100" required autofocus>
             <br>
-            <input type="password" name="password" class="form-control" placeholder="Password" required>
+            <input type="password" name="password" class="form-control" placeholder="Password" autocomplete="current-password" required>
             <br>
             <button class="btn btn-lg btn-primary btn-block" type="submit">Login</button>
         </form>
