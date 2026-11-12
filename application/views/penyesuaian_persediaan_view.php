@@ -1,4 +1,5 @@
 <h3>Penyesuaian Persediaan</h3>
+<p class="text-muted" role="note">Nominal: gunakan titik untuk ribuan dan koma untuk desimal, misalnya <strong>1.000,50</strong>. Angka diformat setelah kolom ditinggalkan.</p>
 <p>Setiap transaksi untuk satu produk. Stock opname menggunakan jumlah fisik yang dimasukkan dan membandingkannya dengan saldo pada saat posting.</p>
 <p><a href="<?= site_url('persediaan') ?>">Saldo dan riwayat stok</a> | <a href="<?= site_url('penyesuaian_persediaan') ?>">Penyesuaian baru</a></p>
 <div id="adjustment-message" role="alert"></div>
@@ -6,7 +7,7 @@
     <h4><?= html_escape($transaction->nomor_transaksi) ?> &mdash; <?= html_escape($transaction->status) ?></h4>
     <p>Produk: <?= html_escape($transaction->kode_produk . ' - ' . $transaction->nama_produk) ?> |
         Jenis: <?= html_escape($transaction->jenis) ?> | Jumlah input: <?= html_escape($transaction->jumlah) ?> |
-        Nilai tercatat: Rp <?= html_escape($transaction->subtotal) ?></p>
+        Nilai tercatat: Rp <?= html_escape(format_nominal($transaction->subtotal)) ?></p>
     <p>Akun selisih: <?= html_escape($transaction->kode_akun . ' - ' . $transaction->nama_akun) ?> |
         Keterangan: <?= html_escape($transaction->deskripsi) ?></p>
     <?php if ($transaction->lampiran_nama): ?>
@@ -73,7 +74,7 @@
     <?php foreach ($transactions as $row): ?>
         <tr><td><?= html_escape($row->tanggal) ?></td><td><?= html_escape($row->nomor_transaksi) ?></td>
             <td><?= html_escape($row->nama_produk) ?></td><td><?= html_escape($row->jenis) ?></td>
-            <td><?= html_escape($row->jumlah) ?></td><td><?= html_escape($row->total) ?></td>
+            <td><?= html_escape($row->jumlah) ?></td><td><?= html_escape(format_nominal($row->total)) ?></td>
             <td><?= html_escape($row->status) ?></td><td><a href="<?= site_url('penyesuaian_persediaan?id=' . (int) $row->id_transaksi) ?>">Lihat</a></td></tr>
     <?php endforeach; ?>
     <?php if (!$transactions): ?><tr><td colspan="8">Belum ada penyesuaian.</td></tr><?php endif; ?>

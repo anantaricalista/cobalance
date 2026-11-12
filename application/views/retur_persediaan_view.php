@@ -10,9 +10,9 @@
         Jenis: <?= html_escape($transaction->jenis_transaksi) ?> |
         Produk: <?= html_escape($transaction->kode_produk . ' - ' . $transaction->nama_produk) ?> |
         Jumlah: <?= html_escape($transaction->jumlah . ' ' . $transaction->satuan) ?></p>
-    <p>Sebelum pajak: Rp <?= html_escape($transaction->nilai_sebelum_pajak) ?> |
-        Pajak: Rp <?= html_escape($transaction->nilai_pajak) ?> |
-        Total: Rp <?= html_escape($transaction->subtotal) ?></p>
+    <p>Sebelum pajak: Rp <?= html_escape(format_nominal($transaction->nilai_sebelum_pajak)) ?> |
+        Pajak: Rp <?= html_escape(format_nominal($transaction->nilai_pajak)) ?> |
+        Total: Rp <?= html_escape(format_nominal($transaction->subtotal)) ?></p>
     <?php if ($transaction->lampiran_nama): ?>
         <p><a href="<?= site_url('lampiran/unduh/' . (int) $transaction->id_transaksi) ?>"><?= html_escape($transaction->lampiran_nama) ?></a></p>
     <?php endif; ?>
@@ -73,7 +73,7 @@
     <?php foreach ($transactions as $row): ?>
         <tr><td><?= html_escape($row->tanggal) ?></td><td><?= html_escape($row->nomor_transaksi) ?></td>
             <td><?= html_escape($row->jenis_transaksi) ?></td><td><?= html_escape($row->nomor_asal) ?></td>
-            <td><?= html_escape($row->total) ?></td><td><?= html_escape($row->status) ?></td>
+            <td><?= html_escape(format_nominal($row->total)) ?></td><td><?= html_escape($row->status) ?></td>
             <td><a href="<?= site_url('retur_persediaan?id=' . (int) $row->id_transaksi) ?>">Lihat</a></td></tr>
     <?php endforeach; ?>
     <?php if (!$transactions): ?><tr><td colspan="7">Belum ada retur.</td></tr><?php endif; ?>

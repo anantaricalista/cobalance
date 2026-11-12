@@ -9,6 +9,9 @@
 <?php if (isset($master['help'])): ?>
     <p class="alert alert-info"><?php echo html_escape($master['help']); ?></p>
 <?php endif; ?>
+<?php if ($master['route'] === 'produk'): ?>
+    <p class="text-muted">Harga: gunakan titik untuk ribuan dan koma untuk desimal, misalnya <strong>1.000,50</strong>.</p>
+<?php endif; ?>
 <div class="table-responsive">
     <table id="table" class="table table-striped table-bordered" cellspacing="0" width="100%">
         <thead><tr>
@@ -115,6 +118,7 @@
     function add_master() {
         save_method = 'add';
         $('#form')[0].reset();
+        $('#form [data-money]').each(function () { MoneyInput.set(this, ''); });
         $('#form option[data-legacy]').remove();
         updateSettingOptions();
         $('#form').find('[name="' + masterId + '"]').val('');

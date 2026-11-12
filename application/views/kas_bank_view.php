@@ -13,6 +13,7 @@ $map = function ($accounts) {
 };
 ?>
 <h3>Kas dan Bank</h3>
+<p class="text-muted" role="note">Nominal: gunakan titik untuk ribuan dan koma untuk desimal, misalnya <strong>1.000,50</strong>. Angka diformat setelah kolom ditinggalkan.</p>
 <p>Catat kas masuk, kas keluar, dan transfer antar akun kas/bank. Posting membuat jurnal otomatis. Piutang dan utang usaha tidak dipilih di sini; gunakan modul Penerimaan Piutang dan Pembayaran Utang.</p>
 
 <?php if ($transaction): ?>
@@ -22,7 +23,7 @@ $map = function ($accounts) {
         <strong>Nomor:</strong> <?= html_escape($transaction->nomor_transaksi) ?>
         &nbsp; <strong>Status:</strong> <?= html_escape($transaction->status) ?>
         <?php if (!$editable): ?>
-            &nbsp; <strong>Total:</strong> Rp <?= html_escape($transaction->total) ?>
+            &nbsp; <strong>Total:</strong> Rp <?= html_escape(format_nominal($transaction->total)) ?>
         <?php endif; ?>
     </p>
     <?php if (!$editable): ?>
@@ -34,7 +35,7 @@ $map = function ($accounts) {
                     <tr>
                         <td><?= html_escape($detail['kode_akun'] . ' - ' . $detail['nama_akun']) ?></td>
                         <td><?= html_escape($detail['deskripsi']) ?></td>
-                        <td>Rp <?= html_escape($detail['subtotal']) ?></td>
+                        <td>Rp <?= html_escape(format_nominal($detail['subtotal'])) ?></td>
                     </tr>
                 <?php endforeach; ?>
                 </tbody>
@@ -131,7 +132,7 @@ $map = function ($accounts) {
                 <td><?= html_escape($item->nomor_transaksi) ?></td>
                 <td><?= html_escape($types[$item->jenis_transaksi]) ?></td>
                 <td><?= html_escape($item->kode_akun . ' - ' . $item->nama_akun) ?></td>
-                <td>Rp <?= html_escape($item->total) ?></td>
+                <td>Rp <?= html_escape(format_nominal($item->total)) ?></td>
                 <td><?php if ($item->lampiran_nama): ?><a href="<?= site_url('lampiran/unduh/' . (int) $item->id_transaksi) ?>">Unduh</a><?php else: ?>-<?php endif; ?></td>
                 <td><?= html_escape($item->status) ?></td>
                 <td><a class="btn btn-default btn-xs" href="<?= site_url('kas_bank?id=' . (int) $item->id_transaksi) ?>">Lihat</a></td>

@@ -25,9 +25,9 @@ class M_laba_rugi extends CI_Model
         $this->db->order_by('a.kode_akun', 'asc');
         $pendapatan = $this->db->get()->result();
 
-        $total_pendapatan = 0;
+        $total_pendapatan = '0.00';
         foreach ($pendapatan as $row) {
-            $total_pendapatan += $row->amount;
+            $total_pendapatan = jumlah_nominal($total_pendapatan, $row->amount);
         }
 
         // Ambil data beban
@@ -43,12 +43,12 @@ class M_laba_rugi extends CI_Model
         $this->db->order_by('a.kode_akun', 'asc');
         $beban = $this->db->get()->result();
 
-        $total_beban = 0;
+        $total_beban = '0.00';
         foreach ($beban as $row) {
-            $total_beban += $row->amount;
+            $total_beban = jumlah_nominal($total_beban, $row->amount);
         }
 
-        $laba_bersih = $total_pendapatan - $total_beban;
+        $laba_bersih = kurangi_nominal($total_pendapatan, $total_beban);
 
         return array(
             'pendapatan' => $pendapatan,

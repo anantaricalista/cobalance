@@ -18,6 +18,7 @@ foreach ($cash_accounts as $account) {
 }
 ?>
 <h3>Modal dan Prive</h3>
+<p class="text-muted" role="note">Nominal: gunakan titik untuk ribuan dan koma untuk desimal, misalnya <strong>1.000,50</strong>. Angka diformat setelah kolom ditinggalkan.</p>
 <p>Setoran modal mendebit kas/bank dan mengkredit akun Modal pada Pengaturan Akun. Prive mendebit akun ekuitas yang dipilih dan mengkredit kas/bank.</p>
 <p><a href="<?= site_url('modal_prive') ?>">Transaksi baru</a></p>
 <div id="capital-message" role="alert"></div>
@@ -27,7 +28,7 @@ foreach ($cash_accounts as $account) {
     <p><strong>Nomor:</strong> <?= html_escape($transaction->nomor_transaksi) ?> |
         <strong>Tanggal:</strong> <?= html_escape($transaction->tanggal) ?> |
         <strong>Status:</strong> <?= html_escape($transaction->status) ?> |
-        <strong>Jumlah:</strong> Rp <?= html_escape($transaction->total) ?></p>
+        <strong>Jumlah:</strong> Rp <?= html_escape(format_nominal($transaction->total)) ?></p>
     <p>Kas/bank: <?= html_escape($transaction->kode_kas . ' - ' . $transaction->nama_kas) ?> |
         Akun lawan: <?= html_escape($transaction->kode_lawan . ' - ' . $transaction->nama_lawan) ?></p>
     <p><?= html_escape($transaction->deskripsi) ?></p>
@@ -110,7 +111,7 @@ foreach ($cash_accounts as $account) {
             <td><?= html_escape($item->jenis_transaksi === 'setoran_modal' ? 'Setoran modal' : 'Prive') ?></td>
             <td><?= html_escape($item->kode_kas . ' - ' . $item->nama_kas) ?></td>
             <td><?= html_escape($item->kode_lawan . ' - ' . $item->nama_lawan) ?></td>
-            <td>Rp <?= html_escape($item->total) ?></td><td><?= html_escape($item->status) ?></td>
+            <td>Rp <?= html_escape(format_nominal($item->total)) ?></td><td><?= html_escape($item->status) ?></td>
             <td><a href="<?= site_url('modal_prive?id=' . (int) $item->id_transaksi) ?>">Lihat</a></td></tr>
     <?php endforeach; ?>
     <?php if (!$transactions): ?><tr><td colspan="8">Belum ada transaksi modal atau prive.</td></tr><?php endif; ?>

@@ -175,7 +175,7 @@
 
 <?php
 $currency = function ($amount) {
-	return 'Rp ' . number_format((float) $amount, 0, ',', '.');
+	return 'Rp ' . format_nominal($amount);
 };
 $transaction_labels = array(
 	'penjualan' => 'Penjualan',

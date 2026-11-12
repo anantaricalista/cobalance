@@ -80,7 +80,7 @@
             </thead>
             <tbody>
                 <?php
-                $total_aset = 0;
+                $total_aset = '0.00';
                 if (!empty($aset)) {
                     foreach ($aset as $row) { ?>
                         <tr>
@@ -91,11 +91,11 @@
                                 <?php echo $row->nama_akun; ?>
                             </td>
                             <td style="width:45%; text-align:right;">
-                                <?php echo "Rp " . number_format($row->total_balance, 2, ',', '.'); ?>
+                                <?php echo "Rp " . format_nominal($row->total_balance); ?>
                             </td>
                         </tr>
                         <?php
-                        $total_aset += floatval($row->total_balance);
+                        $total_aset = jumlah_nominal($total_aset, $row->total_balance);
                     }
                 } else { ?>
                     <tr>
@@ -107,7 +107,7 @@
                 <tr>
                     <td colspan="2" align="right">Total Aset</td>
                     <td align="right">
-                        <?php echo "Rp " . number_format($total_aset, 2, ',', '.'); ?>
+                        <?php echo "Rp " . format_nominal($total_aset); ?>
                     </td>
                 </tr>
             </tfoot>
@@ -126,7 +126,7 @@
             </thead>
             <tbody>
                 <?php
-                $total_liabilitas = 0;
+                $total_liabilitas = '0.00';
                 if (!empty($liabilitas)) {
                     foreach ($liabilitas as $row) { ?>
                         <tr>
@@ -137,11 +137,11 @@
                                 <?php echo $row->nama_akun; ?>
                             </td>
                             <td align="right">
-                                <?php echo "Rp " . number_format($row->total_balance, 2, ',', '.'); ?>
+                                <?php echo "Rp " . format_nominal($row->total_balance); ?>
                             </td>
                         </tr>
                         <?php
-                        $total_liabilitas += floatval($row->total_balance);
+                        $total_liabilitas = jumlah_nominal($total_liabilitas, $row->total_balance);
                     }
                 } else { ?>
                     <tr>
@@ -153,7 +153,7 @@
                 <tr>
                     <td colspan="2" align="right">Total Liabilitas</td>
                     <td align="right">
-                        <?php echo "Rp " . number_format($total_liabilitas, 2, ',', '.'); ?>
+                        <?php echo "Rp " . format_nominal($total_liabilitas); ?>
                     </td>
                 </tr>
             </tfoot>
@@ -170,7 +170,7 @@
             </thead>
             <tbody>
                 <?php
-                $total_ekuitas = 0;
+                $total_ekuitas = '0.00';
                 if (!empty($ekuitas)) {
                     foreach ($ekuitas as $row) { ?>
                         <tr>
@@ -181,11 +181,11 @@
                                 <?php echo $row->nama_akun; ?>
                             </td>
                             <td align="right">
-                                <?php echo "Rp " . number_format($row->total_balance, 2, ',', '.'); ?>
+                                <?php echo "Rp " . format_nominal($row->total_balance); ?>
                             </td>
                         </tr>
                         <?php
-                        $total_ekuitas += floatval($row->total_balance);
+                        $total_ekuitas = jumlah_nominal($total_ekuitas, $row->total_balance);
                     }
                 } else { ?>
                     <tr>
@@ -197,7 +197,7 @@
                 <tr>
                     <td colspan="2" align="right">Total Ekuitas</td>
                     <td align="right">
-                        <?php echo "Rp " . number_format($total_ekuitas, 2, ',', '.'); ?>
+                        <?php echo "Rp " . format_nominal($total_ekuitas); ?>
                     </td>
                 </tr>
             </tfoot>

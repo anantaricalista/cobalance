@@ -4,20 +4,44 @@ window.MoneyInput = (function ($) {
         return value.replace(/\./g, '').replace(',', '.');
     }
 
-    function format(value) {
-        var parts = value.split(',');
-        return parts[0].replace(/\./g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.') +
-            (parts.length > 1 ? ',' + parts[1] : '');
+    function validFormat(value) {
+        return /^(?:\d+|\d{1,3}(?:\.\d{3})+)(?:,\d{1,2})?$/.test(value);
+    }
+
+    function display(value) {
+        var text = String(value == null ? '' : value);
+        if (text === '') return '';
+        if (!/^-?\d+(?:\.\d+)?$/.test(text)) return text;
+        var parts = text.split('.');
+        return parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.') +
+            ',' + (parts[1] || '').padEnd(2, '0');
+    }
+
+    function cents(value) {
+        var text = String(value == null ? '0' : value);
+        if (!/^-?\d+(?:\.\d{1,2})?$/.test(text)) throw new Error('Nominal tidak valid.');
+        var negative = text.charAt(0) === '-';
+        var parts = (negative ? text.slice(1) : text).split('.');
+        var result = BigInt(parts[0] + (parts[1] || '').padEnd(2, '0'));
+        return negative ? -result : result;
+    }
+
+    function fromCents(value) {
+        var text = value.toString();
+        var negative = text.charAt(0) === '-';
+        if (negative) text = text.slice(1);
+        text = text.padStart(3, '0');
+        return (negative ? '-' : '') + text.slice(0, -2) + '.' + text.slice(-2);
     }
 
     function validate(input) {
         var value = input.value;
         var number = canonical(value);
         var message = '';
-        if (value && !/^\d+(?:\.\d{3})*(?:,\d{1,2})?$/.test(value)) {
-            message = 'Gunakan angka dengan maksimal dua desimal, misalnya 1.000.000,50.';
-        } else if (value && ((input.getAttribute('min') !== null && Number(number) < Number(input.getAttribute('min'))) ||
-            (input.getAttribute('max') !== null && Number(number) > Number(input.getAttribute('max'))))) {
+        if (value && !validFormat(value)) {
+            message = 'Gunakan koma untuk desimal dan titik untuk ribuan, misalnya 1.000,50.';
+        } else if (value && ((input.getAttribute('min') !== null && cents(number) < cents(input.getAttribute('min'))) ||
+            (input.getAttribute('max') !== null && cents(number) > cents(input.getAttribute('max'))))) {
             message = 'Nominal berada di luar batas yang diizinkan.';
         }
         input.setCustomValidity(message);
@@ -25,19 +49,14 @@ window.MoneyInput = (function ($) {
 
     function init(input, initial) {
         var $input = $(input);
-        $input.attr('type', 'text').attr('inputmode', 'decimal').attr('data-money', '1');
+        $input.attr('type', 'text').attr('inputmode', 'decimal').attr('data-money', '1')
+            .attr('placeholder', 'Contoh: 1.000,50')
+            .attr('title', 'Gunakan koma untuk desimal dan titik untuk ribuan, misalnya 1.000,50.');
         $input.on('input', function () {
-            var start = this.selectionStart;
-            var before = this.value.slice(0, start).replace(/\./g, '').length;
-            if (/^[\d.,]*$/.test(this.value) && (this.value.match(/,/g) || []).length <= 1) {
-                this.value = format(this.value);
-                var pos = 0, count = 0;
-                while (pos < this.value.length && count < before) {
-                    if (this.value.charAt(pos) !== '.') count++;
-                    pos++;
-                }
-                this.setSelectionRange(pos, pos);
-            }
+            validate(this);
+        });
+        $input.on('blur', function () {
+            if (this.value && validFormat(this.value)) this.value = display(canonical(this.value));
             validate(this);
         });
         set(input, initial == null ? '' : initial);
@@ -45,12 +64,13 @@ window.MoneyInput = (function ($) {
 
     function set(input, value) {
         var text = String(value == null ? '' : value);
-        input.value = format(text.replace('.', ','));
+        input.value = display(text);
         validate(input);
     }
 
     function value(input) {
-        return canonical(input.value);
+        if (!input.value) return '';
+        return validFormat(input.value) ? canonical(input.value) : 'invalid';
     }
 
     function serialize(form) {
@@ -62,6 +82,7 @@ window.MoneyInput = (function ($) {
         return result;
     }
 
-    return {init: init, set: set, value: value, serialize: serialize};
+    return {init: init, set: set, value: value, serialize: serialize, display: display,
+        cents: cents, fromCents: fromCents};
 })(jQuery);
 </script>

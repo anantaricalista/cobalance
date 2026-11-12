@@ -30,6 +30,7 @@ foreach ($customers as $customer) {
 $isDraft = $transaction && $transaction->status === 'draft';
 ?>
 <h3>Aset Tetap</h3>
+<p class="text-muted" role="note">Nominal: gunakan titik untuk ribuan dan koma untuk desimal, misalnya <strong>1.000,50</strong>. Angka diformat setelah kolom ditinggalkan.</p>
 <p>Kelola perolehan tunai/kredit, pendaftaran aset lama yang sudah dicatat melalui Saldo Awal, penyusutan garis lurus, dan pelepasan aset.</p>
 <div id="asset-message" role="alert"></div>
 
@@ -38,19 +39,19 @@ $isDraft = $transaction && $transaction->status === 'draft';
     <h4><?= html_escape($transaction->nomor_transaksi) ?> — <?= html_escape($transaction->jenis_transaksi) ?></h4>
     <p><strong>Tanggal/periode:</strong> <?= html_escape($transaction->tanggal) ?>
         &nbsp; <strong>Status:</strong> <?= html_escape($transaction->status) ?>
-        <?php if ($transaction->total !== null): ?>&nbsp; <strong>Total:</strong> Rp <?= html_escape($transaction->total) ?><?php endif; ?>
+        <?php if ($transaction->total !== null): ?>&nbsp; <strong>Total:</strong> Rp <?= html_escape(format_nominal($transaction->total)) ?><?php endif; ?>
     </p>
     <?php if ($transaction->jenis_transaksi === 'penyusutan_aset' && $transaction->details): ?>
         <div class="table-responsive"><table class="table table-bordered table-condensed">
             <thead><tr><th>Kode</th><th>Aset</th><th>Periode</th><th>Penyusutan</th></tr></thead><tbody>
             <?php foreach ($transaction->details as $row): ?>
                 <tr><td><?= html_escape($row['kode_aset']) ?></td><td><?= html_escape($row['nama_aset']) ?></td>
-                    <td><?= html_escape($row['periode']) ?></td><td>Rp <?= html_escape($row['nilai_penyusutan']) ?></td></tr>
+                    <td><?= html_escape($row['periode']) ?></td><td>Rp <?= html_escape(format_nominal($row['nilai_penyusutan'])) ?></td></tr>
             <?php endforeach; ?>
             </tbody></table></div>
     <?php elseif ($transaction->jenis_transaksi === 'pelepasan_aset' && $transaction->disposal): ?>
         <p><strong>Aset:</strong> <?= html_escape($transaction->disposal->kode_aset . ' - ' . $transaction->disposal->nama_aset) ?>
-            &nbsp; <strong>Hasil:</strong> Rp <?= html_escape($transaction->disposal->nilai_pelepasan) ?></p>
+            &nbsp; <strong>Hasil:</strong> Rp <?= html_escape(format_nominal($transaction->disposal->nilai_pelepasan)) ?></p>
     <?php endif; ?>
     <?php if ($transaction->lampiran_nama): ?>
         <p><strong>Lampiran:</strong> <a href="<?= site_url('lampiran/unduh/' . (int) $transaction->id_transaksi) ?>"><?= html_escape($transaction->lampiran_nama) ?></a></p>
@@ -183,8 +184,8 @@ $isDraft = $transaction && $transaction->status === 'draft';
 
 <?php if ($asset): ?>
     <h4><?= html_escape($asset->kode_aset . ' - ' . $asset->nama_aset) ?></h4>
-    <p>Perolehan Rp <?= html_escape($asset->nilai_perolehan) ?>; residu Rp <?= html_escape($asset->nilai_residu) ?>;
-        akumulasi Rp <?= html_escape($asset->akumulasi_tercatat) ?>; nilai buku Rp <?= html_escape($asset->nilai_buku) ?>;
+    <p>Perolehan Rp <?= html_escape(format_nominal($asset->nilai_perolehan)) ?>; residu Rp <?= html_escape(format_nominal($asset->nilai_residu)) ?>;
+        akumulasi Rp <?= html_escape(format_nominal($asset->akumulasi_tercatat)) ?>; nilai buku Rp <?= html_escape(format_nominal($asset->nilai_buku)) ?>;
         status <?= html_escape($asset->status) ?>.</p>
     <p>Jadwal mulai <?= html_escape($asset->tanggal_mulai_penyusutan) ?>, umur <?= (int) $asset->umur_manfaat_bulan ?> bulan.</p>
 <?php endif; ?>
@@ -196,8 +197,8 @@ $isDraft = $transaction && $transaction->status === 'draft';
     <tbody>
     <?php foreach ($assets as $item): ?>
         <tr><td><?= html_escape($item->kode_aset) ?></td><td><?= html_escape($item->nama_aset) ?></td>
-            <td><?= html_escape($item->tanggal_perolehan) ?></td><td>Rp <?= html_escape($item->nilai_perolehan) ?></td>
-            <td>Rp <?= html_escape($item->akumulasi_tercatat) ?></td><td>Rp <?= html_escape($item->nilai_buku) ?></td>
+            <td><?= html_escape($item->tanggal_perolehan) ?></td><td>Rp <?= html_escape(format_nominal($item->nilai_perolehan)) ?></td>
+            <td>Rp <?= html_escape(format_nominal($item->akumulasi_tercatat)) ?></td><td>Rp <?= html_escape(format_nominal($item->nilai_buku)) ?></td>
             <td><?= html_escape($item->status === 'dilepas' ? 'Dilepas' : $item->status_perolehan) ?></td>
             <td><a class="btn btn-default btn-xs" href="<?= site_url('aset_tetap?id=' . (int) $item->id_aset_tetap) ?>">Lihat</a>
                 <?php if ($item->lampiran_nama): ?><a class="btn btn-default btn-xs" href="<?= site_url('lampiran/unduh/' . (int) $item->id_transaksi_perolehan) ?>">Bukti perolehan</a><?php endif; ?></td></tr>

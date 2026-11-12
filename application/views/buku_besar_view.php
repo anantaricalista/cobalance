@@ -67,10 +67,7 @@
 
     // Fungsi untuk memformat angka ke format Rupiah
     function formatRupiah(num) {
-        return "Rp " + parseFloat(num).toLocaleString('id-ID', {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-        });
+        return "Rp " + MoneyInput.display(num);
     }
 
     function loadLedger() {
@@ -89,7 +86,7 @@
             dataType: "JSON",
             data: { id_akun: id_akun, start_date: start_date, end_date: end_date },
             success: function (data) {
-                var opening = parseFloat(data.opening);
+                var opening = MoneyInput.cents(data.opening);
                 var transactions = data.transactions;
                 var running_balance = opening;
                 var html = '';
@@ -99,22 +96,22 @@
                 html += '<td>0</td>';
                 html += '<td colspan="4" style="text-align:center;"><em>Saldo Awal</em></td>';
                 html += '<td></td>';
-                html += '<td style="text-align:right;">' + formatRupiah(running_balance) + '</td>';
+                html += '<td style="text-align:right;">' + formatRupiah(MoneyInput.fromCents(running_balance)) + '</td>';
                 html += '</tr>';
 
                 for (var i = 0; i < transactions.length; i++) {
                     var trx = transactions[i];
-                    var debit = parseFloat(trx.debit);
-                    var kredit = parseFloat(trx.kredit);
+                    var debit = MoneyInput.cents(trx.debit);
+                    var kredit = MoneyInput.cents(trx.kredit);
                     running_balance += (debit - kredit);
                     html += '<tr>';
                     html += '<td>' + (i + 1) + '</td>';
                     html += '<td>' + formatDateIndo(trx.tanggal) + '</td>';
                     html += '<td>' + trx.deskripsi + '</td>';
                     html += '<td>' + trx.referensi + '</td>';
-                    html += '<td style="text-align:right;">' + formatRupiah(debit) + '</td>';
-                    html += '<td style="text-align:right;">' + formatRupiah(kredit) + '</td>';
-                    html += '<td style="text-align:right;">' + formatRupiah(running_balance) + '</td>';
+                    html += '<td style="text-align:right;">' + formatRupiah(MoneyInput.fromCents(debit)) + '</td>';
+                    html += '<td style="text-align:right;">' + formatRupiah(MoneyInput.fromCents(kredit)) + '</td>';
+                    html += '<td style="text-align:right;">' + formatRupiah(MoneyInput.fromCents(running_balance)) + '</td>';
                     html += '</tr>';
                 }
 

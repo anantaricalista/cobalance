@@ -33,6 +33,7 @@ $product_options = array();
 foreach ($products as $product) $product_options[] = array('id' => $product->id_produk, 'label' => $product->kode_produk . ' - ' . $product->nama_produk, 'disabled' => !$product->aktif);
 ?>
 <h3>Saldo Awal</h3>
+<p class="text-muted" role="note">Nominal: gunakan titik untuk ribuan dan koma untuk desimal, misalnya <strong>1.000,50</strong>. Angka diformat setelah kolom ditinggalkan.</p>
 <div class="opening-overview">
     <div class="opening-overview-copy">
         <span class="opening-eyebrow">PERSIAPAN PEMBUKUAN</span>
@@ -198,7 +199,7 @@ $(function () {
                 fillSelect(input, kind === 'aset' ? assetAccounts[field[0]] : options[kind], values[field[0]]);
             } else {
                 input = $('<input class="form-control">').attr('type', field[1] === 'date' ? 'date' : 'text');
-                if (field[1] === 'money' || field[1] === 'quantity') input.attr('inputmode', 'decimal').attr('placeholder', field[1] === 'money' ? '0.00' : '0.0000');
+                if (field[1] === 'money' || field[1] === 'quantity') input.attr('inputmode', 'decimal').attr('placeholder', field[1] === 'money' ? '0,00' : '0.0000');
                 if (field[0] === 'nomor') input.attr('maxlength', '100');
                 if (field[0] === 'kode_aset') input.attr('maxlength', '50');
                 if (field[0] === 'nama_aset') input.attr('maxlength', '255');
@@ -211,7 +212,7 @@ $(function () {
         });
         if (editable) row.append($('<td>').append($('<button type="button" class="btn btn-danger btn-sm">')
             .attr('aria-label', 'Hapus rincian ' + kind).append($('<span class="glyphicon glyphicon-trash" aria-hidden="true">'))
-            .on('click', function () { row.remove(); updateCounts(); })));
+            .on('click', function () { row.remove(); updateCounts(); updatePreview(); })));
         $('#table-' + kind + ' tbody').append(row);
         updateCounts();
         updatePreview();
@@ -232,28 +233,35 @@ $(function () {
     }
     function cents(value) {
         var amount = String(value == null ? '' : value);
-        if (!/^\d+(?:\.\d{1,2})?$/.test(amount)) return 0;
-        var parts = amount.split('.');
-        return Number(parts[0]) * 100 + Number((parts[1] || '').padEnd(2, '0'));
+        if (amount === '') return BigInt(0);
+        if (!/^\d+(?:\.\d{1,2})?$/.test(amount)) return null;
+        return MoneyInput.cents(amount);
     }
     function sumMoney(kind, field) {
-        var total = 0;
+        var total = BigInt(0);
         $('#table-' + kind + ' [data-field="' + field + '"]').each(function () {
-            total += cents($(this).is('[data-money]') ? MoneyInput.value(this) : $(this).val());
+            var amount = cents($(this).is('[data-money]') ? MoneyInput.value(this) : $(this).val());
+            total = total === null || amount === null ? null : total + amount;
         });
         return total;
     }
     function displayMoney(value) {
-        var whole = String(Math.floor(value / 100)).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-        return 'Rp ' + whole + ',' + String(value % 100).padStart(2, '0');
+        return 'Rp ' + MoneyInput.display(MoneyInput.fromCents(value));
     }
     function updatePreview() {
-        var debit = sumMoney('akun', 'debit') + sumMoney('piutang', 'jumlah')
-            + sumMoney('stok', 'nilai') + sumMoney('aset', 'nilai_perolehan');
-        var credit = sumMoney('akun', 'kredit') + sumMoney('utang', 'jumlah')
-            + sumMoney('aset', 'akumulasi_penyusutan_awal');
-        var difference = Math.abs(debit - credit);
-        var total = Math.max(debit, credit);
+        var debitParts = [sumMoney('akun', 'debit'), sumMoney('piutang', 'jumlah'),
+            sumMoney('stok', 'nilai'), sumMoney('aset', 'nilai_perolehan')];
+        var creditParts = [sumMoney('akun', 'kredit'), sumMoney('utang', 'jumlah'),
+            sumMoney('aset', 'akumulasi_penyusutan_awal')];
+        if (debitParts.concat(creditParts).some(function (value) { return value === null; })) {
+            $('#opening-preview-debit, #opening-preview-credit, #opening-preview-balance, #opening-preview-total')
+                .text('Tidak dapat dihitung');
+            return;
+        }
+        var debit = debitParts.reduce(function (a, b) { return a + b; }, BigInt(0));
+        var credit = creditParts.reduce(function (a, b) { return a + b; }, BigInt(0));
+        var difference = debit >= credit ? debit - credit : credit - debit;
+        var total = debit >= credit ? debit : credit;
         $('#opening-preview-debit').text(displayMoney(debit));
         $('#opening-preview-credit').text(displayMoney(credit));
         $('#opening-preview-balance').text(displayMoney(difference));
@@ -282,7 +290,7 @@ $(function () {
         var data = {penyeimbang: $('#balancing-account').val()};
         Object.keys(fields).forEach(function (kind) {
             data[kind] = [];
-            $('#table-' + kind + ' tbody tr').each(function () {
+            $('#table-' + kind + ' tbody tr:not(.opening-empty-row)').each(function () {
                 var row = {};
                 $(this).find('[data-field]').each(function () { row[$(this).data('field')] = $(this).is('[data-money]') ? MoneyInput.value(this) : $(this).val(); });
                 data[kind].push(row);

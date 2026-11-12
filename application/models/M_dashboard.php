@@ -51,7 +51,7 @@ class M_dashboard extends CI_Model
         ", array($company, $month_start, $today))->row();
 
         return array(
-            'cash' => $cash ? (float) $cash->balance : 0,
+            'cash' => $cash ? $cash->balance : '0',
             'receivable' => $receivable,
             'payable' => $payable,
             'monthly' => $monthly ? $monthly : (object) array(
@@ -101,7 +101,7 @@ class M_dashboard extends CI_Model
             WHERE open_items.sisa > 0
         ";
         $query = $this->db->query($sql, array($payment_type, $return_type, $company))->row();
-        return $query ? (float) $query->balance : 0;
+        return $query ? $query->balance : '0';
     }
 
     private function recent_transactions($company)

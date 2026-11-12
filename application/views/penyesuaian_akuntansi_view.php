@@ -10,6 +10,7 @@ foreach ($accounts as $account) {
 }
 ?>
 <h3>Penyesuaian Akuntansi</h3>
+<p class="text-muted" role="note">Nominal: gunakan titik untuk ribuan dan koma untuk desimal, misalnya <strong>1.000,50</strong>. Angka diformat setelah kolom ditinggalkan.</p>
 <p>Catat jurnal manual untuk koreksi atau penyesuaian. Setiap transaksi wajib seimbang dan hanya dapat menggunakan akun rinci.</p>
 <p><a href="<?= site_url('penyesuaian_akuntansi') ?>">Transaksi baru</a></p>
 <div id="adjustment-message" role="alert"></div>
@@ -48,7 +49,7 @@ foreach ($accounts as $account) {
             <thead><tr><th>Akun</th><th>Debet</th><th>Kredit</th><th>Keterangan</th></tr></thead><tbody>
             <?php foreach ($transaction->details as $line): ?>
                 <tr><td><?= html_escape($line->kode_akun . ' - ' . $line->nama_akun) ?></td>
-                    <td>Rp <?= html_escape($line->debit) ?></td><td>Rp <?= html_escape($line->kredit) ?></td>
+                    <td>Rp <?= html_escape(format_nominal($line->debit)) ?></td><td>Rp <?= html_escape(format_nominal($line->kredit)) ?></td>
                     <td><?= html_escape($line->deskripsi) ?></td></tr>
             <?php endforeach; ?>
             </tbody></table></div>
@@ -91,8 +92,8 @@ foreach ($accounts as $account) {
     <tbody>
     <?php foreach ($transactions as $item): ?>
         <tr><td><?= html_escape($item->tanggal) ?></td><td><?= html_escape($item->nomor_transaksi) ?></td>
-            <td><?= html_escape($item->deskripsi) ?></td><td>Rp <?= html_escape($item->total_debit) ?></td>
-            <td>Rp <?= html_escape($item->total_kredit) ?></td><td><?= html_escape($item->status) ?></td>
+            <td><?= html_escape($item->deskripsi) ?></td><td>Rp <?= html_escape(format_nominal($item->total_debit)) ?></td>
+            <td>Rp <?= html_escape(format_nominal($item->total_kredit)) ?></td><td><?= html_escape($item->status) ?></td>
             <td><a href="<?= site_url('penyesuaian_akuntansi?id=' . (int) $item->id_transaksi) ?>">Lihat</a></td></tr>
     <?php endforeach; ?>
     <?php if (!$transactions): ?><tr><td colspan="7">Belum ada penyesuaian akuntansi.</td></tr><?php endif; ?>
@@ -132,25 +133,22 @@ $(function () {
     function canonical(input) {
         return MoneyInput.value(input).replace(',', '.');
     }
-    function formatTotal(cents) {
-        var whole = String(Math.floor(cents / 100)).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-        var fraction = String(cents % 100).padStart(2, '0');
-        return 'Rp ' + whole + ',' + fraction;
-    }
     function cents(input) {
         var value = canonical(input);
-        if (!/^\d+(?:\.\d{1,2})?$/.test(value)) return 0;
-        var parts = value.split('.');
-        return Number(parts[0]) * 100 + Number((parts[1] || '').padEnd(2, '0'));
+        if (value === '') return BigInt(0);
+        if (!/^\d+(?:\.\d{1,2})?$/.test(value)) return null;
+        return MoneyInput.cents(value);
     }
     function totals() {
-        var debit = 0, credit = 0;
+        var debit = BigInt(0), credit = BigInt(0);
         $('#adjustment-lines tbody tr').each(function () {
-            debit += cents($(this).find('.adjustment-debit')[0]);
-            credit += cents($(this).find('.adjustment-credit')[0]);
+            var d = cents($(this).find('.adjustment-debit')[0]);
+            var c = cents($(this).find('.adjustment-credit')[0]);
+            debit = debit === null || d === null ? null : debit + d;
+            credit = credit === null || c === null ? null : credit + c;
         });
-        $('#adjustment-debit-total').text(formatTotal(debit));
-        $('#adjustment-credit-total').text(formatTotal(credit));
+        $('#adjustment-debit-total').text(debit === null ? 'Tidak dapat dihitung' : 'Rp ' + MoneyInput.display(MoneyInput.fromCents(debit)));
+        $('#adjustment-credit-total').text(credit === null ? 'Tidak dapat dihitung' : 'Rp ' + MoneyInput.display(MoneyInput.fromCents(credit)));
     }
     $('#adjustment-add-line').on('click', function () { addLine(null); });
     $('#adjustment-lines').on('click', '.adjustment-remove-line', function () {
@@ -174,7 +172,10 @@ $(function () {
                 var row = $(this);
                 var debit = canonical(row.find('.adjustment-debit')[0]);
                 var credit = canonical(row.find('.adjustment-credit')[0]);
-                if (!row.find('.adjustment-account').val() || (!!Number(debit) === !!Number(credit))) valid = false;
+                var debitCents = cents(row.find('.adjustment-debit')[0]);
+                var creditCents = cents(row.find('.adjustment-credit')[0]);
+                if (!row.find('.adjustment-account').val() || debitCents === null || creditCents === null ||
+                    ((debitCents === BigInt(0)) === (creditCents === BigInt(0)))) valid = false;
                 details.push({
                     id_akun: row.find('.adjustment-account').val(),
                     debit: debit || '0',
@@ -186,12 +187,14 @@ $(function () {
                 showError('Pilih akun dan isi hanya debit atau kredit pada setiap baris; minimal dua baris diperlukan.');
                 return;
             }
-            var totalDebit = 0, totalCredit = 0;
+            var totalDebit = BigInt(0), totalCredit = BigInt(0);
             $('#adjustment-lines tbody tr').each(function () {
-                totalDebit += cents($(this).find('.adjustment-debit')[0]);
-                totalCredit += cents($(this).find('.adjustment-credit')[0]);
+                var debit = cents($(this).find('.adjustment-debit')[0]);
+                var credit = cents($(this).find('.adjustment-credit')[0]);
+                totalDebit = totalDebit === null || debit === null ? null : totalDebit + debit;
+                totalCredit = totalCredit === null || credit === null ? null : totalCredit + credit;
             });
-            if (!totalDebit || totalDebit !== totalCredit) {
+            if (totalDebit === null || totalCredit === null || totalDebit === BigInt(0) || totalDebit !== totalCredit) {
                 showError('Total debit dan kredit harus sama dan lebih dari nol.');
                 return;
             }

@@ -32,6 +32,7 @@ foreach ($cash_accounts as $account) {
 }
 ?>
 <h3>Pembelian</h3>
+<p class="text-muted" role="note">Nominal: gunakan titik untuk ribuan dan koma untuk desimal, misalnya <strong>1.000,50</strong>. Angka diformat setelah kolom ditinggalkan.</p>
 <p>Draft baru diposting menjadi jurnal otomatis. Pembelian barang menambah persediaan dan memperbarui harga pokok rata-rata; pembelian jasa dibebankan ke akun pembelian/beban pada master produk.</p>
 
 <?php if ($transaction): ?>
@@ -44,7 +45,7 @@ foreach ($cash_accounts as $account) {
         <strong>Nomor:</strong> <?= html_escape($transaction->nomor_transaksi) ?>
         &nbsp; <strong>Status:</strong> <?= html_escape($transaction->status) ?>
         <?php if (!$editable): ?>
-            &nbsp; <strong>Total:</strong> Rp <?= html_escape($transaction->total) ?>
+            &nbsp; <strong>Total:</strong> Rp <?= html_escape(format_nominal($transaction->total)) ?>
         <?php endif; ?>
     </p>
     <?php if (!$editable): ?>
@@ -56,12 +57,12 @@ foreach ($cash_accounts as $account) {
                     <tr>
                         <td><?= html_escape($detail['deskripsi']) ?></td>
                         <td><?= html_escape($detail['jumlah']) ?> <?= html_escape($detail['satuan']) ?></td>
-                        <td>Rp <?= html_escape($detail['harga']) ?></td>
-                        <td>Rp <?= html_escape($detail['diskon']) ?></td>
+                        <td>Rp <?= html_escape(format_nominal($detail['harga'])) ?></td>
+                        <td>Rp <?= html_escape(format_nominal($detail['diskon'])) ?></td>
                         <td><?= html_escape($detail['nama_pajak'] ? $detail['nama_pajak'] . ' (' . $detail['mode_pajak'] . ')' : 'Tidak dikenakan') ?></td>
-                        <td>Rp <?= html_escape($detail['nilai_sebelum_pajak']) ?></td>
-                        <td>Rp <?= html_escape($detail['nilai_pajak']) ?></td>
-                        <td>Rp <?= html_escape($detail['subtotal']) ?></td>
+                        <td>Rp <?= html_escape(format_nominal($detail['nilai_sebelum_pajak'])) ?></td>
+                        <td>Rp <?= html_escape(format_nominal($detail['nilai_pajak'])) ?></td>
+                        <td>Rp <?= html_escape(format_nominal($detail['subtotal'])) ?></td>
                     </tr>
                 <?php endforeach; ?>
                 </tbody>
@@ -175,7 +176,7 @@ foreach ($cash_accounts as $account) {
                 <td><?= html_escape($item->nomor_transaksi) ?></td>
                 <td><?= html_escape($item->nama_pemasok) ?></td>
                 <td><?= html_escape($item->cara_pembayaran === 'kredit' ? 'Kredit' : 'Tunai') ?></td>
-                <td>Rp <?= html_escape($item->total) ?></td>
+                <td>Rp <?= html_escape(format_nominal($item->total)) ?></td>
                 <td><?php if ($item->lampiran_nama): ?><a href="<?= site_url('lampiran/unduh/' . (int) $item->id_transaksi) ?>">Unduh</a><?php else: ?>-<?php endif; ?></td>
                 <td><?= html_escape($item->status) ?></td>
                 <td><a class="btn btn-default btn-xs" href="<?= site_url('pembelian?id=' . (int) $item->id_transaksi) ?>">Lihat</a></td>

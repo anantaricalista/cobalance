@@ -10,7 +10,7 @@
             <tr>
                 <td><?= html_escape($row->kode_produk) ?></td><td><?= html_escape($row->nama_produk) ?></td>
                 <td><?= html_escape($row->satuan) ?></td><td><?= html_escape($row->jumlah) ?></td>
-                <td><?= html_escape($row->nilai) ?></td><td><?= html_escape($row->harga_pokok_rata_rata) ?></td>
+                <td><?= html_escape(format_nominal($row->nilai)) ?></td><td><?= html_escape(format_nominal($row->harga_pokok_rata_rata, 6)) ?></td>
                 <td><?= $row->aktif ? 'Aktif' : 'Tidak aktif' ?></td>
                 <td><a href="<?= site_url('persediaan?produk=' . (int) $row->id_produk) ?>">Lihat mutasi</a></td>
             </tr>
@@ -31,8 +31,8 @@
                     <td><?= html_escape($row->tanggal) ?></td><td><?= html_escape($row->nomor_transaksi) ?></td>
                     <td><?= html_escape($row->jenis_transaksi) ?></td><td><?= html_escape($row->status) ?></td>
                     <td><?= html_escape($row->jenis_mutasi) ?></td><td><?= html_escape($row->jumlah) ?></td>
-                    <td><?= html_escape($row->nilai) ?></td><td><?= html_escape($row->saldo_jumlah) ?></td>
-                    <td><?= html_escape($row->saldo_nilai) ?></td><td><?= html_escape($row->harga_pokok_rata_rata) ?></td>
+                    <td><?= html_escape(format_nominal($row->nilai)) ?></td><td><?= html_escape($row->saldo_jumlah) ?></td>
+                    <td><?= html_escape(format_nominal($row->saldo_nilai)) ?></td><td><?= html_escape(format_nominal($row->harga_pokok_rata_rata, 6)) ?></td>
                 </tr>
             <?php endforeach; ?>
             <?php if (!$riwayat['mutasi']): ?><tr><td colspan="10">Belum ada mutasi.</td></tr><?php endif; ?>

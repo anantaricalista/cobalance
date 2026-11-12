@@ -97,7 +97,7 @@
             <td><?php echo $row->kode_akun; ?></td>
             <td style="text-align:left;"><?php echo ($row->id_akun_induk ? '&nbsp;&nbsp;&nbsp;' : '') . $row->nama_akun; ?></td>
             <td><?php echo $row->tipe_akun; ?></td>
-            <td style="text-align:right;">Rp <?php echo number_format($row->saldo, 2, ',', '.'); ?></td>
+            <td style="text-align:right;">Rp <?php echo format_nominal($row->saldo); ?></td>
           </tr>
       <?php endforeach; ?>
     </tbody>

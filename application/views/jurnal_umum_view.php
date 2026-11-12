@@ -93,10 +93,7 @@
 
     // Fungsi untuk memformat angka ke format Rupiah
     function formatRupiah(num) {
-        return "Rp " + parseFloat(num).toLocaleString('id-ID', {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-        });
+        return "Rp " + MoneyInput.display(num);
     }
 
     function view_detail(id) {

@@ -87,12 +87,12 @@
             <td colspan="4" style="text-align:center;"><em>Saldo Awal</em></td>
             <td></td>
             <td style="text-align:right;">Rp.
-                <?php echo number_format($opening, 2, ',', '.'); ?>
+                <?php echo format_nominal($opening); ?>
             </td>
         </tr>
         <?php $no = 1; ?>
         <?php foreach ($transactions as $trx):
-            $running_balance += ($trx->debit - $trx->kredit);
+            $running_balance = kurangi_nominal(jumlah_nominal($running_balance, $trx->debit), $trx->kredit);
             ?>
             <tr>
                 <td>
@@ -108,13 +108,13 @@
                     <?php echo $trx->referensi; ?>
                 </td>
                 <td style="text-align:right;">Rp.
-                    <?php echo number_format($trx->debit, 2, ',', '.'); ?>
+                    <?php echo format_nominal($trx->debit === null ? '0' : $trx->debit); ?>
                 </td>
                 <td style="text-align:right;">Rp.
-                    <?php echo number_format($trx->kredit, 2, ',', '.'); ?>
+                    <?php echo format_nominal($trx->kredit === null ? '0' : $trx->kredit); ?>
                 </td>
                 <td style="text-align:right;">Rp.
-                    <?php echo number_format($running_balance, 2, ',', '.'); ?>
+                    <?php echo format_nominal($running_balance); ?>
                 </td>
             </tr>
         <?php endforeach; ?>

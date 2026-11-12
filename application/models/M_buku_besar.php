@@ -22,7 +22,7 @@ class M_buku_besar extends CI_Model
         $this->db->where('jt.tanggal <', $start_date);
         $query = $this->db->get();
         $row = $query->row();
-        return ($row->total_debit - $row->total_kredit);
+        return kurangi_nominal($row->total_debit, $row->total_kredit);
     }
 
     // Ambil seluruh transaksi untuk akun dalam rentang tanggal

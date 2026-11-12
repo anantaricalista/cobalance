@@ -63,6 +63,8 @@ abstract class Master_Controller extends MY_Controller
                     $value = $this->config_master['fields'][$field]['options'][$value];
                 } elseif ($this->config_master['fields'][$field]['type'] === 'account') {
                     $value = isset($accounts[$value]) ? $accounts[$value] : '-';
+                } elseif ($this->config_master['table'] === 'produk' && $field === 'harga_jual') {
+                    $value = format_nominal($value);
                 }
                 $row[] = html_escape((string) $value);
             }

@@ -17,6 +17,7 @@ foreach ($cash_accounts as $account) {
 }
 ?>
 <h3>Pembayaran Utang</h3>
+<p class="text-muted" role="note">Nominal: gunakan titik untuk ribuan dan koma untuk desimal, misalnya <strong>1.000,50</strong>. Angka diformat setelah kolom ditinggalkan.</p>
 <p>Pembayaran dialokasikan ke tagihan pemasok (pembelian kredit atau saldo awal utang). Saat diposting, jurnal otomatis mendebit utang usaha dan mengkredit kas/bank.</p>
 
 <?php if ($transaction): ?>
@@ -27,7 +28,7 @@ foreach ($cash_accounts as $account) {
         &nbsp; <strong>Status:</strong> <?= html_escape($transaction->status) ?>
         <?php if (!$editable): ?>
             &nbsp; <strong>Pemasok:</strong> <?= html_escape($transaction->nama_pemasok) ?>
-            &nbsp; <strong>Total:</strong> Rp <?= html_escape($transaction->total) ?>
+            &nbsp; <strong>Total:</strong> Rp <?= html_escape(format_nominal($transaction->total)) ?>
         <?php endif; ?>
     </p>
     <?php if (!$editable): ?>
@@ -39,8 +40,8 @@ foreach ($cash_accounts as $account) {
                     <tr>
                         <td><?= html_escape($row['nomor_transaksi']) ?></td>
                         <td><?= html_escape($row['tanggal']) ?></td>
-                        <td>Rp <?= html_escape($row['total']) ?></td>
-                        <td>Rp <?= html_escape($row['jumlah']) ?></td>
+                        <td>Rp <?= html_escape(format_nominal($row['total'])) ?></td>
+                        <td>Rp <?= html_escape(format_nominal($row['jumlah'])) ?></td>
                     </tr>
                 <?php endforeach; ?>
                 </tbody>
@@ -132,7 +133,7 @@ foreach ($cash_accounts as $account) {
                 <td><?= html_escape($item->tanggal) ?></td>
                 <td><?= html_escape($item->nomor_transaksi) ?></td>
                 <td><?= html_escape($item->nama_pemasok) ?></td>
-                <td>Rp <?= html_escape($item->total) ?></td>
+                <td>Rp <?= html_escape(format_nominal($item->total)) ?></td>
                 <td><?php if ($item->lampiran_nama): ?><a href="<?= site_url('lampiran/unduh/' . (int) $item->id_transaksi) ?>">Unduh</a><?php else: ?>-<?php endif; ?></td>
                 <td><?= html_escape($item->status) ?></td>
                 <td><a class="btn btn-default btn-xs" href="<?= site_url('pembayaran_utang?id=' . (int) $item->id_transaksi) ?>">Lihat</a></td>
@@ -188,8 +189,8 @@ $(function () {
                 .append($('<td>').text(row.nomor_transaksi))
                 .append($('<td>').text(row.tanggal))
                 .append($('<td>').text(row.jatuh_tempo || '-'))
-                .append($('<td>').text('Rp ' + row.total))
-                .append($('<td>').text('Rp ' + row.sisa))
+                .append($('<td>').text('Rp ' + MoneyInput.display(row.total)))
+                .append($('<td>').text('Rp ' + MoneyInput.display(row.sisa)))
                 .append($('<td>').append(amount));
             body.append(tr);
         });

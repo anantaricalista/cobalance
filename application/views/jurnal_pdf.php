@@ -119,11 +119,11 @@
         </tr>
         <?php
         $no = 1;
-        $totalDebit = 0;
-        $totalKredit = 0;
+        $totalDebit = '0.00';
+        $totalKredit = '0.00';
         foreach ($jurnal->detail as $detail):
-            $totalDebit += $detail->debit;
-            $totalKredit += $detail->kredit;
+            $totalDebit = jumlah_nominal($totalDebit, $detail->debit);
+            $totalKredit = jumlah_nominal($totalKredit, $detail->kredit);
             ?>
             <tr>
                 <td>
@@ -133,10 +133,10 @@
                     <?php echo $detail->nama_akun . ' (' . $detail->kode_akun . ')'; ?>
                 </td>
                 <td style="text-align: right;">
-                    <?php echo number_format($detail->debit, 2, ',', '.'); ?>
+                    <?php echo format_nominal($detail->debit === null ? '0' : $detail->debit); ?>
                 </td>
                 <td style="text-align: right;">
-                    <?php echo number_format($detail->kredit, 2, ',', '.'); ?>
+                    <?php echo format_nominal($detail->kredit === null ? '0' : $detail->kredit); ?>
                 </td>
             </tr>
         <?php endforeach; ?>
@@ -144,10 +144,10 @@
             <tr class="total-row">
                 <td colspan="2">Total</td>
                 <td style="text-align: right;">
-                    <?php echo number_format($totalDebit, 2, ',', '.'); ?>
+                    <?php echo format_nominal($totalDebit); ?>
                 </td>
                 <td style="text-align: right;">
-                    <?php echo number_format($totalKredit, 2, ',', '.'); ?>
+                    <?php echo format_nominal($totalKredit); ?>
                 </td>
             </tr>
         </tfoot>

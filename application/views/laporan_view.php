@@ -33,13 +33,13 @@
                             <?php echo $row->nama_akun; ?>
                         </td>
                         <td style="text-align:right;">
-                            <?php echo number_format($row->total_debit, 2, ',', '.'); ?>
+                            <?php echo format_nominal($row->total_debit); ?>
                         </td>
                         <td style="text-align:right;">
-                            <?php echo number_format($row->total_kredit, 2, ',', '.'); ?>
+                            <?php echo format_nominal($row->total_kredit); ?>
                         </td>
                         <td style="text-align:right;">
-                            <?php echo number_format($row->saldo, 2, ',', '.'); ?>
+                            <?php echo format_nominal($row->saldo); ?>
                         </td>
                     </tr>
                 <?php endforeach; ?>
@@ -51,25 +51,25 @@
         </tbody>
         <tfoot>
             <?php
-            $totalDebit = 0;
-            $totalKredit = 0;
-            $totalSaldo = 0;
+            $totalDebit = '0.00';
+            $totalKredit = '0.00';
+            $totalSaldo = '0.00';
             foreach ($laporan as $row) {
-                $totalDebit += $row->total_debit;
-                $totalKredit += $row->total_kredit;
-                $totalSaldo += $row->saldo;
+                $totalDebit = jumlah_nominal($totalDebit, $row->total_debit);
+                $totalKredit = jumlah_nominal($totalKredit, $row->total_kredit);
+                $totalSaldo = jumlah_nominal($totalSaldo, $row->saldo);
             }
             ?>
             <tr style="font-weight:bold;">
                 <td colspan="2" style="text-align:right;">Total</td>
                 <td style="text-align:right;">
-                    <?php echo number_format($totalDebit, 2, ',', '.'); ?>
+                    <?php echo format_nominal($totalDebit); ?>
                 </td>
                 <td style="text-align:right;">
-                    <?php echo number_format($totalKredit, 2, ',', '.'); ?>
+                    <?php echo format_nominal($totalKredit); ?>
                 </td>
                 <td style="text-align:right;">
-                    <?php echo number_format($totalSaldo, 2, ',', '.'); ?>
+                    <?php echo format_nominal($totalSaldo); ?>
                 </td>
             </tr>
         </tfoot>

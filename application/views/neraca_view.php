@@ -37,10 +37,7 @@
     }
 
     function formatRupiah(num) {
-        var formatted = parseFloat(num).toLocaleString('id-ID', {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-        });
+        var formatted = MoneyInput.display(num);
         return '<div style="display: flex; justify-content: space-between; width: 100%;">' +
             '<span>Rp.</span>' +
             '<span>' + formatted + '</span>' +
@@ -65,7 +62,7 @@
                 html += '    <table class="table table-striped table-bordered">';
                 html += '      <thead><tr><th style="width:80px;">Kode Akun</th><th>Nama Akun</th><th style="width:150px; text-align:right;">Saldo</th></tr></thead>';
                 html += '      <tbody>';
-                var total_aset = 0;
+                var total_aset = BigInt(0);
                 for (var i = 0; i < data.aset.length; i++) {
                     var row = data.aset[i];
                     html += '<tr>';
@@ -73,10 +70,10 @@
                     html += '<td>' + row.nama_akun + '</td>';
                     html += '<td style="text-align:right;">' + formatRupiah(row.total_balance) + '</td>';
                     html += '</tr>';
-                    total_aset += parseFloat(row.total_balance);
+                    total_aset += MoneyInput.cents(row.total_balance);
                 }
                 html += '      </tbody>';
-                html += '      <tfoot><tr style="font-weight:bold;"><td colspan="2" style="text-align:right;">Total Aset</td><td style="text-align:right;">' + formatRupiah(total_aset) + '</td></tr></tfoot>';
+                html += '      <tfoot><tr style="font-weight:bold;"><td colspan="2" style="text-align:right;">Total Aset</td><td style="text-align:right;">' + formatRupiah(MoneyInput.fromCents(total_aset)) + '</td></tr></tfoot>';
                 html += '    </table>';
                 html += '  </div>';
 
@@ -87,7 +84,7 @@
                 html += '    <table class="table table-striped table-bordered">';
                 html += '      <thead><tr><th style="width:80px;">Kode Akun</th><th>Nama Akun</th><th style="width:150px; text-align:right;">Saldo</th></tr></thead>';
                 html += '      <tbody>';
-                var total_liabilitas = 0;
+                var total_liabilitas = BigInt(0);
                 for (var j = 0; j < data.liabilitas.length; j++) {
                     var row = data.liabilitas[j];
                     html += '<tr>';
@@ -95,10 +92,10 @@
                     html += '<td>' + row.nama_akun + '</td>';
                     html += '<td style="text-align:right;">' + formatRupiah(row.total_balance) + '</td>';
                     html += '</tr>';
-                    total_liabilitas += parseFloat(row.total_balance);
+                    total_liabilitas += MoneyInput.cents(row.total_balance);
                 }
                 html += '      </tbody>';
-                html += '      <tfoot><tr style="font-weight:bold;"><td colspan="2" style="text-align:right;">Total Liabilitas</td><td style="text-align:right;">' + formatRupiah(total_liabilitas) + '</td></tr></tfoot>';
+                html += '      <tfoot><tr style="font-weight:bold;"><td colspan="2" style="text-align:right;">Total Liabilitas</td><td style="text-align:right;">' + formatRupiah(MoneyInput.fromCents(total_liabilitas)) + '</td></tr></tfoot>';
                 html += '    </table>';
 
                 // Tabel Ekuitas
@@ -106,7 +103,7 @@
                 html += '    <table class="table table-striped table-bordered">';
                 html += '      <thead><tr><th style="width:80px;">Kode Akun</th><th>Nama Akun</th><th style="width:150px; text-align:right;">Saldo</th></tr></thead>';
                 html += '      <tbody>';
-                var total_ekuitas = 0;
+                var total_ekuitas = BigInt(0);
                 for (var k = 0; k < data.ekuitas.length; k++) {
                     var row = data.ekuitas[k];
                     html += '<tr>';
@@ -114,10 +111,10 @@
                     html += '<td>' + row.nama_akun + '</td>';
                     html += '<td style="text-align:right;">' + formatRupiah(row.total_balance) + '</td>';
                     html += '</tr>';
-                    total_ekuitas += parseFloat(row.total_balance);
+                    total_ekuitas += MoneyInput.cents(row.total_balance);
                 }
                 html += '      </tbody>';
-                html += '      <tfoot><tr style="font-weight:bold;"><td colspan="2" style="text-align:right;">Total Ekuitas</td><td style="text-align:right;">' + formatRupiah(total_ekuitas) + '</td></tr></tfoot>';
+                html += '      <tfoot><tr style="font-weight:bold;"><td colspan="2" style="text-align:right;">Total Ekuitas</td><td style="text-align:right;">' + formatRupiah(MoneyInput.fromCents(total_ekuitas)) + '</td></tr></tfoot>';
                 html += '    </table>';
                 html += '  </div>';
                 html += '</div>';

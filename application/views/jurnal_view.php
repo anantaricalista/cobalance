@@ -117,8 +117,8 @@
                     $('#journal-detail-date').text(journal.tanggal || '-');
                     $('#journal-detail-description').text(journal.deskripsi || '-');
                     $('#journal-detail-reference').text(journal.referensi || '-');
-                    var debitTotal = 0;
-                    var creditTotal = 0;
+                    var debitTotal = BigInt(0);
+                    var creditTotal = BigInt(0);
                     (journal.details || []).forEach(function (detail) {
                         var debit = moneyCents(detail.debit);
                         var credit = moneyCents(detail.kredit);
@@ -151,15 +151,11 @@
     });
 
     function moneyCents(value) {
-        var parts = String(value == null ? '0' : value).split('.');
-        var whole = /^\d+$/.test(parts[0]) ? Number(parts[0]) : 0;
-        var fraction = (parts[1] || '').slice(0, 2).padEnd(2, '0');
-        return whole * 100 + Number(fraction);
+        return MoneyInput.cents(value == null ? '0' : value);
     }
 
     function formatMoney(cents) {
-        var whole = Math.floor(cents / 100).toLocaleString('id-ID');
-        var fraction = String(cents % 100).padStart(2, '0');
-        return 'Rp ' + whole + ',' + fraction;
+        return 'Rp ' + MoneyInput.display(MoneyInput.fromCents(cents));
     }
+
 </script>

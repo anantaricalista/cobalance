@@ -122,7 +122,7 @@
                             <?php echo $row->nama_akun; ?>
                         </td>
                         <td style="text-align:right;">Rp
-                            <?php echo number_format($row->amount, 2, ',', '.'); ?>
+                            <?php echo format_nominal($row->amount); ?>
                         </td>
                     </tr>
                 <?php endforeach; ?>
@@ -136,7 +136,7 @@
             <tr style="font-weight:bold;">
                 <td colspan="2" style="text-align:right;">Total Pendapatan</td>
                 <td style="text-align:right;">Rp
-                    <?php echo number_format($total_pendapatan, 2, ',', '.'); ?>
+                    <?php echo format_nominal($total_pendapatan); ?>
                 </td>
             </tr>
         </tfoot>
@@ -163,7 +163,7 @@
                             <?php echo $row->nama_akun; ?>
                         </td>
                         <td style="text-align:right;">Rp
-                            <?php echo number_format($row->amount, 2, ',', '.'); ?>
+                            <?php echo format_nominal($row->amount); ?>
                         </td>
                     </tr>
                 <?php endforeach; ?>
@@ -177,7 +177,7 @@
             <tr style="font-weight:bold;">
                 <td colspan="2" style="text-align:right;">Total Beban</td>
                 <td style="text-align:right;">Rp
-                    <?php echo number_format($total_beban, 2, ',', '.'); ?>
+                    <?php echo format_nominal($total_beban); ?>
                 </td>
             </tr>
         </tfoot>
@@ -185,7 +185,7 @@
 
     <!-- Laba Bersih -->
     <h3 style="text-align:right;">Laba Bersih: Rp
-        <?php echo number_format($laba_bersih, 2, ',', '.'); ?>
+        <?php echo format_nominal($laba_bersih); ?>
     </h3>
 
     <div class="footer">
