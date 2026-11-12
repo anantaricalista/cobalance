@@ -3,6 +3,20 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 class M_pengguna extends CI_Model
 {
+    public function roles()
+    {
+        return array(
+            'user' => 'User',
+            'admin' => 'Admin Perusahaan',
+            'kasir' => 'Kasir',
+            'penjualan' => 'Penjualan',
+            'purchasing' => 'Purchasing',
+            'gudang' => 'Gudang',
+            'keuangan' => 'Keuangan',
+            'akuntansi' => 'Akuntansi',
+            'manajer' => 'Manajer / Pemilik'
+        );
+    }
 
     public function __construct()
     {
@@ -80,6 +94,17 @@ class M_pengguna extends CI_Model
         }
 
         try {
+            $role_column = $this->db->query(
+                "SELECT LOCATE(?, COLUMN_TYPE) AS tersedia FROM information_schema.COLUMNS
+                WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'pengguna' AND COLUMN_NAME = 'role'",
+                array("'" . $data['role'] . "'")
+            );
+            if (!$role_column || !$role_column->row()) {
+                throw new RuntimeException('Tidak dapat memeriksa skema role pengguna.');
+            }
+            if ((int) $role_column->row()->tersedia === 0) {
+                throw new DomainException('Role belum tersedia di database. Jalankan migrasi role pengguna terlebih dahulu.');
+            }
             $company_row = $this->db->query(
                 'SELECT id_perusahaan FROM perusahaan WHERE id_perusahaan = ? FOR UPDATE',
                 array($company)
@@ -127,7 +152,7 @@ class M_pengguna extends CI_Model
             if (!$admin_rows && $data['role'] !== 'admin') {
                 throw new DomainException('Perusahaan harus memiliki satu admin. Pilih role admin untuk pengguna ini.');
             }
-            if ($data['role'] === 'user' && $target && $target->role === 'admin' && count($admin_rows) <= 1) {
+            if ($data['role'] !== 'admin' && $target && $target->role === 'admin' && count($admin_rows) <= 1) {
                 throw new DomainException('Perusahaan harus memiliki satu admin. Tetapkan admin pengganti sebelum mengubah role ini.');
             }
 

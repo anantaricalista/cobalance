@@ -18,7 +18,9 @@ Sebelum mencatat transaksi, buka menu **Master** dan lengkapi data berikut:
 1. **Akun** — periksa Bagan Akun. Tambahkan akun yang diperlukan dengan tipe dan
    akun induk yang sesuai. Transaksi memakai akun rincian, bukan akun induk.
 2. **Pengguna** — kelola akun yang dapat masuk ke perusahaan ini dan pilih role
-   **Admin Perusahaan** atau **User**. Perusahaan hanya memiliki satu admin;
+   **Admin Perusahaan**, **User**, **Kasir**, **Penjualan**, **Purchasing**,
+   **Gudang**, **Keuangan**, **Akuntansi**, atau **Manajer / Pemilik**. Role
+   belum membatasi akses modul dan belum memiliki tampilan khusus. Perusahaan hanya memiliki satu admin;
    memilih Admin untuk pengguna lain akan memindahkan role admin saat ini menjadi
    User. Password baru minimal 8 karakter; password saat mengedit boleh dikosongkan
    agar tidak berubah.

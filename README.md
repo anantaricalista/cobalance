@@ -65,6 +65,12 @@ setelah migrasi login. Migrasi menegakkan paling banyak satu pengguna ber-role
 perusahaan sudah memiliki lebih dari satu admin, selesaikan duplikatnya dahulu
 karena migrasi akan gagal. Perusahaan lama tanpa admin tidak diubah otomatis.
 
+Untuk pilihan role tambahan di Master Pengguna, cadangkan database lalu jalankan
+`application/sql/20261112_role_pengguna.sql` pada setiap database setelah migrasi
+admin perusahaan. Role lama `admin` dan `user` tetap dipertahankan. Role ini
+belum membatasi akses: setiap pengguna perusahaan yang login masih dapat membuka
+modul perusahaan, termasuk Master Pengguna.
+
 System admin dapat membuat perusahaan beserta satu admin dan menyalin seluruh
 master akun perusahaan ID 1, termasuk hubungan induknya, dalam satu transaksi.
 Perusahaan ID 1 harus tersedia dan mempunyai hierarki akun yang valid. Salinan

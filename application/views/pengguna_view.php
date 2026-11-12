@@ -9,7 +9,7 @@
     </div>
 </div>
 <p class="text-muted">
-    Role saat ini hanya membedakan Admin Perusahaan dan User. Pemilihan role belum membatasi akses ke modul.
+    Role menentukan peran pengguna. Pembatasan akses modul dan tampilan khusus belum diterapkan.
 </p>
 
 <div class="table-responsive">
@@ -56,8 +56,9 @@
                     <div class="form-group">
                         <label for="role">Role</label>
                         <select id="role" name="role" class="form-control" required>
-                            <option value="user">User</option>
-                            <option value="admin">Admin Perusahaan</option>
+                            <?php foreach ($roles as $value => $label): ?>
+                                <option value="<?= html_escape($value) ?>"><?= html_escape($label) ?></option>
+                            <?php endforeach; ?>
                         </select>
                         <p class="help-block">Perusahaan memiliki satu admin. Memilih admin baru akan memindahkan role admin saat ini menjadi User.</p>
                     </div>

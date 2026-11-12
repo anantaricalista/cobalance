@@ -17,7 +17,7 @@ class Pengguna extends MY_Controller
             $this->session->set_userdata('user_form_token', $token);
         }
         $this->load->view('template/header');
-        $this->load->view('pengguna_view', array('form_token' => $token));
+        $this->load->view('pengguna_view', array('form_token' => $token, 'roles' => $this->pengguna->roles()));
         $this->load->view('template/footer');
     }
 
@@ -36,6 +36,7 @@ class Pengguna extends MY_Controller
         $length = (int) $this->input->post('length');
         $length = $length === -1 ? -1 : max(1, min(100, $length));
         $company = $this->company_id();
+        $roles = $this->pengguna->roles();
         $rows = array();
         foreach ($this->pengguna->user_list($company, $search, $start, $length, $column, $direction) as $user) {
             $id = (int) $user->id_pengguna;
@@ -43,7 +44,7 @@ class Pengguna extends MY_Controller
                 ++$start,
                 html_escape($user->nama_lengkap),
                 html_escape($user->username),
-                $user->role === 'admin' ? 'Admin Perusahaan' : 'User',
+                html_escape(isset($roles[$user->role]) ? $roles[$user->role] : (string) $user->role),
                 '<button type="button" class="btn btn-sm btn-primary" title="Edit" onclick="edit_pengguna(' . $id . ')"><i class="glyphicon glyphicon-pencil"></i></button> '
                 . '<button type="button" class="btn btn-sm btn-danger" title="Hapus" onclick="delete_pengguna(' . $id . ')"><i class="glyphicon glyphicon-trash"></i></button>'
             );
@@ -93,7 +94,7 @@ class Pengguna extends MY_Controller
         if ($name === '' || $this->text_length($name) > 255
             || !preg_match('/\A[a-zA-Z0-9._-]{1,100}\z/', $username)
             || strcasecmp($username, 'system') === 0
-            || !in_array($role, array('admin', 'user'), true)
+            || !array_key_exists($role, $this->pengguna->roles())
             || ($id === null && $password === '')
             || ($password !== '' && (strlen($password) < 8 || strlen($password) > 72 || strpos($password, "\0") !== false))) {
             return $this->error('Periksa nama, username, role, dan password. Password baru harus 8–72 byte.', 400);
