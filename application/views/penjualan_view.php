@@ -51,12 +51,12 @@ foreach ($cash_accounts as $account) {
     <?php if (!$editable): ?>
         <div class="table-responsive">
             <table class="table table-bordered table-condensed">
-                <thead><tr><th>Produk/Jasa</th><th>Jumlah</th><th>Harga</th><th>Potongan</th><th>Pajak</th><th>Nilai sebelum pajak</th><th>Nilai pajak</th><th>Subtotal</th></tr></thead>
+                <thead><tr><th>Produk/Jasa</th><th>Jumlah</th><th>Harga per satuan</th><th>Diskon (Rp)</th><th>Pajak</th><th>Nilai sebelum pajak</th><th>Nilai pajak</th><th>Subtotal</th></tr></thead>
                 <tbody>
                 <?php foreach ($transaction->details as $detail): ?>
                     <tr>
                         <td><?= html_escape($detail['deskripsi']) ?></td>
-                        <td><?= html_escape($detail['jumlah']) ?> <?= html_escape($detail['satuan']) ?></td>
+                        <td><?= html_escape(strpos($detail['jumlah'], '.') !== false ? rtrim(rtrim($detail['jumlah'], '0'), '.') : $detail['jumlah']) ?> <?= html_escape($detail['satuan']) ?></td>
                         <td>Rp <?= html_escape(format_nominal($detail['harga'])) ?></td>
                         <td>Rp <?= html_escape(format_nominal($detail['diskon'])) ?></td>
                         <td><?= html_escape($detail['nama_pajak'] ? $detail['nama_pajak'] . ' (' . $detail['mode_pajak'] . ')' : 'Tidak dikenakan') ?></td>
@@ -128,14 +128,15 @@ foreach ($cash_accounts as $account) {
                 <?php endif; ?>
             </div>
             <h4>Rincian barang dan jasa</h4>
+            <p class="text-muted">Harga berlaku per satuan. Diskon adalah total potongan untuk seluruh jumlah pada setiap baris, bukan per satuan.</p>
             <div class="table-responsive">
                 <table class="table table-bordered table-condensed" id="sale-lines">
                     <thead>
                         <tr>
                             <th>Produk/Jasa</th>
                             <th>Jumlah</th>
-                            <th>Harga</th>
-                            <th>Potongan per rincian</th>
+                            <th>Harga per satuan</th>
+                            <th>Diskon (Rp)</th>
                             <th>Mode pajak</th>
                             <th>Pajak</th>
                             <?php if ($editable): ?><th>Aksi</th><?php endif; ?>
@@ -219,12 +220,14 @@ $(function () {
         });
         row.append($('<td>').append(product));
         [
-            ['jumlah', '1.0000', '0.0001'],
+            ['jumlah', '1', '0.0001'],
             ['harga', '', '0.01'],
             ['diskon', '0.00', '0.01']
         ].forEach(function (field) {
             var input = $('<input class="form-control" type="number" min="0" step="' + field[2] + '" required>');
-            input.attr('data-field', field[0]).val(values[field[0]] == null ? field[1] : values[field[0]]);
+            var value = values[field[0]] == null ? field[1] : values[field[0]];
+            if (field[0] === 'jumlah') value = String(value).replace(/(\.\d*?)0+$/, '$1').replace(/\.$/, '');
+            input.attr('data-field', field[0]).val(value);
             if (field[0] === 'jumlah') input.attr('min', '0.0001');
             else MoneyInput.init(input[0], input.val());
             row.append($('<td>').append(input));

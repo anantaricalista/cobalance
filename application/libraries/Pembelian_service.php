@@ -431,7 +431,7 @@ class Pembelian_service
         $gross = $this->cents($query->row()->gross);
         $discount_cents = $this->cents($discount);
         if ($discount_cents > $gross) {
-            throw new DomainException('Potongan per rincian tidak boleh melebihi nilai bruto.');
+            throw new DomainException('Diskon tidak boleh melebihi harga total pada baris tersebut.');
         }
         $base = $gross - $discount_cents;
         if ($mode === 'tidak_dikenakan' || $this->rate_units($rate) === 0) {
