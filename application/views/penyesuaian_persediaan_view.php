@@ -85,6 +85,12 @@ $(function () {
         'name' => $this->security->get_csrf_token_name(), 'value' => $this->security->get_csrf_hash())) ?><?php else: ?>null<?php endif; ?>;
     var currentId = <?= $transaction ? (int) $transaction->id_transaksi : 'null' ?>;
     if ($('#adjustment-value').length) MoneyInput.init($('#adjustment-value')[0], '');
+    if ($('#adjustment-form').length) {
+        var query = new URLSearchParams(location.search);
+        if (query.get('produk') && /^\d+$/.test(query.get('produk'))) $('#adjustment-product').val(query.get('produk'));
+        if (query.get('jumlah') && /^\d+(\.\d+)?$/.test(query.get('jumlah'))) { $('#adjustment-kind').val('opname'); $('#adjustment-quantity').val(query.get('jumlah')); }
+        if (query.get('ket')) $('#adjustment-description').val(query.get('ket').substring(0, 255));
+    }
     function request(url, data) {
         if (csrf) data.append(csrf.name, csrf.value);
         $('button').prop('disabled', true);
