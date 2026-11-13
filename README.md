@@ -18,6 +18,18 @@ Input nominal uang menggunakan format Indonesia, misalnya `1.000.000,50`
 (titik untuk ribuan dan koma untuk desimal, maksimal dua angka desimal).
 Jumlah barang, umur manfaat, dan persentase pajak tidak memakai format ini.
 
+## Tampilan
+
+Layout perusahaan menggunakan navigasi samping yang menyesuaikan menu setiap role,
+serta menu yang dapat dibuka pada layar kecil. Halaman login dan system admin
+mengikuti palet tampilan yang sama.
+
+Layout ini mengadaptasi pola AdminLTE untuk Co-Balance melalui
+`assets/css/cobalance-layout.css`, bukan memuat CSS/JavaScript AdminLTE 4 secara
+global. Komponen aplikasi saat ini masih menggunakan Bootstrap 3, sehingga
+memuat Bootstrap 5 yang terkandung dalam AdminLTE 4 secara langsung dapat
+mengubah perilaku modal, dropdown, tabel dan komponen lain.
+
 ## Keamanan login
 
 Sebelum memperbarui aplikasi, cadangkan database dan jalankan

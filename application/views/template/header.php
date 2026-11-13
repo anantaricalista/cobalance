@@ -798,29 +798,34 @@
             }
         }
     </style>
+    <link href="<?= base_url('assets/css/cobalance-layout.css') ?>" rel="stylesheet">
 </head>
 
-<body class="<?php echo in_array($this->router->fetch_class(), array(
+<body class="cb-layout <?php echo in_array($this->router->fetch_class(), array(
     'penjualan', 'penerimaan_piutang', 'pembelian', 'pembayaran_utang', 'kas_bank', 'aset_tetap',
     'persediaan', 'penyesuaian_persediaan', 'usulan_opname', 'retur_persediaan', 'modal_prive', 'penyesuaian_akuntansi',
     'saldo_awal', 'jurnal'
 ), true) ? 'transaction-ui' : ''; ?>">
+    <header class="cb-topbar">
+        <button type="button" class="cb-menu-toggle" aria-label="Buka menu navigasi" aria-controls="cb-sidebar" aria-expanded="false">
+            <span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span>
+        </button>
+        <div class="cb-topbar-title">Ruang Kerja <strong>Co-Balance</strong></div>
+        <div class="cb-topbar-company"><?= html_escape($this->session->userdata('nama_perusahaan')) ?></div>
+        <a class="cb-topbar-logout" href="<?= site_url('auth/logout') ?>" title="Keluar">
+            <span class="glyphicon glyphicon-log-out" aria-hidden="true"></span><span class="cb-logout-label"> Keluar</span>
+        </a>
+    </header>
+    <div class="cb-sidebar-backdrop" hidden></div>
     <!-- Navigation Bar -->
-    <nav class="navbar navbar-default sticky-header">
+    <nav id="cb-sidebar" class="navbar navbar-default sticky-header cb-sidebar" aria-label="Navigasi utama">
         <div class="container-fluid">
             <!-- Brand and toggle -->
             <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-menu"
-                    aria-expanded="false">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="<?php echo site_url(isset(MY_Controller::$role_scope[$this->session->userdata('role')]) ? MY_Controller::$role_scope[$this->session->userdata('role')]['home'] : ''); ?>">Co-Balance</a>
+                <a class="navbar-brand" href="<?php echo site_url(isset(MY_Controller::$role_scope[$this->session->userdata('role')]) ? MY_Controller::$role_scope[$this->session->userdata('role')]['home'] : ''); ?>"><span class="cb-brand-icon" aria-hidden="true">C</span><span>Co-Balance<small>Ruang kerja keuangan</small></span></a>
             </div>
             <!-- Menu Items -->
-            <div class="collapse navbar-collapse" id="navbar-menu">
+            <div class="navbar-collapse" id="navbar-menu">
                 <?php if ($this->session->userdata('role') === 'gudang'): ?>
                 <ul class="nav navbar-nav">
                     <li <?php if ($this->router->fetch_class() == 'beranda') echo 'class="active"'; ?>><a href="<?php echo site_url('gudang/beranda'); ?>">Beranda</a></li>
@@ -837,6 +842,7 @@
                 </ul>
                 <?php else: ?>
                 <ul class="nav navbar-nav">
+                    <li <?php if ($this->router->fetch_class() == 'dashboard') echo 'class="active"'; ?>><a href="<?= site_url('dashboard') ?>"><span class="glyphicon glyphicon-home cb-nav-icon" aria-hidden="true"></span>Beranda</a></li>
                     <li class="dropdown <?php if (in_array($this->router->fetch_class(), array('akun', 'pengguna', 'pelanggan', 'pemasok', 'produk', 'pajak', 'pengaturan_akun')))
                         echo 'active'; ?>">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
@@ -931,23 +937,10 @@
                     </li>
                 </ul>
                 <?php endif; ?>
-                <!-- Right-side: tampilkan nama perusahaan dan logout (hanya ikon) -->
-                <ul class="nav navbar-nav navbar-right">
-                    <li>
-                        <a href="javascript:void(0)" style="cursor: default;">
-                            <?php echo $this->session->userdata('nama_perusahaan'); ?>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="<?php echo site_url('auth/logout'); ?>" title="Logout">
-                            <i class="glyphicon glyphicon-log-out"></i>
-                        </a>
-                    </li>
-                </ul>
             </div><!-- /.navbar-collapse -->
         </div><!-- /.container-fluid -->
     </nav>
-    <div class="container content-container">
+    <main class="container content-container">
 
 
         <!-- jQuery -->
@@ -960,4 +953,5 @@
         <!-- DataTable JS -->
         <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
         <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap.min.js"></script>
+        <script src="<?= base_url('assets/js/cobalance-layout.js') ?>"></script>
         <?php $this->load->view('template/transaction_ui'); ?>

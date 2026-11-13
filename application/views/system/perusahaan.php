@@ -6,16 +6,19 @@
     <title>System Admin - Co-Balance</title>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        body { background: #f4f7fb; color: #263248; }
-        .system-bar { background: #256c76; color: #fff; padding: 18px 0; }
+        body { background: #f4f6f9; color: #263248; }
+        .system-bar { background: #243444; color: #fff; padding: 18px 0; box-shadow: 0 3px 14px rgba(23,38,55,.14); }
         .system-bar h1 { margin: 0; font-size: 22px; font-weight: 700; }
         .system-bar p { margin: 4px 0 0; color: #d7eff0; }
         .system-content { padding-top: 25px; padding-bottom: 30px; }
-        .system-panel { background: white; border: 1px solid #e1e8f0; border-radius: 9px; margin-bottom: 22px; padding: 22px; }
+        .system-panel { background: white; border: 1px solid #e1e8f0; border-radius: 10px; margin-bottom: 22px; padding: 24px; box-shadow: 0 4px 14px rgba(27,49,79,.05); }
         .system-panel h2 { margin: 0 0 8px; color: #183153; font-size: 19px; font-weight: 700; }
         .system-panel .help { margin-bottom: 20px; color: #687a91; }
         .system-panel label { color: #42536b; }
-        .system-panel .form-control { border-radius: 6px; }
+        .system-panel .form-control { border-color: #d6dfe8; border-radius: 6px; box-shadow: none; }
+        .system-panel .form-control:focus { border-color: #4a93a5; box-shadow: 0 0 0 3px rgba(74,147,165,.13); }
+        .system-panel .btn-primary { border-color: #347e85; border-radius: 6px; background: #347e85; }
+        .system-panel .btn-primary:hover, .system-panel .btn-primary:focus { border-color: #28666c; background: #28666c; }
         .system-panel .table { margin-bottom: 0; }
         .system-panel .table th { white-space: nowrap; }
     </style>
