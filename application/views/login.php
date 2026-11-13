@@ -5,13 +5,16 @@
     <meta charset="UTF-8">
     <title>Masuk - Co-Balance</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/png" sizes="32x32" href="<?= base_url('assets/img/favicon-32.png') ?>">
+    <link rel="apple-touch-icon" sizes="180x180" href="<?= base_url('assets/img/apple-touch-icon.png') ?>">
     <!-- Bootstrap CSS -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px 15px; background: #f4f6f9; color: #29394c; }
         .login-shell { width: 100%; max-width: 430px; }
         .login-brand { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 23px; color: #243b5a; font-size: 24px; font-weight: 700; }
-        .login-brand-mark { display: flex; align-items: center; justify-content: center; width: 45px; height: 45px; border-radius: 12px; background: #347e85; color: #fff; }
+        .login-brand-mark { display: flex; align-items: center; justify-content: center; width: 54px; height: 54px; padding: 8px; border: 1px solid #e1e8f0; border-radius: 14px; background: #fff; box-shadow: 0 4px 14px rgba(27,49,79,.06); }
+        .login-brand-mark img { width: 100%; height: 100%; object-fit: contain; }
         .form-signin { padding: 32px; border: 1px solid #e1e8f0; border-radius: 12px; background: #fff; box-shadow: 0 12px 35px rgba(27,49,79,.08); }
         .form-signin h1 { margin: 0 0 8px; color: #243b5a; font-size: 23px; font-weight: 700; }
         .login-intro { margin-bottom: 24px; color: #718198; }
@@ -27,7 +30,7 @@
 
 <body>
     <div class="login-shell">
-        <div class="login-brand"><span class="login-brand-mark" aria-hidden="true">C</span>Co-Balance</div>
+        <div class="login-brand"><span class="login-brand-mark"><img src="<?= base_url('assets/img/cobalance-logo.png') ?>" alt=""></span>Co-Balance</div>
         <form class="form-signin" action="<?php echo site_url('auth/login'); ?>" method="post">
             <input type="hidden" name="login_token" value="<?php echo html_escape($login_token); ?>">
             <?php if ($this->config->item('csrf_protection')): ?>

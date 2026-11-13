@@ -4,12 +4,19 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>System Admin - Co-Balance</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="<?= base_url('assets/img/favicon-32.png') ?>">
+    <link rel="apple-touch-icon" sizes="180x180" href="<?= base_url('assets/img/apple-touch-icon.png') ?>">
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body { background: #f4f6f9; color: #263248; }
         .system-bar { background: #243444; color: #fff; padding: 18px 0; box-shadow: 0 3px 14px rgba(23,38,55,.14); }
         .system-bar h1 { margin: 0; font-size: 22px; font-weight: 700; }
         .system-bar p { margin: 4px 0 0; color: #d7eff0; }
+        .system-brand { display: flex; align-items: center; gap: 12px; }
+        .system-brand-logo { display: flex; flex: 0 0 44px; align-items: center; justify-content: center; width: 44px; height: 44px; padding: 6px; border-radius: 11px; background: #fff; }
+        .system-brand-logo img { width: 100%; height: 100%; object-fit: contain; }
+        .system-brand-text { min-width: 0; }
+        @media (max-width: 480px) { .system-bar h1 { font-size: 17px; } .system-bar p { font-size: 12px; } }
         .system-content { padding-top: 25px; padding-bottom: 30px; }
         .system-panel { background: white; border: 1px solid #e1e8f0; border-radius: 10px; margin-bottom: 22px; padding: 24px; box-shadow: 0 4px 14px rgba(27,49,79,.05); }
         .system-panel h2 { margin: 0 0 8px; color: #183153; font-size: 19px; font-weight: 700; }
@@ -33,8 +40,11 @@
                 <?php endif; ?>
                 <button class="btn btn-default btn-sm" type="submit">Keluar</button>
             </form>
-            <h1>Co-Balance · System Admin</h1>
-            <p>Pengelolaan perusahaan dan admin perusahaan</p>
+            <div class="system-brand">
+                <span class="system-brand-logo"><img src="<?= base_url('assets/img/cobalance-logo.png') ?>" alt=""></span>
+                <div class="system-brand-text"><h1>Co-Balance · System Admin</h1>
+                    <p>Pengelolaan perusahaan dan admin perusahaan</p></div>
+            </div>
         </div>
     </header>
     <main class="container system-content">

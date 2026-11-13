@@ -67,7 +67,8 @@
 }
 .cb-sidebar .navbar-brand:hover, .cb-sidebar .navbar-brand:focus { color: #fff; }
 .cb-sidebar .navbar-brand small { display: block; margin-top: 4px; color: #a8b8c5; font-size: 11px; font-weight: 400; }
-.cb-brand-icon { display: flex; align-items: center; justify-content: center; width: 38px; height: 38px; border-radius: 10px; background: #46a2a3; color: #fff; }
+.cb-brand-icon { display: flex; flex: 0 0 40px; align-items: center; justify-content: center; width: 40px; height: 40px; padding: 6px; border-radius: 11px; background: #fff; }
+.cb-brand-icon img { display: block; width: 100%; height: 100%; object-fit: contain; }
 .cb-sidebar #navbar-menu { display: block; height: auto; padding: 12px; border: 0; box-shadow: none; }
 .cb-sidebar .navbar-nav { float: none; margin: 0; }
 .cb-sidebar .navbar-nav > li { float: none; margin-bottom: 3px; }

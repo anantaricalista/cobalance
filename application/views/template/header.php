@@ -5,6 +5,8 @@
     <meta charset="utf-8">
     <title>Co-Balance</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/png" sizes="32x32" href="<?= base_url('assets/img/favicon-32.png') ?>">
+    <link rel="apple-touch-icon" sizes="180x180" href="<?= base_url('assets/img/apple-touch-icon.png') ?>">
     <!-- Bootstrap CSS -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet">
     <!-- DataTables CSS (jika digunakan) -->
@@ -822,7 +824,7 @@
         <div class="container-fluid">
             <!-- Brand and toggle -->
             <div class="navbar-header">
-                <a class="navbar-brand" href="<?php echo site_url(isset(MY_Controller::$role_scope[$this->session->userdata('role')]) ? MY_Controller::$role_scope[$this->session->userdata('role')]['home'] : ''); ?>"><span class="cb-brand-icon" aria-hidden="true">C</span><span>Co-Balance<small>Ruang kerja keuangan</small></span></a>
+                <a class="navbar-brand" href="<?php echo site_url(isset(MY_Controller::$role_scope[$this->session->userdata('role')]) ? MY_Controller::$role_scope[$this->session->userdata('role')]['home'] : ''); ?>"><span class="cb-brand-icon"><img src="<?= base_url('assets/img/cobalance-logo.png') ?>" alt=""></span><span>Co-Balance<small>Ruang kerja keuangan</small></span></a>
             </div>
             <!-- Menu Items -->
             <div class="navbar-collapse" id="navbar-menu">
