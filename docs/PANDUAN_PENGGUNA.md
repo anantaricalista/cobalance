@@ -105,6 +105,7 @@ Gunakan modul pada menu **Transaksi** sesuai kegiatan:
 | Memeriksa dan menyesuaikan jumlah/nilai stok | Persediaan → Penyesuaian Persediaan |
 | Mencatat retur pembelian atau penjualan | Retur Pembelian/Penjualan |
 | Membuat jurnal penyesuaian manual | Penyesuaian Akuntansi |
+| Memindahkan Laba (Rugi) Berjalan tahun lalu ke Laba Ditahan | Penyesuaian Akuntansi → Pindahkan Saldo Laba (Rugi) Berjalan (jalankan `20261114_pemindahan_laba.sql` dahulu) |
 
 Alur transaksi umumnya:
 

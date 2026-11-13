@@ -12,6 +12,7 @@ class Penyesuaian_akuntansi_service
         $this->ci->load->library('session');
         $this->ci->load->library('transaksi_service');
         $this->ci->load->library('lampiran_service');
+        $this->ci->load->library('pemindahan_laba_service');
     }
 
     public function daftar()
@@ -48,6 +49,8 @@ class Penyesuaian_akuntansi_service
             array($company, $id));
         $this->ok($query);
         $transaction->details = $query->result();
+        $transfer = $this->ci->pemindahan_laba_service->untuk_transaksi($id);
+        $transaction->pemindahan_tahun = $transfer ? (int) $transfer->tahun : null;
         return $transaction;
     }
 
@@ -80,6 +83,9 @@ class Penyesuaian_akuntansi_service
             if (!$transaction || $transaction->status !== 'draft') {
                 throw new DomainException('Hanya draft penyesuaian milik perusahaan ini yang dapat diubah.');
             }
+            if ($this->ci->pemindahan_laba_service->untuk_transaksi($id)) {
+                throw new DomainException('Draft pemindahan laba dibuat otomatis. Perbarui melalui tombol Pindahkan Saldo Laba Berjalan.');
+            }
             $this->validate_accounts($company, $details);
             $this->ok($db->where('id_perusahaan', $company)->where('id_transaksi', $id)->update('transaksi',
                 array('tanggal' => $tanggal, 'deskripsi' => $description === '' ? 'Penyesuaian akuntansi' : $description)));
@@ -92,7 +98,9 @@ class Penyesuaian_akuntansi_service
 
     public function posting($id)
     {
-        return $this->ci->transaksi_service->posting($id, function ($transaction, $db) {
+        $transfer = $this->ci->pemindahan_laba_service->untuk_transaksi($id);
+        $parents = $transfer ? array((int) $transfer->id_akun_berjalan) : array();
+        return $this->ci->transaksi_service->posting($id, function ($transaction, $db) use ($transfer) {
             if ($transaction->jenis_transaksi !== 'penyesuaian_akuntansi') {
                 throw new DomainException('Transaksi penyesuaian akuntansi tidak ditemukan.');
             }
@@ -101,9 +109,13 @@ class Penyesuaian_akuntansi_service
                 array($transaction->id_perusahaan, $transaction->id_transaksi));
             $this->ok($query);
             $details = $this->normalize_details($query->result_array());
-            $this->validate_accounts($transaction->id_perusahaan, $details);
+            if ($transfer) {
+                $this->ci->pemindahan_laba_service->validasi_posting($transaction->id_perusahaan, $transaction->id_transaksi);
+            } else {
+                $this->validate_accounts($transaction->id_perusahaan, $details);
+            }
             return $details;
-        });
+        }, $parents);
     }
 
     public function batalkan($id, $tanggal, $alasan)

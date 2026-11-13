@@ -1048,7 +1048,7 @@ class Saldo_awal_service
             $journal = $this->ci->db->query("SELECT d.id_akun,d.debit,d.kredit
                 FROM transaksi_jurnal tj JOIN detail_jurnal d ON d.id_jurnal=tj.id_jurnal
                 WHERE tj.id_perusahaan=? AND tj.id_transaksi=? AND tj.jenis_jurnal='posting'
-                ORDER BY d.id_detail_jurnal", array($company, $transactionId));
+                ORDER BY d.id_detail", array($company, $transactionId));
             $this->ok($journal);
             $snapshot['jurnal'][$transactionId] = $journal->result_array();
         }

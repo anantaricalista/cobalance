@@ -1,5 +1,5 @@
 <?php
-$editable = !$transaction || $transaction->status === 'draft';
+$editable = (!$transaction || $transaction->status === 'draft') && !($transaction && $transaction->pemindahan_tahun);
 $accountMap = array();
 foreach ($accounts as $account) {
     $accountMap[] = array(
@@ -13,6 +13,44 @@ foreach ($accounts as $account) {
 <p class="text-muted" role="note">Nominal: pemisah ribuan ditambahkan otomatis; gunakan koma untuk desimal, misalnya <strong>1.000,50</strong>.</p>
 <p>Catat jurnal manual untuk koreksi atau penyesuaian. Setiap transaksi wajib seimbang dan hanya dapat menggunakan akun rinci.</p>
 <p><a href="<?= site_url('penyesuaian_akuntansi') ?>">Transaksi baru</a></p>
+<?php if ($this->can_post_transactions): ?>
+    <p>
+        <button id="transfer-open" type="button" class="btn btn-info"<?= $transfer_years ? '' : ' disabled' ?>>
+            Pindahkan Saldo Laba (Rugi) Berjalan
+        </button>
+        <?php if ($transfer_message): ?><span class="text-muted"> <?= html_escape($transfer_message) ?></span><?php endif; ?>
+    </p>
+    <div class="modal fade" id="transfer-modal" tabindex="-1" role="dialog" aria-labelledby="transfer-title">
+        <div class="modal-dialog modal-lg"><div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Tutup"><span>&times;</span></button>
+                <h4 class="modal-title" id="transfer-title">Pindahkan Saldo Laba (Rugi) Berjalan ke Ditahan</h4>
+            </div>
+            <div class="modal-body">
+                <div id="transfer-message" role="alert"></div>
+                <div class="form-group"><label for="transfer-year">Tahun yang dipindahkan</label>
+                    <select id="transfer-year" class="form-control">
+                        <option value="">-- Pilih tahun --</option>
+                        <?php foreach ($transfer_years as $year): ?><option value="<?= (int) $year ?>"><?= (int) $year ?></option><?php endforeach; ?>
+                    </select>
+                    <p class="help-block">Hanya tahun sebelum tahun berjalan. Jurnal dibuat sebagai draft bertanggal 1 Januari tahun berikutnya.</p></div>
+                <div id="transfer-detail" style="display:none;">
+                    <p id="transfer-summary"></p>
+                    <div id="transfer-journals"></div>
+                    <div class="table-responsive" style="max-height:320px;overflow:auto;"><table class="table table-condensed table-bordered">
+                        <thead><tr><th>Tanggal</th><th>Referensi</th><th>Akun</th><th>Debet</th><th>Kredit</th><th>Status</th></tr></thead>
+                        <tbody id="transfer-lines"></tbody>
+                    </table></div>
+                    <p id="transfer-truncated" class="text-muted" style="display:none;"></p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="transfer-generate" type="button" class="btn btn-primary" style="display:none;"></button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
+            </div>
+        </div></div>
+    </div>
+<?php endif; ?>
 <div id="adjustment-message" role="alert"></div>
 <?php if ($transaction): ?>
     <p><a href="<?= site_url('penyesuaian_akuntansi') ?>">&larr; Kembali ke daftar</a></p>
@@ -22,6 +60,11 @@ foreach ($accounts as $account) {
         <strong>Status:</strong> <?= html_escape($transaction->status) ?></p>
     <?php if ($transaction->lampiran_nama): ?>
         <p><strong>Lampiran:</strong> <a href="<?= site_url('lampiran/unduh/' . (int) $transaction->id_transaksi) ?>"><?= html_escape($transaction->lampiran_nama) ?></a></p>
+    <?php endif; ?>
+    <?php if ($transaction->pemindahan_tahun): ?>
+        <p class="alert alert-info">Jurnal pemindahan Saldo Laba (Rugi) Berjalan tahun <?= (int) $transaction->pemindahan_tahun ?>
+            dibuat otomatis dan tidak dapat diedit manual. Untuk memperbarui draft, gunakan tombol
+            <strong>Pindahkan Saldo Laba (Rugi) Berjalan</strong> pada halaman daftar.</p>
     <?php endif; ?>
     <?php if ($editable): ?>
         <form id="adjustment-form" enctype="multipart/form-data">
@@ -242,6 +285,84 @@ $(function () {
             $('button').prop('disabled', false);
         });
     }
+    var transferChanged = false;
+    var transferLabels = {
+        buat: 'Buat jurnal pemindahan', buat_selisih: 'Buat jurnal selisih',
+        perbarui_draft: 'Perbarui draft jurnal pemindahan'
+    };
+    var statusLabels = {diposting: 'Sudah dipindahkan', draft: 'Masuk draft', belum: 'Belum dipindahkan'};
+    function transferError(message) {
+        $('#transfer-message').empty().append($('<div class="alert alert-danger">').text(message));
+    }
+    function transferFail(xhr) {
+        transferError(xhr.responseJSON && xhr.responseJSON.message
+            ? xhr.responseJSON.message : 'Permintaan gagal. Silakan coba kembali.');
+    }
+    function renderTransfer(data) {
+        var label = data.laba ? 'Laba' : 'Rugi';
+        $('#transfer-summary').empty()
+            .append($('<span>').text('Akun: ' + data.akun_berjalan + ' → ' + data.akun_ditahan + '. '))
+            .append($('<br>'))
+            .append($('<strong>').text(label + ' bersih ' + data.tahun + ': Rp ' + data.total + '. '))
+            .append(document.createTextNode('Sudah dipindahkan: Rp ' + data.diposting + '; dalam draft: Rp ' + data.draft
+                + '; belum dipindahkan: Rp ' + data.belum + '. Tanggal jurnal: ' + data.tanggal_jurnal + '.'));
+        var journals = $('#transfer-journals').empty();
+        data.pemindahan.forEach(function (item) {
+            journals.append($('<div>').append($('<a>').attr('href', <?= json_encode(site_url('penyesuaian_akuntansi?id=')) ?> + item.id_transaksi)
+                .text(item.nomor)).append(document.createTextNode(' — ' + (item.jenis === 'selisih' ? 'selisih' : 'awal')
+                + ', ' + item.status + ', Rp ' + item.jumlah)));
+        });
+        var tbody = $('#transfer-lines').empty();
+        data.baris.forEach(function (line) {
+            var status = $('<td>').append($('<span class="label">')
+                .addClass(line.status === 'diposting' ? 'label-success' : (line.status === 'draft' ? 'label-info' : 'label-warning'))
+                .text(statusLabels[line.status]));
+            if (line.nomor_pemindahan) status.append(document.createTextNode(' ' + line.nomor_pemindahan));
+            tbody.append($('<tr>').append($('<td>').text(line.tanggal), $('<td>').text(line.referensi || line.jurnal || ''),
+                $('<td>').text(line.akun), $('<td class="text-right">').text(line.debit),
+                $('<td class="text-right">').text(line.kredit), status));
+        });
+        if (!data.baris.length) tbody.append($('<tr>').append($('<td colspan="6">').text('Tidak ada transaksi pada tahun ini.')));
+        $('#transfer-truncated').toggle(data.dipotong).text('Menampilkan ' + data.baris.length + ' dari ' + data.jumlah_baris + ' baris; jurnal tetap mencakup seluruh baris.');
+        var button = $('#transfer-generate');
+        if (transferLabels[data.aksi]) button.text(transferLabels[data.aksi]).show();
+        else button.hide();
+        var notes = {
+            posting: 'Draft jurnal sudah sesuai. Buka jurnalnya lalu posting.',
+            selesai: 'Seluruh transaksi tahun ini sudah dipindahkan.',
+            kosong: 'Tidak ada nilai laba (rugi) yang perlu dipindahkan.'
+        };
+        if (notes[data.aksi]) $('#transfer-message').empty().append($('<div class="alert alert-info">').text(notes[data.aksi]));
+        $('#transfer-detail').show();
+    }
+    function loadTransfer(clearMessage, after) {
+        var year = $('#transfer-year').val();
+        if (clearMessage !== false) $('#transfer-message').empty();
+        $('#transfer-detail, #transfer-generate').hide();
+        if (!year) return;
+        $.getJSON(<?= json_encode(site_url('penyesuaian_akuntansi/pratinjau_pemindahan')) ?>, {tahun: year})
+            .done(function (response) { renderTransfer(response.data); if (after) after(); })
+            .fail(transferFail);
+    }
+    $('#transfer-open').on('click', function () { $('#transfer-modal').modal('show'); });
+    $('#transfer-year').on('change', function () { loadTransfer(); });
+    $('#transfer-modal').on('hidden.bs.modal', function () { if (transferChanged) location.reload(); });
+    $('#transfer-generate').on('click', function () {
+        var year = $('#transfer-year').val();
+        if (!year || !confirm('Buat jurnal pemindahan saldo laba (rugi) berjalan tahun ' + year + '? Jurnal disimpan sebagai draft.')) return;
+        var fields = {tahun: year};
+        if (csrf) fields[csrf.name] = csrf.value;
+        $('#transfer-generate').prop('disabled', true);
+        $.post(<?= json_encode(site_url('penyesuaian_akuntansi/buat_pemindahan')) ?>, fields).done(function (response) {
+            transferChanged = true;
+            var result = response.data;
+            loadTransfer(true, function () {
+                $('#transfer-message').empty().append($('<div class="alert alert-success">').append(document.createTextNode(
+                    'Draft jurnal ' + (result.hasil === 'diperbarui' ? 'diperbarui' : 'dibuat') + ' (Rp ' + result.jumlah + '). '))
+                    .append($('<a>').attr('href', <?= json_encode(site_url('penyesuaian_akuntansi?id=')) ?> + result.id_transaksi).text(result.nomor_transaksi)));
+            });
+        }).fail(transferFail).always(function () { $('#transfer-generate').prop('disabled', false); });
+    });
     $('#adjustment-post').on('click', function () {
         if (confirm('Posting penyesuaian dan buat jurnal?')) {
             request(<?= json_encode(site_url('penyesuaian_akuntansi/posting')) ?>, {id: transaction.id_transaksi});

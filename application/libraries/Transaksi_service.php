@@ -44,15 +44,15 @@ class Transaksi_service
         });
     }
 
-    public function posting($id, callable $siapkan_jurnal)
+    public function posting($id, callable $siapkan_jurnal, array $akun_induk_diizinkan = array())
     {
-        return $this->atomic(function ($perusahaan, $pengguna) use ($id, $siapkan_jurnal) {
+        return $this->atomic(function ($perusahaan, $pengguna) use ($id, $siapkan_jurnal, $akun_induk_diizinkan) {
             $transaksi = $this->lock_transaksi($id, $perusahaan);
             if ($transaksi->status !== 'draft') {
                 throw new DomainException('Hanya transaksi draft yang dapat diposting.');
             }
             $detail = $siapkan_jurnal($transaksi, $this->ci->db);
-            $this->validasi_jurnal($detail, $perusahaan);
+            $this->validasi_jurnal($detail, $perusahaan, false, $akun_induk_diizinkan);
             $id_jurnal = $this->simpan_jurnal($transaksi, $transaksi->tanggal, $detail, 'posting');
             $this->check($this->ci->db->where('id_transaksi', $transaksi->id_transaksi)
                 ->where('id_perusahaan', $perusahaan)->where('status', 'draft')
@@ -164,7 +164,7 @@ class Transaksi_service
         return $query->row();
     }
 
-    private function validasi_jurnal($detail, $perusahaan, $pembalik = false)
+    private function validasi_jurnal($detail, $perusahaan, $pembalik = false, array $akun_induk_diizinkan = array())
     {
         if (!is_array($detail) || count($detail) < 2) {
             throw new DomainException('Jurnal harus memiliki minimal dua baris.');
@@ -190,7 +190,7 @@ class Transaksi_service
             }
             if (!$pembalik) {
                 $children = $this->ci->db->where('id_perusahaan', $perusahaan)->where('id_akun_induk', $row['id_akun'])->count_all_results('akun');
-                if ($children > 0) {
+                if ($children > 0 && !in_array((int) $row['id_akun'], array_map('intval', $akun_induk_diizinkan), true)) {
                     throw new DomainException('Akun induk tidak dapat digunakan untuk jurnal.');
                 }
             }

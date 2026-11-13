@@ -210,6 +210,17 @@ menggunakan akun rinci, berisi debit atau kredit (tidak keduanya), dan total deb
 wajib sama dengan total kredit. Draft dapat diubah beserta lampirannya; posting
 membuat jurnal otomatis dan pembatalan membuat jurnal pembalik.
 
+### Pemindahan Saldo Laba (Rugi) Berjalan
+
+Jalankan `application/sql/20261114_pemindahan_laba.sql` satu kali setelah backup.
+Perusahaan wajib memiliki akun 3103 Saldo Laba (Rugi) Berjalan dan 3102 Saldo Laba
+(Rugi) Ditahan (Ekuitas, 3102 tanpa turunan). Tombol **Pindahkan Saldo Laba (Rugi)
+Berjalan** (admin/akuntansi) membuka modal: pilih tahun sebelum tahun berjalan, lihat
+transaksi beserta status Belum/Draft/Diposting, lalu buat satu draft jurnal bertanggal
+1 Januari tahun berikutnya. Transaksi susulan memperbarui draft terbuka, atau membuat
+draft selisih bila jurnal sebelumnya sudah diposting. Posting ditolak bila masih ada
+transaksi yang belum tercakup. Jurnal pemindahan tidak memengaruhi Laba Rugi.
+
 ## Jurnal Transaksi
 
 Menu Jurnal Transaksi bersifat baca-saja: jurnal hasil posting dapat dilihat dan
