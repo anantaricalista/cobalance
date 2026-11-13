@@ -248,21 +248,23 @@
                     $('#jenis_pengaturan').val(data.jenis_pengaturan);
                     updateSettingOptions();
                 }
-                [masterId].concat(masterFields).forEach(function (field) {
-                    var input = $('#form').find('[name="' + field + '"]');
-                    var value = data[field] === null ? '' : String(data[field]);
-                    if (Object.prototype.hasOwnProperty.call(accountOptions, field) && value && input.find('option').filter(function () { return this.value === value && !this.disabled; }).length === 0) {
-                        allAccounts.forEach(function (account) {
-                            if (String(account.id_akun) === value) {
-                                input.append($('<option>').val(value).text(account.kode_akun + ' - ' + account.nama_akun + ' (pilihan lama)').attr('data-legacy', 'true'));
-                            }
-                        });
-                    }
-                    if (input.is('[data-money]')) MoneyInput.set(input[0], value);
-                    else input.val(value);
-                });
-                $('#modal_title').text('Edit ' + masterTitle);
-                $('#modal_form').modal('show');
+                window.setTimeout(function () {
+                    [masterId].concat(masterFields).forEach(function (field) {
+                        var input = $('#form').find('[name="' + field + '"]');
+                        var value = data[field] === null ? '' : String(data[field]);
+                        if (Object.prototype.hasOwnProperty.call(accountOptions, field) && value && input.find('option').filter(function () { return this.value === value && !this.disabled; }).length === 0) {
+                            allAccounts.forEach(function (account) {
+                                if (String(account.id_akun) === value) {
+                                    input.append($('<option>').val(value).text(account.kode_akun + ' - ' + account.nama_akun + ' (pilihan lama)').attr('data-legacy', 'true'));
+                                }
+                            });
+                        }
+                        if (input.is('[data-money]')) MoneyInput.set(input[0], value);
+                        else input.val(value);
+                    });
+                    $('#modal_title').text('Edit ' + masterTitle);
+                    $('#modal_form').modal('show');
+                }, 0);
             },
             error: function (xhr) { alert(error_message(xhr, 'Gagal mengambil data.')); }
         });
