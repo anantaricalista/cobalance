@@ -807,7 +807,7 @@
     'penjualan', 'penerimaan_piutang', 'pembelian', 'pembayaran_utang', 'kas_bank', 'aset_tetap',
     'persediaan', 'penyesuaian_persediaan', 'usulan_opname', 'retur_persediaan', 'modal_prive', 'penyesuaian_akuntansi',
     'saldo_awal', 'jurnal'
-), true) ? 'transaction-ui' : ''; ?>" data-sidebar-auto-collapse="<?= in_array($this->router->fetch_class(), array('dashboard', 'beranda'), true) ? 'false' : 'true' ?>">
+), true) ? 'transaction-ui' : ''; ?>">
     <header class="cb-topbar">
         <button type="button" class="cb-menu-toggle" aria-label="Buka menu navigasi" aria-controls="cb-sidebar" aria-expanded="false">
             <span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span>

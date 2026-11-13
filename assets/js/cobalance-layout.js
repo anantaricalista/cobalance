@@ -58,15 +58,13 @@
     });
     updateButton(!mobile && !document.body.classList.contains('cb-sidebar-collapsed'));
 
-    if (document.body.getAttribute('data-sidebar-auto-collapse') === 'true') {
-        document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function () {
+        window.requestAnimationFrame(function () {
             window.requestAnimationFrame(function () {
-                window.requestAnimationFrame(function () {
-                    if (isMobile() || userInteracted || sidebar.contains(document.activeElement)) return;
-                    document.body.classList.add('cb-sidebar-collapsed');
-                    updateButton(false);
-                });
+                if (isMobile() || userInteracted || sidebar.contains(document.activeElement)) return;
+                document.body.classList.add('cb-sidebar-collapsed');
+                updateButton(false);
             });
         });
-    }
+    });
 }());

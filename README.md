@@ -21,8 +21,8 @@ Jumlah barang, umur manfaat, dan persentase pajak tidak memakai format ini.
 ## Tampilan
 
 Layout perusahaan menggunakan navigasi samping yang menyesuaikan menu setiap role.
-Pada layar besar, menu otomatis ditutup dengan animasi saat membuka modul agar
-area kerja lebih luas; halaman beranda tetap menampilkan menu. Gunakan tombol menu
+Pada layar besar, menu otomatis ditutup dengan animasi pada semua halaman perusahaan
+agar area kerja lebih luas. Gunakan tombol menu
 di bagian atas untuk menyembunyikan atau menampilkan navigasi kembali. Pada layar
 kecil menu ditampilkan sebagai panel.
 Halaman login dan system admin
