@@ -41,7 +41,10 @@ class M_neraca extends CI_Model
             )
             SELECT s.root_id AS id_akun, a.kode_akun, a.nama_akun,
                 (
-                    SELECT IFNULL(SUM(d.debit) - SUM(d.kredit), 0)
+                    SELECT CASE WHEN ? IN ('Kewajiban', 'Ekuitas')
+                        THEN IFNULL(SUM(d.kredit) - SUM(d.debit), 0)
+                        ELSE IFNULL(SUM(d.debit) - SUM(d.kredit), 0)
+                    END
                     FROM detail_jurnal d
                     JOIN jurnal_transaksi j ON d.id_jurnal = j.id_jurnal
                     WHERE d.id_akun IN (
@@ -55,7 +58,7 @@ class M_neraca extends CI_Model
             ORDER BY a.kode_akun ASC
         ";
 
-        $query = $this->db->query($sql, array($id_perusahaan, $tipe, $id_perusahaan, $end_date));
+        $query = $this->db->query($sql, array($id_perusahaan, $tipe, $id_perusahaan, $tipe, $end_date));
         return $query->result();
     }
 

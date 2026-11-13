@@ -152,7 +152,9 @@ Buka menu **Laporan** setelah transaksi diposting:
   tanggal. Pilih tanggal mulai dan selesai, lalu tekan **Tampilkan**. Periode bulan
   berjalan dimuat sebagai nilai awal; tersedia ekspor PDF.
 - **Neraca** menampilkan aset, liabilitas, dan ekuitas pada tanggal yang dipilih.
-  Atur **Tanggal Neraca**, lalu tekan **Tampilkan**; tersedia ekspor PDF.
+  Atur **Tanggal Neraca**, lalu tekan **Tampilkan**; tersedia ekspor PDF. Saldo
+  kredit pada liabilitas dan ekuitas ditampilkan positif, sedangkan saldo debit
+  ditampilkan negatif. Aset menggunakan tanda sebaliknya.
 - **Buku Besar** menampilkan saldo awal periode dan mutasi akun. Pilih akun serta
   tanggal mulai dan selesai, lalu tekan **Tampilkan**. Akun wajib dipilih sebelum
   melihat atau mengekspor laporan.
