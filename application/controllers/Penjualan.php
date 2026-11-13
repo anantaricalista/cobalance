@@ -33,7 +33,7 @@ class Penjualan extends MY_Controller
             'transaction' => $transaction,
             'customers' => $this->db->where('id_perusahaan', $perusahaan)->where('aktif', 1)
                 ->order_by('nama_pelanggan')->get('pelanggan')->result(),
-            'products' => $this->db->where('id_perusahaan', $perusahaan)->where('aktif', 1)
+            'products' => $this->db->select('id_produk, kode_produk, nama_produk, satuan, harga_jual')->where('id_perusahaan', $perusahaan)->where('aktif', 1)
                 ->order_by('nama_produk')->get('produk')->result(),
             'taxes' => $this->db->where('id_perusahaan', $perusahaan)->where('aktif', 1)
                 ->order_by('kode_pajak')->get('pajak')->result(),

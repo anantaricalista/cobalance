@@ -1,0 +1,3 @@
+ALTER TABLE produk
+    ADD COLUMN gambar MEDIUMBLOB NULL,
+    ADD COLUMN gambar_tipe VARCHAR(32) NULL;

@@ -1220,7 +1220,7 @@ class Saldo_awal_service
 
     private function product($p, $id)
     {
-        $q = $this->ci->db->query("SELECT * FROM produk WHERE id_perusahaan=? AND id_produk=? FOR UPDATE", array($p, $id));
+        $q = $this->ci->db->query("SELECT id_produk, tipe_produk, aktif, id_akun_persediaan FROM produk WHERE id_perusahaan=? AND id_produk=? FOR UPDATE", array($p, $id));
         $this->ok($q);
         $row = $q->row();
         if (!$row || $row->tipe_produk !== 'barang' || !$row->aktif) {

@@ -5,11 +5,21 @@ class M_master extends CI_Model
 {
     private $table;
     private $id_field;
+    private $fields;
 
-    public function configure($table, $id_field)
+    public function configure($table, $id_field, array $fields)
     {
         $this->table = $table;
         $this->id_field = $id_field;
+        $this->fields = array_merge(array($id_field), $fields);
+    }
+
+    private function select_fields()
+    {
+        $this->db->select($this->fields);
+        if ($this->table === 'produk') {
+            $this->db->select('CASE WHEN gambar IS NULL THEN 0 ELSE 1 END AS memiliki_gambar', false);
+        }
     }
 
     private function query($search, $columns)
@@ -31,6 +41,7 @@ class M_master extends CI_Model
 
     public function listing($search, $columns, $order, $direction, $start, $length)
     {
+        $this->select_fields();
         $this->query($search, $columns);
         $this->db->order_by($order, $direction);
         if ($length !== -1) {
@@ -47,6 +58,7 @@ class M_master extends CI_Model
 
     public function find($id)
     {
+        $this->select_fields();
         return $this->db->where('id_perusahaan', $this->session->userdata('id_perusahaan'))
             ->where($this->id_field, $id)->get($this->table)->row();
     }

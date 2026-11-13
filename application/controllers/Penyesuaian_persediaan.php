@@ -31,7 +31,7 @@ class Penyesuaian_persediaan extends MY_Controller
         $data = array(
             'transaction' => $transaction,
             'transactions' => $this->penyesuaian_persediaan_service->daftar(),
-            'products' => $this->db->where('id_perusahaan', $company)->where('tipe_produk', 'barang')
+            'products' => $this->db->select('id_produk, kode_produk, nama_produk')->where('id_perusahaan', $company)->where('tipe_produk', 'barang')
                 ->where('aktif', 1)->order_by('kode_produk')->get('produk')->result(),
             'accounts' => $this->akun->get_display_options(array('Pendapatan', 'Beban'), array())
         );

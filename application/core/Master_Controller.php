@@ -10,7 +10,7 @@ abstract class Master_Controller extends MY_Controller
         parent::__construct();
         $this->load->model('M_master', 'master');
         $this->load->model('M_akun', 'akun');
-        $this->master->configure($this->config_master['table'], $this->config_master['id']);
+        $this->master->configure($this->config_master['table'], $this->config_master['id'], array_keys($this->config_master['fields']));
     }
 
     public function index()
@@ -69,6 +69,12 @@ abstract class Master_Controller extends MY_Controller
                 $row[] = html_escape((string) $value);
             }
             $id = (int) $record->{$this->config_master['id']};
+            if ($this->config_master['table'] === 'produk') {
+                $row[] = $record->memiliki_gambar
+                    ? '<img class="product-list-image" src="' . html_escape(site_url('produk/gambar/' . $id)) .
+                        '" alt="Gambar produk" loading="lazy">'
+                    : '<span class="text-muted">Tidak ada</span>';
+            }
             $row[] = '<button type="button" class="btn btn-sm btn-primary" title="Edit" onclick="edit_master(' . $id . ')"><i class="glyphicon glyphicon-pencil"></i></button> '
                 . '<button type="button" class="btn btn-sm btn-danger" title="Hapus" onclick="delete_master(' . $id . ')"><i class="glyphicon glyphicon-trash"></i></button>';
             $rows[] = $row;
@@ -99,6 +105,11 @@ abstract class Master_Controller extends MY_Controller
         if ($data === false) {
             return;
         }
+        try {
+            $data = $this->prepare_data($data);
+        } catch (InvalidArgumentException $e) {
+            return $this->error($e->getMessage(), 400);
+        }
         $data['id_perusahaan'] = $this->session->userdata('id_perusahaan');
         $this->write('insert', null, $data);
     }
@@ -121,7 +132,17 @@ abstract class Master_Controller extends MY_Controller
             && $this->master->product_used($id)) {
             return $this->error('Tipe produk yang sudah digunakan tidak dapat diubah.', 409);
         }
+        try {
+            $data = $this->prepare_data($data);
+        } catch (InvalidArgumentException $e) {
+            return $this->error($e->getMessage(), 400);
+        }
         $this->write('update', $id, $data);
+    }
+
+    protected function prepare_data(array $data)
+    {
+        return $data;
     }
 
     public function ajax_delete($id)

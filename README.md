@@ -35,6 +35,15 @@ global. Komponen aplikasi saat ini masih menggunakan Bootstrap 3, sehingga
 memuat Bootstrap 5 yang terkandung dalam AdminLTE 4 secara langsung dapat
 mengubah perilaku modal, dropdown, tabel dan komponen lain.
 
+## Gambar produk
+
+Setelah mencadangkan database, jalankan `application/sql/20261113_gambar_produk.sql`
+satu kali. Master Produk mendukung gambar opsional JPG, PNG, atau WebP maksimal
+2 MB dan 4096 x 4096 piksel. Gambar disimpan dalam BLOB tabel `produk` dan
+diakses melalui endpoint yang dibatasi perusahaan; gambar dapat diganti atau
+dihapus saat mengedit produk. Pastikan konfigurasi PHP `upload_max_filesize`
+dan `post_max_size` serta `max_allowed_packet` database cukup untuk unggahan.
+
 ## Keamanan login
 
 Sebelum memperbarui aplikasi, cadangkan database dan jalankan

@@ -31,7 +31,9 @@ Sebelum mencatat transaksi, buka menu **Master** dan lengkapi data berikut:
    pembelian, penerimaan piutang, atau pembayaran utang.
 4. **Produk dan Jasa** — buat item barang atau jasa, satuan, harga jual, dan akun
    terkait. Barang memerlukan akun persediaan dan beban pokok; jasa memerlukan
-   akun pembelian/beban. Akun pendapatan dapat diatur per item.
+   akun pembelian/beban. Akun pendapatan dapat diatur per item. Gambar opsional
+   dapat ditambah, diganti, atau dihapus dari formulir produk; gunakan JPG, PNG,
+   atau WebP maksimal 2 MB dan 4096 x 4096 piksel.
 5. **Pajak** — masukkan kode, nama, tarif, serta akun pajak masukan dan/atau
    keluaran jika digunakan.
 6. **Pengaturan Akun** — hubungkan jenis pengaturan ke akun rincian yang sesuai,

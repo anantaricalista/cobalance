@@ -24,7 +24,7 @@ class Saldo_awal extends MY_Controller
             'expense_accounts' => $this->akun->get_display_options(array('Beban')),
             'customers' => $this->db->where('id_perusahaan', $perusahaan)->order_by('nama_pelanggan')->get('pelanggan')->result(),
             'suppliers' => $this->db->where('id_perusahaan', $perusahaan)->order_by('nama_pemasok')->get('pemasok')->result(),
-            'products' => $this->db->where('id_perusahaan', $perusahaan)->where('tipe_produk', 'barang')->order_by('nama_produk')->get('produk')->result()
+            'products' => $this->db->select('id_produk, kode_produk, nama_produk, aktif')->where('id_perusahaan', $perusahaan)->where('tipe_produk', 'barang')->order_by('nama_produk')->get('produk')->result()
         );
         $this->load->view('template/header');
         $this->load->view('saldo_awal_view', $data);

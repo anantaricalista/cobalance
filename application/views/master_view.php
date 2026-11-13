@@ -10,6 +10,10 @@
     <p class="alert alert-info"><?php echo html_escape($master['help']); ?></p>
 <?php endif; ?>
 <?php if ($master['route'] === 'produk'): ?>
+    <style>
+        .product-list-image { width: 48px; height: 48px; object-fit: cover; border: 1px solid #e1e8f0; border-radius: 6px; }
+        .product-image-preview { max-width: 150px; max-height: 150px; object-fit: contain; border: 1px solid #e1e8f0; border-radius: 8px; padding: 4px; background: #fff; }
+    </style>
     <p class="text-muted">Harga: pemisah ribuan ditambahkan otomatis; gunakan koma untuk desimal, misalnya <strong>1.000,50</strong>.</p>
 <?php endif; ?>
 <div class="table-responsive">
@@ -19,6 +23,7 @@
             <?php foreach ($master['list'] as $name): ?>
                 <th><?php echo html_escape($master['fields'][$name]['label']); ?></th>
             <?php endforeach; ?>
+            <?php if ($master['route'] === 'produk'): ?><th>Gambar</th><?php endif; ?>
             <th>Aksi</th>
         </tr></thead>
         <tbody></tbody>
@@ -47,6 +52,18 @@
                                     <?php foreach ($field['options'] as $value => $label): ?>
                                         <option value="<?php echo html_escape((string) $value); ?>"><?php echo html_escape($label); ?></option>
                                     <?php endforeach; ?>
+                                    <?php if ($master['route'] === 'produk'): ?>
+                                        <div class="form-group">
+                                            <label for="gambar_produk" class="control-label col-xs-12 col-sm-4">Gambar produk</label>
+                                            <div class="col-xs-12 col-sm-8">
+                                                <img id="product-image-preview" class="product-image-preview" alt="Pratinjau gambar produk" style="display:none">
+                                                <p id="product-image-empty" class="text-muted">Belum ada gambar.</p>
+                                                <input id="gambar_produk" name="gambar_produk" type="file" accept="image/jpeg,image/png,image/webp">
+                                                <p class="help-block">Opsional. JPG, PNG, atau WebP, maksimal 2 MB dan 4096 x 4096 piksel.</p>
+                                                <label id="product-image-remove-label" style="display:none"><input type="checkbox" name="hapus_gambar" value="1"> Hapus gambar saat ini</label>
+                                            </div>
+                                        </div>
+                                    <?php endif; ?>
                                 </select>
                             <?php elseif ($field['type'] === 'account'): ?>
                                 <select id="<?php echo html_escape($name); ?>" name="<?php echo html_escape($name); ?>" class="form-control account-search" <?php echo !empty($field['required']) ? 'required' : ''; ?>>
@@ -84,26 +101,62 @@
     var allAccounts = <?php echo json_encode($all_accounts, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
     var accountOptions = <?php echo json_encode($accounts, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
     var settingOptions = <?php echo json_encode($setting_options, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
+    var isProduct = <?php echo $master['route'] === 'produk' ? 'true' : 'false'; ?>;
+    var productImageUrl = null;
+    var existingImageUrl = '';
+
+    function showProductImage(url) {
+        $('#product-image-preview').attr('src', url || '').toggle(!!url);
+        $('#product-image-empty').toggle(!url);
+    }
+
+    function resetProductImage(url) {
+        if (productImageUrl) URL.revokeObjectURL(productImageUrl);
+        productImageUrl = null;
+        existingImageUrl = url || '';
+        $('#product-image-remove-label').toggle(!!existingImageUrl);
+        showProductImage(existingImageUrl);
+    }
 
     $(document).ready(function () {
         table = $('#table').DataTable({
             processing: true, serverSide: true, order: [[1, 'asc']],
             ajax: { url: masterUrl + '/ajax_list', type: 'POST' },
-            columnDefs: [{ targets: [0, -1], orderable: false }]
+            columnDefs: [{ targets: isProduct ? [0, -2, -1] : [0, -1], orderable: false }]
         });
         $('#jenis_pengaturan').on('change', function () {
             updateSettingOptions();
         });
         <?php if ($master['route'] === 'produk'): ?>
         MoneyInput.init($('#harga_jual')[0], $('#harga_jual').val());
+        $('#gambar_produk').on('change', function () {
+            if (productImageUrl) URL.revokeObjectURL(productImageUrl);
+            productImageUrl = this.files.length ? URL.createObjectURL(this.files[0]) : null;
+            if (productImageUrl) $('[name="hapus_gambar"]').prop('checked', false);
+            showProductImage(productImageUrl || existingImageUrl);
+        });
+        $('[name="hapus_gambar"]').on('change', function () {
+            if (this.checked) {
+                $('#gambar_produk').val('');
+                if (productImageUrl) URL.revokeObjectURL(productImageUrl);
+                productImageUrl = null;
+            }
+            showProductImage(this.checked ? '' : existingImageUrl);
+        });
         <?php endif; ?>
         $('#form').on('submit', function (event) {
             event.preventDefault();
             $('#form_error').hide().text('');
             $('#btnSave').prop('disabled', true).text('Menyimpan...');
+            var payload = MoneyInput.serialize($('#form'));
+            if (isProduct) {
+                payload = new FormData($('#form')[0]);
+                $('#form [data-money]').each(function () { payload.set(this.name, MoneyInput.value(this)); });
+            }
             $.ajax({
                 url: masterUrl + (save_method === 'add' ? '/ajax_add' : '/ajax_update'),
-                type: 'POST', data: MoneyInput.serialize($('#form')), dataType: 'json',
+                type: 'POST', data: payload, dataType: 'json',
+                processData: !isProduct, contentType: isProduct ? false : 'application/x-www-form-urlencoded; charset=UTF-8',
                 success: function () { $('#modal_form').modal('hide'); table.ajax.reload(null, false); },
                 error: function (xhr) { $('#form_error').text(error_message(xhr, 'Gagal menyimpan data.')).show(); },
                 complete: function () { $('#btnSave').prop('disabled', false).text('Simpan'); }
@@ -118,6 +171,7 @@
     function add_master() {
         save_method = 'add';
         $('#form')[0].reset();
+        if (isProduct) resetProductImage('');
         $('#form [data-money]').each(function () { MoneyInput.set(this, ''); });
         $('#form option[data-legacy]').remove();
         updateSettingOptions();
@@ -133,6 +187,7 @@
             success: function (data) {
                 save_method = 'update';
                 $('#form')[0].reset();
+                if (isProduct) resetProductImage(data.memiliki_gambar ? masterUrl + '/gambar/' + encodeURIComponent(id) : '');
                 $('#form option[data-legacy]').remove();
                 $('#form_error').hide().text('');
                 if (masterId === 'id_pengaturan_akun') {

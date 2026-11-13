@@ -454,7 +454,8 @@ class Pembelian_service
 
     private function product($company, $id)
     {
-        $query = $this->ci->db->query('SELECT * FROM produk WHERE id_perusahaan=? AND id_produk=? FOR UPDATE',
+        $query = $this->ci->db->query('SELECT id_produk, nama_produk, tipe_produk, aktif, id_akun_pembelian,
+            id_akun_persediaan FROM produk WHERE id_perusahaan=? AND id_produk=? FOR UPDATE',
             array($company, $id));
         $this->ok($query);
         $product = $query->row();

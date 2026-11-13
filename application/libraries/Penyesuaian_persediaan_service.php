@@ -245,7 +245,7 @@ class Penyesuaian_persediaan_service
 
     private function product($company, $id)
     {
-        $query = $this->ci->db->query("SELECT * FROM produk WHERE id_perusahaan=? AND id_produk=?
+        $query = $this->ci->db->query("SELECT id_produk, id_akun_persediaan FROM produk WHERE id_perusahaan=? AND id_produk=?
             AND tipe_produk='barang' AND aktif=1 FOR UPDATE", array($company, $id));
         $this->ok($query);
         if (!$query->row()) {
