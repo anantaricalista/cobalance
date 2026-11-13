@@ -140,7 +140,12 @@ peringatan di layar sebelum melanjutkan.
 
 ## 5. Periksa jurnal
 
-1. Buka **Jurnal Transaksi** untuk melihat transaksi yang telah membentuk jurnal.
+1. Buka **Jurnal Transaksi** untuk melihat jurnal beserta nomor dan jenis transaksi,
+   pihak, status, jenis jurnal, total debit, serta pelaku jurnal. Pilih **Detail**
+   atau **PDF** untuk melihat pembuat draft, pengguna dan waktu posting, serta
+   informasi pembatalan jika ada. Jurnal pembalik menampilkan pembatal sebagai
+   pelakunya; jurnal lama tanpa informasi transaksi ditandai **Tidak tercatat**.
+   Nama dan username mengikuti data pengguna saat ini, bukan riwayat nama saat posting.
 2. Gunakan **Jurnal Umum** untuk melihat jurnal dan rincian akun debit/kredit.
 3. Pastikan total debit dan kredit seimbang. Jurnal dari posting dan pembatalan
    otomatis tidak boleh diedit langsung; koreksi dilakukan melalui alur transaksi

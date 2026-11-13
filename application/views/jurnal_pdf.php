@@ -84,11 +84,11 @@
             </td>
         </tr>
         <tr>
-            <td style="width:15%; text-align: left;">
+            <td style="width:28%; text-align: left;">
                 <strong>Tanggal</strong>
             </td>
             <td>
-                <?php echo ": " . $jurnal->tanggal; ?>
+                <?php echo ": " . html_escape($jurnal->tanggal); ?>
             </td>
         </tr>
         <tr>
@@ -96,7 +96,7 @@
                 <strong>Referensi</strong>
             </td>
             <td>
-                <?php echo ": " . $jurnal->referensi; ?>
+                <?php echo ": " . html_escape($jurnal->referensi); ?>
             </td>
         </tr>
         <tr>
@@ -104,9 +104,26 @@
                 <strong>Deskripsi</strong>
             </td>
             <td>
-                <?php echo ": " . $jurnal->deskripsi; ?>
+                <?php echo ": " . html_escape($jurnal->deskripsi); ?>
             </td>
         </tr>
+        <?php foreach (array(
+            'Nomor transaksi' => $info['nomor'],
+            'Jenis transaksi' => $info['jenis_transaksi'],
+            'Pihak' => $info['pihak'],
+            'Jenis jurnal' => $info['jenis_jurnal'],
+            'Status transaksi' => $info['status_transaksi'],
+            'Keterangan transaksi' => $info['deskripsi_transaksi'],
+            'Pembuat draft' => $info['pembuat'],
+            'Diposting oleh' => $info['poster'],
+            'Waktu posting' => $info['waktu_posting'],
+            'Dibatalkan oleh' => $info['pembatal'],
+            'Waktu pembatalan' => $info['waktu_pembatalan'],
+            'Alasan pembatalan' => $info['alasan_pembatalan']
+        ) as $label => $value): ?>
+        <tr><td style="text-align: left;"><strong><?= html_escape($label) ?></strong></td>
+            <td>: <?= html_escape($value) ?></td></tr>
+        <?php endforeach; ?>
     </table>
     <br>
     <br>
@@ -130,7 +147,7 @@
                     <?php echo $no++; ?>
                 </td>
                 <td class="left">
-                    <?php echo $detail->nama_akun . ' (' . $detail->kode_akun . ')'; ?>
+                    <?php echo html_escape($detail->nama_akun . ' (' . $detail->kode_akun . ')'); ?>
                 </td>
                 <td style="text-align: right;">
                     <?php echo format_nominal($detail->debit === null ? '0' : $detail->debit); ?>

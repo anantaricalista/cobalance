@@ -27,11 +27,19 @@ class Jurnal extends MY_Controller
         $no = $_POST['start'];
         foreach ($list as $jurnal) {
             $no++;
+            $info = $this->journal_info($jurnal);
             $row = array();
             $row[] = $no;
             $row[] = $jurnal->tanggal;
+            $row[] = html_escape($info['nomor']);
+            $row[] = html_escape($info['jenis_transaksi']);
+            $row[] = html_escape($info['pihak']);
+            $row[] = html_escape($info['jenis_jurnal']);
+            $row[] = html_escape($info['status_transaksi']);
             $row[] = html_escape($jurnal->deskripsi);
-            $row[] = html_escape($jurnal->referensi);
+            $row[] = $jurnal->total_debit === null ? '-' : 'Rp ' . html_escape(format_nominal($jurnal->total_debit));
+            $row[] = html_escape($info['pelaku_jurnal']) .
+                '<br><small class="text-muted">' . html_escape($info['waktu_jurnal']) . '</small>';
             $row[] = '<div class="journal-actions">' .
                 '<button type="button" class="btn btn-sm btn-primary view-journal" data-jurnal-id="' .
                 (int) $jurnal->id_jurnal . '"><i class="glyphicon glyphicon-list-alt"></i> Detail</button>' .
@@ -75,12 +83,12 @@ class Jurnal extends MY_Controller
                 'kredit' => $detail->kredit
             );
         }
-        return $this->output->set_content_type('application/json')->set_output(json_encode(array(
+        return $this->output->set_content_type('application/json')->set_output(json_encode(array_merge($this->journal_info($journal), array(
             'tanggal' => $journal->tanggal,
             'deskripsi' => $journal->deskripsi,
             'referensi' => $journal->referensi,
             'details' => $details
-        )));
+        ))));
     }
 
     // Endpoint mutasi lama ditutup: jurnal harus berasal dari modul transaksi.
@@ -110,6 +118,7 @@ class Jurnal extends MY_Controller
         }
         $jurnal->detail = $this->jurnal->get_details($id);
         $data['jurnal'] = $jurnal;
+        $data['info'] = $this->journal_info($jurnal);
 
         // Render view sebagai HTML
         $html = $this->load->view('jurnal_pdf', $data, true);
@@ -120,6 +129,43 @@ class Jurnal extends MY_Controller
         $this->pdf->setPaper('A4', 'portrait');
         $this->pdf->render();
         $this->pdf->stream("jurnal_{$id}.pdf", array("Attachment" => 0));
+    }
+
+    private function journal_info($journal)
+    {
+        $user = function ($id, $name, $username) {
+            if (!$id) {
+                return 'Tidak tercatat';
+            }
+            if (!$name && !$username) {
+                return 'Pengguna ID ' . $id . ' (nama tidak tersedia)';
+            }
+            return $name ? $name . ($username ? ' (@' . $username . ')' : '') : '@' . $username;
+        };
+        $creator = $user($journal->id_pengguna_pembuat, $journal->nama_pembuat, $journal->username_pembuat);
+        $poster = $user($journal->id_pengguna_posting, $journal->nama_poster, $journal->username_poster);
+        $canceller = $user($journal->id_pengguna_pembatal, $journal->nama_pembatal, $journal->username_pembatal);
+        $kind = $journal->jenis_jurnal === 'posting' ? 'Posting'
+            : ($journal->jenis_jurnal === 'pembalik' ? 'Pembalik' : 'Tidak tercatat');
+        return array(
+            'nomor' => $journal->nomor_transaksi ?: ($journal->referensi ?: '-'),
+            'jenis_transaksi' => $journal->jenis_transaksi ? ucwords(str_replace('_', ' ', $journal->jenis_transaksi)) : 'Tidak tercatat',
+            'pihak' => $journal->nama_pelanggan ?: ($journal->nama_pemasok ?: '-'),
+            'jenis_jurnal' => $kind,
+            'status_transaksi' => $journal->status_transaksi ? ucfirst($journal->status_transaksi) : 'Tidak tercatat',
+            'deskripsi_transaksi' => $journal->deskripsi_transaksi ?: '-',
+            'pembuat' => $creator,
+            'poster' => $poster,
+            'waktu_posting' => $journal->waktu_posting ?: 'Tidak tercatat',
+            'pembatal' => $canceller,
+            'waktu_pembatalan' => $journal->waktu_pembatalan ?: 'Tidak tercatat',
+            'alasan_pembatalan' => $journal->alasan_pembatalan ?: '-',
+            'pelaku_jurnal' => $journal->jenis_jurnal === 'pembalik' ? $canceller
+                : ($journal->jenis_jurnal === 'posting' ? $poster : 'Tidak tercatat'),
+            'waktu_jurnal' => $journal->jenis_jurnal === 'pembalik'
+                ? ($journal->waktu_pembatalan ?: 'Tidak tercatat')
+                : ($journal->jenis_jurnal === 'posting' ? ($journal->waktu_posting ?: 'Tidak tercatat') : 'Tidak tercatat')
+        );
     }
 
     private function read_only()

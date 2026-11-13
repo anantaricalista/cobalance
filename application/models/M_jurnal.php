@@ -5,9 +5,12 @@ class M_jurnal extends CI_Model
 {
 
     var $table = 'jurnal_transaksi';
-    var $column_order = array(null, 'tanggal', 'deskripsi', 'referensi');
-    var $column_search = array('tanggal', 'deskripsi', 'referensi');
-    var $order = array('tanggal' => 'desc');
+    var $column_order = array(null, 'j.tanggal', 't.nomor_transaksi', 't.jenis_transaksi', null, null,
+        't.status', 'j.deskripsi', null, null, null);
+    var $column_search = array('j.tanggal', 'j.deskripsi', 'j.referensi', 't.nomor_transaksi',
+        't.jenis_transaksi', 't.deskripsi', 't.status', 'p.nama_pelanggan', 's.nama_pemasok',
+        'poster.nama_lengkap', 'poster.username', 'pembatal.nama_lengkap', 'pembatal.username');
+    var $order = array('j.tanggal' => 'desc');
 
     public function __construct()
     {
@@ -15,11 +18,30 @@ class M_jurnal extends CI_Model
         $this->load->database();
     }
 
+    private function journal_query()
+    {
+        $this->db->select('j.*, tj.jenis_jurnal, t.nomor_transaksi, t.jenis_transaksi, t.status AS status_transaksi,
+            t.deskripsi AS deskripsi_transaksi, t.id_pengguna_pembuat, t.id_pengguna_posting,
+            t.id_pengguna_pembatal, t.waktu_posting, t.waktu_pembatalan, t.alasan_pembatalan,
+            pembuat.nama_lengkap AS nama_pembuat, pembuat.username AS username_pembuat,
+            poster.nama_lengkap AS nama_poster, poster.username AS username_poster,
+            pembatal.nama_lengkap AS nama_pembatal, pembatal.username AS username_pembatal,
+            p.nama_pelanggan, s.nama_pemasok')
+            ->select('(SELECT SUM(d.debit) FROM detail_jurnal d WHERE d.id_jurnal = j.id_jurnal) AS total_debit', false)
+            ->from('jurnal_transaksi j')
+            ->join('transaksi_jurnal tj', 'tj.id_jurnal = j.id_jurnal AND tj.id_perusahaan = j.id_perusahaan', 'left')
+            ->join('transaksi t', 't.id_transaksi = tj.id_transaksi AND t.id_perusahaan = tj.id_perusahaan', 'left')
+            ->join('pengguna pembuat', 'pembuat.id_pengguna = t.id_pengguna_pembuat AND pembuat.id_perusahaan = t.id_perusahaan', 'left')
+            ->join('pengguna poster', 'poster.id_pengguna = t.id_pengguna_posting AND poster.id_perusahaan = t.id_perusahaan', 'left')
+            ->join('pengguna pembatal', 'pembatal.id_pengguna = t.id_pengguna_pembatal AND pembatal.id_perusahaan = t.id_perusahaan', 'left')
+            ->join('pelanggan p', 'p.id_pelanggan = t.id_pelanggan AND p.id_perusahaan = t.id_perusahaan', 'left')
+            ->join('pemasok s', 's.id_pemasok = t.id_pemasok AND s.id_perusahaan = t.id_perusahaan', 'left')
+            ->where('j.id_perusahaan', $this->session->userdata('id_perusahaan'));
+    }
+
     private function _get_datatables_query()
     {
-        $this->db->from($this->table);
-        // Filter berdasarkan perusahaan yang login
-        $this->db->where('id_perusahaan', $this->session->userdata('id_perusahaan'));
+        $this->journal_query();
         $i = 0;
         foreach ($this->column_search as $item) {
             if (isset($_POST['search']['value']) && $_POST['search']['value'] !== '') {
@@ -42,6 +64,7 @@ class M_jurnal extends CI_Model
             $order = $this->order;
             $this->db->order_by(key($order), $order[key($order)]);
         }
+        $this->db->order_by('j.id_jurnal', 'desc');
     }
 
     function get_datatables()
@@ -70,9 +93,8 @@ class M_jurnal extends CI_Model
 
     public function get_by_id($id)
     {
-        $this->db->from($this->table);
-        $this->db->where('id_jurnal', $id);
-        $this->db->where('id_perusahaan', $this->session->userdata('id_perusahaan'));
+        $this->journal_query();
+        $this->db->where('j.id_jurnal', $id);
         $query = $this->db->get();
         return $query->row();
     }
