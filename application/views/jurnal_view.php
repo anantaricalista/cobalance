@@ -3,7 +3,40 @@
     .journal-page .journal-panel { background: #fff; border: 1px solid #e1e8f0; border-radius: 10px; padding: 18px; }
     .journal-page .journal-actions { display: flex; gap: 6px; white-space: nowrap; }
     .journal-page .journal-amount { white-space: nowrap; text-align: right; }
-    .journal-detail-meta dd { overflow-wrap: anywhere; }
+    #journal-detail-modal .modal-content { border: 0; border-radius: 14px; overflow: hidden; box-shadow: 0 18px 50px rgba(20, 38, 63, .22); }
+    #journal-detail-modal .modal-header { padding: 22px 26px; border-bottom: 1px solid #e6edf4; background: #f7fafc; }
+    #journal-detail-modal .modal-header .close { margin-top: 0; font-size: 27px; opacity: .6; }
+    #journal-detail-modal .journal-detail-heading { display: flex; align-items: center; gap: 14px; padding-right: 28px; }
+    #journal-detail-modal .journal-detail-icon { display: flex; align-items: center; justify-content: center; flex: 0 0 44px; height: 44px; border-radius: 12px; background: #e2f2f2; color: #267c82; font-size: 19px; }
+    #journal-detail-modal .modal-title { margin: 0; color: #183153; font-size: 20px; font-weight: 700; }
+    #journal-detail-modal .journal-detail-subtitle { margin: 4px 0 0; color: #687a91; font-size: 13px; }
+    #journal-detail-modal .modal-body { padding: 22px 26px 8px; background: #f7f9fc; }
+    #journal-detail-modal .journal-detail-section { margin-bottom: 16px; padding: 19px 20px; border: 1px solid #e2eaf2; border-radius: 10px; background: #fff; }
+    #journal-detail-modal .journal-detail-section h5 { margin: 0 0 16px; color: #243b5a; font-size: 15px; font-weight: 700; }
+    #journal-detail-modal .journal-detail-section h5 .glyphicon { margin-right: 7px; color: #4a93a5; }
+    #journal-detail-modal .journal-detail-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 17px 24px; margin: 0; }
+    #journal-detail-modal .journal-detail-field { min-width: 0; }
+    #journal-detail-modal .journal-detail-field-wide { grid-column: span 3; }
+    #journal-detail-modal .journal-detail-grid dt { margin-bottom: 5px; color: #6b7b90; font-size: 12px; font-weight: 600; }
+    #journal-detail-modal .journal-detail-grid dd { margin: 0; color: #263b55; font-size: 14px; font-weight: 600; line-height: 1.5; overflow-wrap: anywhere; }
+    #journal-detail-modal .journal-audit-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    #journal-detail-modal .journal-audit-grid .journal-detail-field-wide { grid-column: span 2; }
+    #journal-detail-modal .journal-detail-table { margin-bottom: 0; }
+    #journal-detail-modal .journal-detail-table th { color: #687a91; background: #f5f8fb; font-size: 12px; white-space: nowrap; }
+    #journal-detail-modal .journal-detail-table td, #journal-detail-modal .journal-detail-table th { padding: 11px 12px; border-color: #e8eef4; vertical-align: middle; }
+    #journal-detail-modal .journal-detail-table td.text-right, #journal-detail-modal .journal-detail-table tfoot th { white-space: nowrap; }
+    #journal-detail-modal .journal-detail-table tfoot th { color: #183153; background: #f0f7f7; }
+    #journal-detail-modal .modal-footer { padding: 15px 26px; border-top: 1px solid #e6edf4; background: #fff; }
+    @media (max-width: 767px) {
+        #journal-detail-modal .modal-header, #journal-detail-modal .modal-body { padding-left: 16px; padding-right: 16px; }
+        #journal-detail-modal .journal-detail-section { padding: 16px; }
+        #journal-detail-modal .journal-detail-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+        #journal-detail-modal .journal-detail-field-wide { grid-column: span 2; }
+    }
+    @media (max-width: 400px) {
+        #journal-detail-modal .journal-detail-grid { grid-template-columns: minmax(0, 1fr); }
+        #journal-detail-modal .journal-detail-field-wide, #journal-detail-modal .journal-audit-grid .journal-detail-field-wide { grid-column: span 1; }
+    }
 </style>
 <div class="journal-page">
 <h3>Jurnal Transaksi</h3>
@@ -36,29 +69,34 @@
                 <button type="button" class="close" data-dismiss="modal" aria-label="Tutup">
                     <span aria-hidden="true">&times;</span>
                 </button>
-                <h4 class="modal-title" id="journal-detail-title">Detail jurnal</h4>
+                <div class="journal-detail-heading">
+                    <span class="journal-detail-icon glyphicon glyphicon-book" aria-hidden="true"></span>
+                    <div>
+                        <h4 class="modal-title" id="journal-detail-title">Detail Jurnal</h4>
+                        <p class="journal-detail-subtitle">Informasi transaksi, rincian akun, dan riwayat tindakan</p>
+                    </div>
+                </div>
             </div>
             <div class="modal-body">
                 <div id="journal-detail-message" role="status" aria-live="polite"></div>
-                <dl class="dl-horizontal journal-detail-meta">
-                    <dt>Tanggal</dt><dd id="journal-detail-date">-</dd>
-                    <dt>Nomor transaksi</dt><dd id="journal-detail-number">-</dd>
-                    <dt>Jenis transaksi</dt><dd id="journal-detail-type">-</dd>
-                    <dt>Pihak</dt><dd id="journal-detail-party">-</dd>
-                    <dt>Jenis jurnal</dt><dd id="journal-detail-kind">-</dd>
-                    <dt>Status transaksi</dt><dd id="journal-detail-status">-</dd>
-                    <dt>Deskripsi</dt><dd id="journal-detail-description">-</dd>
-                    <dt>Referensi</dt><dd id="journal-detail-reference">-</dd>
-                    <dt>Keterangan transaksi</dt><dd id="journal-detail-transaction-description">-</dd>
-                    <dt>Pembuat draft</dt><dd id="journal-detail-creator">-</dd>
-                    <dt>Diposting oleh</dt><dd id="journal-detail-poster">-</dd>
-                    <dt>Waktu posting</dt><dd id="journal-detail-posted-at">-</dd>
-                    <dt>Dibatalkan oleh</dt><dd id="journal-detail-canceller">-</dd>
-                    <dt>Waktu pembatalan</dt><dd id="journal-detail-cancelled-at">-</dd>
-                    <dt>Alasan pembatalan</dt><dd id="journal-detail-reason">-</dd>
-                </dl>
-                <div class="table-responsive">
-                    <table class="table table-striped table-bordered">
+                <section class="journal-detail-section" aria-labelledby="journal-info-title">
+                    <h5 id="journal-info-title"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>Informasi Transaksi</h5>
+                    <dl class="journal-detail-grid journal-detail-meta">
+                        <div class="journal-detail-field"><dt>Nomor transaksi</dt><dd id="journal-detail-number">-</dd></div>
+                        <div class="journal-detail-field"><dt>Tanggal jurnal</dt><dd id="journal-detail-date">-</dd></div>
+                        <div class="journal-detail-field"><dt>Jenis transaksi</dt><dd id="journal-detail-type">-</dd></div>
+                        <div class="journal-detail-field"><dt>Pihak</dt><dd id="journal-detail-party">-</dd></div>
+                        <div class="journal-detail-field"><dt>Jenis jurnal</dt><dd id="journal-detail-kind">-</dd></div>
+                        <div class="journal-detail-field"><dt>Status transaksi</dt><dd id="journal-detail-status">-</dd></div>
+                        <div class="journal-detail-field"><dt>Referensi</dt><dd id="journal-detail-reference">-</dd></div>
+                        <div class="journal-detail-field journal-detail-field-wide"><dt>Deskripsi jurnal</dt><dd id="journal-detail-description">-</dd></div>
+                        <div class="journal-detail-field journal-detail-field-wide"><dt>Keterangan transaksi</dt><dd id="journal-detail-transaction-description">-</dd></div>
+                    </dl>
+                </section>
+                <section class="journal-detail-section" aria-labelledby="journal-accounts-title">
+                    <h5 id="journal-accounts-title"><span class="glyphicon glyphicon-book" aria-hidden="true"></span>Rincian Akun</h5>
+                    <div class="table-responsive">
+                    <table class="table journal-detail-table">
                         <thead><tr><th style="width: 110px;">Kode akun</th><th>Nama akun</th>
                             <th class="text-right">Debit</th><th class="text-right">Kredit</th></tr></thead>
                         <tbody id="journal-detail-rows"></tbody>
@@ -66,7 +104,19 @@
                             <th id="journal-detail-debit" class="text-right">Rp 0,00</th>
                             <th id="journal-detail-credit" class="text-right">Rp 0,00</th></tr></tfoot>
                     </table>
-                </div>
+                    </div>
+                </section>
+                <section class="journal-detail-section" aria-labelledby="journal-audit-title">
+                    <h5 id="journal-audit-title"><span class="glyphicon glyphicon-time" aria-hidden="true"></span>Riwayat Tindakan</h5>
+                    <dl class="journal-detail-grid journal-audit-grid journal-detail-meta">
+                        <div class="journal-detail-field journal-detail-field-wide"><dt>Pembuat draft</dt><dd id="journal-detail-creator">-</dd></div>
+                        <div class="journal-detail-field"><dt>Diposting oleh</dt><dd id="journal-detail-poster">-</dd></div>
+                        <div class="journal-detail-field"><dt>Waktu posting</dt><dd id="journal-detail-posted-at">-</dd></div>
+                        <div class="journal-detail-field"><dt>Dibatalkan oleh</dt><dd id="journal-detail-canceller">-</dd></div>
+                        <div class="journal-detail-field"><dt>Waktu pembatalan</dt><dd id="journal-detail-cancelled-at">-</dd></div>
+                        <div class="journal-detail-field journal-detail-field-wide"><dt>Alasan pembatalan</dt><dd id="journal-detail-reason">-</dd></div>
+                    </dl>
+                </section>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
