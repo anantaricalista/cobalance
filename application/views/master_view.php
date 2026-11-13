@@ -78,6 +78,7 @@
                         <section class="product-form-section" aria-labelledby="product-accounts-title">
                             <h4 id="product-accounts-title">Pengaturan Akun</h4>
                             <p>Pilih akun yang sesuai untuk transaksi produk atau jasa.</p>
+                            <p id="service-account-note" class="help-block" style="display:none" role="status"></p>
                             <div class="product-form-grid">
                     <?php elseif ($master['route'] === 'produk' && $name === 'aktif'): ?>
                         </div></section>
@@ -105,6 +106,9 @@
                                         <option value="<?php echo $account->selectable ? html_escape($account->id_akun) : ''; ?>" <?php echo $account->selectable ? '' : 'disabled'; ?>><?php echo html_escape(str_repeat('- ', $account->depth) . $account->kode_akun . ' - ' . $account->nama_akun); ?></option>
                                     <?php endforeach; ?>
                                 </select>
+                                <?php if ($master['route'] === 'produk' && in_array($name, array('id_akun_persediaan', 'id_akun_beban_pokok'), true)): ?>
+                                    <input type="hidden" name="<?php echo html_escape($name); ?>" value="" disabled class="service-account-placeholder">
+                                <?php endif; ?>
                             <?php else: ?>
                                 <input id="<?php echo html_escape($name); ?>" name="<?php echo html_escape($name); ?>" class="form-control"
                                     type="<?php echo $field['type'] === 'decimal' ? 'number' : 'text'; ?>"
@@ -155,6 +159,7 @@
     var isProduct = <?php echo $master['route'] === 'produk' ? 'true' : 'false'; ?>;
     var productImageUrl = null;
     var existingImageUrl = '';
+    var originalProductType = null;
 
     function showProductImage(url) {
         $('#product-image-preview').attr('src', url || '').toggle(!!url);
@@ -169,6 +174,20 @@
         showProductImage(existingImageUrl);
     }
 
+    function updateProductAccounts() {
+        var isService = $('#tipe_produk').val() === 'jasa';
+        $('#id_akun_persediaan, #id_akun_beban_pokok')
+            .prop('disabled', isService).trigger('change.select2');
+        $('.service-account-placeholder').prop('disabled', !isService);
+        var note = 'Jasa tidak menggunakan akun persediaan dan beban pokok.';
+        if (originalProductType === 'barang') {
+            note += ' Akun tersebut akan dihapus dari produk saat perubahan disimpan.';
+        } else if (originalProductType === 'jasa') {
+            note += ' Akun lama yang tersimpan tetap dipertahankan, tetapi tidak digunakan.';
+        }
+        $('#service-account-note').text(note).toggle(isService);
+    }
+
     $(document).ready(function () {
         table = $('#table').DataTable({
             processing: true, serverSide: true, order: [[1, 'asc']],
@@ -180,6 +199,7 @@
         });
         <?php if ($master['route'] === 'produk'): ?>
         MoneyInput.init($('#harga_jual')[0], $('#harga_jual').val());
+        $('#tipe_produk').on('change', updateProductAccounts);
         $('#gambar_produk').on('change', function () {
             if (productImageUrl) URL.revokeObjectURL(productImageUrl);
             productImageUrl = this.files.length ? URL.createObjectURL(this.files[0]) : null;
@@ -221,8 +241,10 @@
 
     function add_master() {
         save_method = 'add';
+        originalProductType = null;
         $('#form')[0].reset();
         if (isProduct) resetProductImage('');
+        if (isProduct) updateProductAccounts();
         $('#form [data-money]').each(function () { MoneyInput.set(this, ''); });
         $('#form option[data-legacy]').remove();
         updateSettingOptions();
@@ -237,6 +259,7 @@
             url: masterUrl + '/ajax_edit/' + id, type: 'GET', dataType: 'json',
             success: function (data) {
                 save_method = 'update';
+                if (isProduct) originalProductType = data.tipe_produk;
                 $('#form')[0].reset();
                 if (isProduct) resetProductImage(data.memiliki_gambar ? masterUrl + '/gambar/' + encodeURIComponent(id) : '');
                 $('#form option[data-legacy]').remove();
@@ -250,7 +273,7 @@
                 }
                 window.setTimeout(function () {
                     [masterId].concat(masterFields).forEach(function (field) {
-                        var input = $('#form').find('[name="' + field + '"]');
+                        var input = $('#form').find('[name="' + field + '"]').not('.service-account-placeholder');
                         var value = data[field] === null ? '' : String(data[field]);
                         if (Object.prototype.hasOwnProperty.call(accountOptions, field) && value && input.find('option').filter(function () { return this.value === value && !this.disabled; }).length === 0) {
                             allAccounts.forEach(function (account) {
@@ -262,6 +285,7 @@
                         if (input.is('[data-money]')) MoneyInput.set(input[0], value);
                         else input.val(value);
                     });
+                    if (isProduct) updateProductAccounts();
                     $('#modal_title').text('Edit ' + masterTitle);
                     $('#modal_form').modal('show');
                 }, 0);

@@ -197,7 +197,10 @@ Pembelian disimpan sebagai draft sebelum posting, dengan pemasok, pembayaran tun
 atau kredit (kredit wajib jatuh tempo), serta pajak masukan per rincian. Posting
 membuat jurnal otomatis: barang mendebit akun persediaan dan menambah stok dengan
 harga pokok rata-rata baru; jasa mendebit akun pembelian/beban pada master produk
-(wajib diisi); pajak masukan mendebit akun pajak masukan; lawan jurnal adalah
+(wajib diisi). Akun persediaan dan beban pokok tidak dapat dipilih untuk jasa;
+akun lama pada jasa tetap tersimpan tetapi tidak digunakan. Jika barang yang belum
+digunakan diubah menjadi jasa, kedua akun tersebut dihapus saat disimpan.
+Pajak masukan mendebit akun pajak masukan; lawan jurnal adalah
 kas/bank (tunai) atau utang usaha (kredit). Pembatalan membuat jurnal pembalik dan
 mengembalikan stok hanya jika belum ada pembayaran utang terposting dan belum ada
 mutasi stok sesudah pembelian untuk produk yang sama.

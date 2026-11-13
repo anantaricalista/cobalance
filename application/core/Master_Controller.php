@@ -133,14 +133,14 @@ abstract class Master_Controller extends MY_Controller
             return $this->error('Tipe produk yang sudah digunakan tidak dapat diubah.', 409);
         }
         try {
-            $data = $this->prepare_data($data);
+            $data = $this->prepare_data($data, $record);
         } catch (InvalidArgumentException $e) {
             return $this->error($e->getMessage(), 400);
         }
         $this->write('update', $id, $data);
     }
 
-    protected function prepare_data(array $data)
+    protected function prepare_data(array $data, $record = null)
     {
         return $data;
     }

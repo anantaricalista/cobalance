@@ -34,6 +34,10 @@ Sebelum mencatat transaksi, buka menu **Master** dan lengkapi data berikut:
    akun pembelian/beban. Akun pendapatan dapat diatur per item. Gambar opsional
    dapat ditambah, diganti, atau dihapus dari formulir produk; gunakan JPG, PNG,
    atau WebP maksimal 2 MB dan 4096 x 4096 piksel.
+   Untuk jasa, akun persediaan dan beban pokok tidak dapat dipilih. Akun lama
+   yang sudah tersimpan pada jasa tetap dipertahankan, tetapi tidak digunakan.
+   Jika barang yang belum digunakan diubah menjadi jasa, kedua akun tersebut
+   dihapus dari produk saat perubahan disimpan.
 5. **Pajak** — masukkan kode, nama, tarif, serta akun pajak masukan dan/atau
    keluaran jika digunakan.
 6. **Pengaturan Akun** — hubungkan jenis pengaturan ke akun rincian yang sesuai,

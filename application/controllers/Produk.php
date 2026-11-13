@@ -24,8 +24,16 @@ class Produk extends Master_Controller
         )
     );
 
-    protected function prepare_data(array $data)
+    protected function prepare_data(array $data, $record = null)
     {
+        if ($data['tipe_produk'] === 'jasa') {
+            if ($data['id_akun_persediaan'] !== null || $data['id_akun_beban_pokok'] !== null) {
+                throw new InvalidArgumentException('Jasa tidak menggunakan akun persediaan atau akun beban pokok.');
+            }
+            if ($record && $record->tipe_produk === 'jasa') {
+                unset($data['id_akun_persediaan'], $data['id_akun_beban_pokok']);
+            }
+        }
         $remove = $this->input->post('hapus_gambar');
         if ($remove !== null && $remove !== '1') {
             throw new InvalidArgumentException('Pilihan hapus gambar tidak valid.');
