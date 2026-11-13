@@ -606,7 +606,7 @@ class Saldo_awal_service
             ? "(jenis_transaksi='saldo_awal_piutang' OR
                 (jenis_transaksi IN ('penjualan','pelepasan_aset') AND cara_pembayaran='kredit'))"
             : "(jenis_transaksi='saldo_awal_utang' OR
-                (jenis_transaksi IN ('pembelian','perolehan_aset') AND cara_pembayaran='kredit'))";
+                (jenis_transaksi IN ('pembelian','perolehan_aset','beban_penjualan_jasa') AND cara_pembayaran='kredit'))";
         $sql = "SELECT id_transaksi FROM transaksi WHERE id_perusahaan=? AND $eligible
             AND $partyField=? AND LOWER(TRIM(referensi))=LOWER(TRIM(?)) AND status<>'dibatalkan'";
         $params = array($company, $row['id_pihak'], $row['nomor']);

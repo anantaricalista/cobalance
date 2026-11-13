@@ -74,7 +74,7 @@ class M_dashboard extends CI_Model
         } else {
             $party_field = 'id_pemasok';
             $eligible = "((t.jenis_transaksi = 'saldo_awal_utang')
-                OR (t.jenis_transaksi IN ('pembelian', 'perolehan_aset') AND t.cara_pembayaran = 'kredit'))";
+                OR (t.jenis_transaksi IN ('pembelian', 'perolehan_aset', 'beban_penjualan_jasa') AND t.cara_pembayaran = 'kredit'))";
             $payment_type = 'pembayaran_utang';
             $return_type = 'retur_pembelian';
         }

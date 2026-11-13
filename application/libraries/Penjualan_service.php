@@ -227,6 +227,13 @@ class Penjualan_service
                     throw new DomainException('Transaksi penjualan tidak ditemukan.');
                 }
                 $company = $transaction->id_perusahaan;
+                $query = $db->query("SELECT id_transaksi FROM transaksi WHERE id_perusahaan=?
+                    AND id_transaksi_asal=? AND jenis_transaksi='beban_penjualan_jasa' AND status='diposting'
+                    LIMIT 1 FOR UPDATE", array($company, $transaction->id_transaksi));
+                $this->ok($query);
+                if ($query->row()) {
+                    throw new DomainException('Penjualan memiliki beban jasa terposting. Batalkan beban terlebih dahulu.');
+                }
                 $query = $db->query('SELECT a.id_alokasi_transaksi FROM alokasi_transaksi a
                     JOIN transaksi r ON r.id_perusahaan=a.id_perusahaan AND r.id_transaksi=a.id_transaksi
                     WHERE a.id_perusahaan=? AND a.id_transaksi_tagihan=? AND r.status=\'diposting\' LIMIT 1 FOR UPDATE',

@@ -806,7 +806,7 @@
 <body class="cb-layout <?php echo in_array($this->router->fetch_class(), array(
     'penjualan', 'penerimaan_piutang', 'pembelian', 'pembayaran_utang', 'kas_bank', 'aset_tetap',
     'persediaan', 'penyesuaian_persediaan', 'usulan_opname', 'retur_persediaan', 'modal_prive', 'penyesuaian_akuntansi',
-    'saldo_awal', 'jurnal'
+    'saldo_awal', 'jurnal', 'beban_penjualan_jasa'
 ), true) ? 'transaction-ui' : ''; ?>">
     <header class="cb-topbar">
         <button type="button" class="cb-menu-toggle" aria-label="Buka menu navigasi" aria-controls="cb-sidebar" aria-expanded="false">
@@ -879,13 +879,14 @@
                             </li>
                         </ul>
                     </li>
-                    <li class="dropdown <?php if (in_array($this->router->fetch_class(), array('saldo_awal', 'penjualan', 'penerimaan_piutang', 'pembelian', 'pembayaran_utang', 'kas_bank', 'aset_tetap', 'persediaan', 'penyesuaian_persediaan', 'usulan_opname', 'retur_persediaan', 'modal_prive', 'penyesuaian_akuntansi'))) echo 'active'; ?>">
+                    <li class="dropdown <?php if (in_array($this->router->fetch_class(), array('saldo_awal', 'penjualan', 'beban_penjualan_jasa', 'penerimaan_piutang', 'pembelian', 'pembayaran_utang', 'kas_bank', 'aset_tetap', 'persediaan', 'penyesuaian_persediaan', 'usulan_opname', 'retur_persediaan', 'modal_prive', 'penyesuaian_akuntansi'))) echo 'active'; ?>">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                             aria-expanded="false">
                             <span class="glyphicon glyphicon-transfer cb-nav-icon" aria-hidden="true"></span>Transaksi <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu">
                             <li <?php if ($this->router->fetch_class() == 'penjualan') echo 'class="active"'; ?>><a href="<?php echo site_url('penjualan'); ?>"><span class="glyphicon glyphicon-shopping-cart cb-nav-icon" aria-hidden="true"></span>Penjualan</a></li>
+                            <li <?php if ($this->router->fetch_class() == 'beban_penjualan_jasa') echo 'class="active"'; ?>><a href="<?php echo site_url('beban_penjualan_jasa'); ?>"><span class="glyphicon glyphicon-wrench cb-nav-icon" aria-hidden="true"></span>Beban Penjualan Jasa</a></li>
                             <li <?php if ($this->router->fetch_class() == 'penerimaan_piutang') echo 'class="active"'; ?>><a href="<?php echo site_url('penerimaan_piutang'); ?>"><span class="glyphicon glyphicon-download-alt cb-nav-icon" aria-hidden="true"></span>Penerimaan Piutang</a></li>
                             <li <?php if ($this->router->fetch_class() == 'pembelian') echo 'class="active"'; ?>><a href="<?php echo site_url('pembelian'); ?>"><span class="glyphicon glyphicon-shopping-cart cb-nav-icon" aria-hidden="true"></span>Pembelian</a></li>
                             <li <?php if ($this->router->fetch_class() == 'pembayaran_utang') echo 'class="active"'; ?>><a href="<?php echo site_url('pembayaran_utang'); ?>"><span class="glyphicon glyphicon-credit-card cb-nav-icon" aria-hidden="true"></span>Pembayaran Utang</a></li>

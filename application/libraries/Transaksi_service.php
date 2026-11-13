@@ -18,7 +18,7 @@ class Transaksi_service
             'kas_masuk', 'kas_keluar', 'transfer_kas', 'retur_penjualan', 'retur_pembelian',
             'saldo_awal', 'saldo_awal_piutang', 'saldo_awal_utang', 'saldo_awal_persediaan',
             'penyesuaian_akuntansi', 'penyesuaian_persediaan', 'setoran_modal', 'prive',
-            'perolehan_aset', 'penyusutan_aset', 'pelepasan_aset');
+            'perolehan_aset', 'penyusutan_aset', 'pelepasan_aset', 'beban_penjualan_jasa');
         if (!in_array($jenis, $jenis_valid, true) || !$this->tanggal_valid($tanggal)
             || !is_string($deskripsi) || strlen($deskripsi) > 255) {
             throw new InvalidArgumentException('Data transaksi tidak valid.');

@@ -102,6 +102,7 @@ Gunakan modul pada menu **Transaksi** sesuai kegiatan:
 | Kegiatan | Menu |
 |---|---|
 | Menjual barang atau jasa | Penjualan |
+| Mencatat biaya baru yang berkaitan dengan jasa terjual | Beban Penjualan Jasa |
 | Menerima pelunasan tagihan pelanggan | Penerimaan Piutang |
 | Membeli barang atau jasa | Pembelian |
 | Membayar tagihan pemasok | Pembayaran Utang |
@@ -112,6 +113,16 @@ Gunakan modul pada menu **Transaksi** sesuai kegiatan:
 | Mencatat retur pembelian atau penjualan | Retur Transaksi |
 | Membuat jurnal penyesuaian manual | Penyesuaian Akuntansi |
 | Memindahkan Laba (Rugi) Berjalan tahun lalu ke Laba Ditahan | Penyesuaian Akuntansi → Pindahkan Saldo Laba (Rugi) Berjalan (jalankan `20261114_pemindahan_laba.sql` dahulu) |
+
+Untuk **Beban Penjualan Jasa**, cadangkan database dan jalankan
+`application/sql/20261115_beban_penjualan_jasa.sql` terlebih dahulu. Pilih rincian
+jasa pada penjualan terposting, masukkan biaya baru dan akun beban, lalu simpan
+draft dan posting. Jangan masukkan kembali biaya yang sudah dicatat di modul
+lain. Pembayaran tunai memakai akun kas/bank; kredit memerlukan pemasok, jatuh
+tempo, dan pengaturan Utang Usaha, serta dilunasi melalui Pembayaran Utang.
+Biaya dicatat tanpa rincian pajak. Ringkasan memperhitungkan retur dan beban yang
+terposting, tetapi bukan laporan laba bersih. Batalkan pembayaran terposting
+sebelum membatalkan beban; batalkan beban terposting sebelum membatalkan penjualan.
 
 Alur transaksi umumnya:
 

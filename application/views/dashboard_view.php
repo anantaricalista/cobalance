@@ -190,6 +190,7 @@ $transaction_labels = array(
 	'saldo_awal' => 'Saldo Awal',
 	'saldo_awal_piutang' => 'Saldo Awal Piutang',
 	'saldo_awal_utang' => 'Saldo Awal Utang',
+	'beban_penjualan_jasa' => 'Beban Penjualan Jasa',
 	'saldo_awal_persediaan' => 'Saldo Awal Persediaan',
 	'penyesuaian_akuntansi' => 'Penyesuaian Akuntansi',
 	'penyesuaian_persediaan' => 'Penyesuaian Persediaan',

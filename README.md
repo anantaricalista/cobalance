@@ -183,6 +183,21 @@ Pembatalan membuat jurnal pembalik dan mengembalikan stok hanya jika penjualan
 belum dialokasikan ke pembayaran dan belum ada mutasi stok sesudah penjualan
 untuk produk yang sama. Draft penjualan yang belum diposting dapat diubah.
 
+## Beban penjualan jasa
+
+Cadangkan database lalu jalankan `application/sql/20261115_beban_penjualan_jasa.sql`
+satu kali sebelum menggunakan modul. Catat hanya biaya baru yang terkait rincian
+jasa pada penjualan terposting; jangan catat ulang biaya yang sudah dijurnal
+melalui modul lain. Setiap beban memiliki draft dan satu akun beban, tanpa
+rincian pajak. Posting mendebit beban dan mengkredit kas/bank, atau utang usaha
+untuk transaksi kredit dengan pemasok dan jatuh tempo. Utang dapat dibayar pada
+modul Pembayaran Utang. Tidak ada mutasi stok atau beban otomatis.
+
+Ringkasan per rincian jasa menampilkan pendapatan sebelum pajak, retur terposting,
+beban langsung terposting, dan selisihnya; selisih bukan laba bersih perusahaan.
+Beban yang sudah dibayar tidak dapat dibatalkan sebelum pembayaran dibatalkan.
+Penjualan tidak dapat dibatalkan selama memiliki beban jasa terposting.
+
 ## Penerimaan piutang
 
 Penerimaan piutang dialokasikan ke tagihan pelanggan yang sudah diposting
