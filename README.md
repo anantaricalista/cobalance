@@ -20,8 +20,10 @@ Jumlah barang, umur manfaat, dan persentase pajak tidak memakai format ini.
 
 ## Tampilan
 
-Layout perusahaan menggunakan navigasi samping yang menyesuaikan menu setiap role,
-serta menu yang dapat dibuka pada layar kecil. Halaman login dan system admin
+Layout perusahaan menggunakan navigasi samping yang menyesuaikan menu setiap role.
+Gunakan tombol menu di bagian atas untuk menyembunyikan atau menampilkan navigasi
+dan memperluas area kerja; pada layar kecil menu ditampilkan sebagai panel.
+Halaman login dan system admin
 mengikuti palet tampilan yang sama.
 
 Layout ini mengadaptasi pola AdminLTE untuk Co-Balance melalui

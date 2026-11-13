@@ -11,27 +11,47 @@
         if (activeToggle) activeToggle.setAttribute('aria-expanded', 'true');
     }
 
-    function setOpen(open) {
-        document.body.classList.toggle('cb-sidebar-open', open);
-        button.setAttribute('aria-expanded', open ? 'true' : 'false');
-        button.setAttribute('aria-label', open ? 'Tutup menu navigasi' : 'Buka menu navigasi');
-        backdrop.hidden = !open;
+    function isMobile() {
+        return window.innerWidth <= 767;
     }
 
+    function updateButton(open) {
+        button.setAttribute('aria-expanded', open ? 'true' : 'false');
+        button.setAttribute('aria-label', open ? 'Tutup menu navigasi' : 'Buka menu navigasi');
+        button.title = open ? 'Tutup menu navigasi' : 'Buka menu navigasi';
+    }
+
+    function setMobileOpen(open) {
+        document.body.classList.toggle('cb-sidebar-open', open);
+        backdrop.hidden = !open;
+        updateButton(open);
+    }
+
+    var mobile = isMobile();
     button.addEventListener('click', function () {
-        setOpen(!document.body.classList.contains('cb-sidebar-open'));
+        if (isMobile()) {
+            setMobileOpen(!document.body.classList.contains('cb-sidebar-open'));
+        } else {
+            var collapsed = document.body.classList.toggle('cb-sidebar-collapsed');
+            updateButton(!collapsed);
+        }
     });
     backdrop.addEventListener('click', function () {
-        setOpen(false);
+        setMobileOpen(false);
         button.focus();
     });
     document.addEventListener('keydown', function (event) {
-        if (event.key === 'Escape' && document.body.classList.contains('cb-sidebar-open')) {
-            setOpen(false);
+        if (event.key === 'Escape' && isMobile() && document.body.classList.contains('cb-sidebar-open')) {
+            setMobileOpen(false);
             button.focus();
         }
     });
     window.addEventListener('resize', function () {
-        if (window.innerWidth > 767) setOpen(false);
+        if (mobile === isMobile()) return;
+        mobile = isMobile();
+        document.body.classList.remove('cb-sidebar-open');
+        backdrop.hidden = true;
+        updateButton(!mobile && !document.body.classList.contains('cb-sidebar-collapsed'));
     });
+    updateButton(!mobile && !document.body.classList.contains('cb-sidebar-collapsed'));
 }());
