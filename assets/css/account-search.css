@@ -1,0 +1,13 @@
+.account-search-control {
+    margin-bottom: 4px;
+}
+
+.account-search-status {
+    display: block;
+    color: #555;
+    font-size: 12px;
+}
+
+.account-search-status:empty {
+    display: none;
+}

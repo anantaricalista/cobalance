@@ -12,7 +12,7 @@
 <form id="filterForm" class="form-inline" style="margin-bottom:20px;">
     <div class="form-group">
         <label for="id_akun">Akun:</label>
-        <select name="id_akun" id="id_akun" class="form-control">
+        <select name="id_akun" id="id_akun" class="form-control account-search">
             <option value="">-- Pilih Akun --</option>
             <?php foreach ($akun_list as $akun): ?>
                 <option value="<?php echo $akun->id_akun; ?>">

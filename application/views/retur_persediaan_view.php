@@ -59,7 +59,7 @@
             <div class="form-group col-sm-4"><label for="return-quantity">Jumlah retur</label>
                 <input id="return-quantity" class="form-control" type="number" min="0.0001" step="0.0001" required></div>
             <div class="form-group col-sm-8"><label for="return-account">Akun laba/rugi selisih persediaan</label>
-                <select id="return-account" class="form-control">
+                <select id="return-account" class="form-control account-search">
                     <option value="">-- Pilih jika retur pembelian barang --</option>
                     <?php foreach ($accounts as $account): ?>
                         <option value="<?= (int) $account->id_akun ?>" <?= !$account->selectable ? 'disabled' : '' ?>><?= html_escape(str_repeat('— ', $account->depth) . $account->kode_akun . ' - ' . $account->nama_akun) ?></option>

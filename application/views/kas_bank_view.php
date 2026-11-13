@@ -69,7 +69,7 @@ $map = function ($accounts) {
                 </div>
                 <div class="form-group col-sm-6">
                     <label for="cash-account" id="cash-account-label">Akun kas/bank</label>
-                    <select class="form-control" id="cash-account" required></select>
+                    <select class="form-control account-search" id="cash-account" required></select>
                 </div>
             </div>
             <div class="row">
@@ -177,7 +177,7 @@ $(function () {
         values = values || {};
         var transfer = $('#cash-type').val() === 'transfer_kas';
         var row = $('<tr>');
-        var account = $('<select class="form-control" data-field="id_akun" required>');
+        var account = $('<select class="form-control account-search" data-field="id_akun" aria-label="Akun rincian" required>');
         fillSelect(account, transfer ? options.cash : options.all, values.id_akun, '-- Pilih akun --');
         row.append($('<td>').append(account));
         row.append($('<td>').append($('<input class="form-control" maxlength="255" data-field="deskripsi">').val(values.deskripsi || '')));

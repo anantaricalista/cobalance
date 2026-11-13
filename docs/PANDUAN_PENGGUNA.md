@@ -40,6 +40,9 @@ Sebelum mencatat transaksi, buka menu **Master** dan lengkapi data berikut:
 
 Pastikan semua pilihan akun benar dan aktif sebelum transaksi diposting. Jika
 pilihan akun belum tersedia, periksa kembali akun dan pengaturannya.
+Pada pilihan akun, ketik kode atau nama pada kolom pencarian di atas daftar,
+lalu pilih akun yang sesuai. Kosongkan pencarian untuk menampilkan semua pilihan.
+Akun induk yang tidak boleh dipakai tetap tidak dapat dipilih.
 
 Pengguna Purchasing dapat membuka menu **Pemasok** untuk menambah dan mengedit
 pemasok, termasuk mengubah statusnya menjadi aktif atau tidak aktif. Penghapusan

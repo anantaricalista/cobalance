@@ -9,6 +9,8 @@
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet">
     <!-- DataTables CSS (jika digunakan) -->
     <link href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap.min.css" rel="stylesheet">
+    <link href="<?= base_url('assets/css/account-search.css') ?>" rel="stylesheet">
+    <script defer src="<?= base_url('assets/js/account-search.js') ?>"></script>
     <style>
         /* Sticky header */
         .sticky-header {

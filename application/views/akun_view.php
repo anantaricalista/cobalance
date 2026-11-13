@@ -72,7 +72,7 @@
                         <div class="form-group">
                             <label class="control-label col-xs-12 col-sm-3">Akun Induk</label>
                             <div class="col-xs-12 col-sm-9">
-                                <select name="id_akun_induk" class="form-control">
+                                <select name="id_akun_induk" class="form-control account-search" aria-label="Akun Induk">
                                     <option value="">-- Tidak Ada (Akun Induk) --</option>
                                     <?php foreach ($parent_list as $parent): ?>
                                         <option value="<?php echo html_escape($parent->id_akun); ?>">

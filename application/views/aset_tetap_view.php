@@ -82,14 +82,14 @@ $isDraft = $transaction && $transaction->status === 'draft';
                 <input class="form-control" id="acq-start" type="date" required value="<?= html_escape($transaction && $transaction->asset ? $transaction->asset->tanggal_mulai_penyusutan : date('Y-m-01')) ?>"></div>
         </div>
         <div class="row">
-            <div class="form-group col-sm-4"><label for="acq-asset-account">Akun aset (kelompok 1800)</label><select class="form-control" id="acq-asset-account" required></select></div>
-            <div class="form-group col-sm-4"><label for="acq-accum-account">Akun akumulasi (kelompok 1900)</label><select class="form-control" id="acq-accum-account" required></select></div>
-            <div class="form-group col-sm-4"><label for="acq-expense-account">Akun beban penyusutan</label><select class="form-control" id="acq-expense-account" required></select></div>
+            <div class="form-group col-sm-4"><label for="acq-asset-account">Akun aset (kelompok 1800)</label><select class="form-control account-search" id="acq-asset-account" required></select></div>
+            <div class="form-group col-sm-4"><label for="acq-accum-account">Akun akumulasi (kelompok 1900)</label><select class="form-control account-search" id="acq-accum-account" required></select></div>
+            <div class="form-group col-sm-4"><label for="acq-expense-account">Akun beban penyusutan</label><select class="form-control account-search" id="acq-expense-account" required></select></div>
         </div>
         <div class="row">
             <div class="form-group col-sm-3"><label for="acq-payment">Pembayaran</label>
                 <select class="form-control" id="acq-payment"><option value="tunai">Tunai</option><option value="kredit">Kredit</option></select></div>
-            <div class="form-group col-sm-5" id="acq-cash-wrap"><label for="acq-cash">Akun kas/bank</label><select class="form-control" id="acq-cash"></select></div>
+            <div class="form-group col-sm-5" id="acq-cash-wrap"><label for="acq-cash">Akun kas/bank</label><select class="form-control account-search" id="acq-cash"></select></div>
             <div class="form-group col-sm-5" id="acq-supplier-wrap"><label for="acq-supplier">Pemasok</label><select class="form-control" id="acq-supplier"></select></div>
             <div class="form-group col-sm-4" id="acq-due-wrap"><label for="acq-due">Jatuh tempo</label><input class="form-control" id="acq-due" type="date"></div>
         </div>
@@ -126,9 +126,9 @@ $isDraft = $transaction && $transaction->status === 'draft';
             <div class="form-group col-sm-3"><label for="old-accum">Akumulasi penyusutan per Saldo Awal</label><input class="form-control" id="old-accum" type="number" min="0" step="0.01" value="0.00" required></div>
         </div>
         <div class="row">
-            <div class="form-group col-sm-4"><label for="old-asset-account">Akun aset (1800)</label><select class="form-control" id="old-asset-account" required></select></div>
-            <div class="form-group col-sm-4"><label for="old-accum-account">Akun akumulasi (1900)</label><select class="form-control" id="old-accum-account" required></select></div>
-            <div class="form-group col-sm-4"><label for="old-expense-account">Akun beban penyusutan</label><select class="form-control" id="old-expense-account" required></select></div>
+            <div class="form-group col-sm-4"><label for="old-asset-account">Akun aset (1800)</label><select class="form-control account-search" id="old-asset-account" required></select></div>
+            <div class="form-group col-sm-4"><label for="old-accum-account">Akun akumulasi (1900)</label><select class="form-control account-search" id="old-accum-account" required></select></div>
+            <div class="form-group col-sm-4"><label for="old-expense-account">Akun beban penyusutan</label><select class="form-control account-search" id="old-expense-account" required></select></div>
         </div>
         <button class="btn btn-default" type="submit">Daftarkan aset lama</button>
     </form>
@@ -157,7 +157,7 @@ $isDraft = $transaction && $transaction->status === 'draft';
         </div>
         <div class="row">
             <div class="form-group col-sm-3"><label for="disposal-payment">Cara penerimaan</label><select class="form-control" id="disposal-payment"><option value="tanpa_hasil">Tanpa hasil</option><option value="tunai">Tunai</option><option value="kredit">Kredit</option></select></div>
-            <div class="form-group col-sm-4" id="disposal-cash-wrap"><label for="disposal-cash">Akun kas/bank</label><select class="form-control" id="disposal-cash"></select></div>
+            <div class="form-group col-sm-4" id="disposal-cash-wrap"><label for="disposal-cash">Akun kas/bank</label><select class="form-control account-search" id="disposal-cash"></select></div>
             <div class="form-group col-sm-5" id="disposal-customer-wrap"><label for="disposal-customer">Pelanggan</label><select class="form-control" id="disposal-customer"></select></div>
             <div class="form-group col-sm-4" id="disposal-due-wrap"><label for="disposal-due">Jatuh tempo</label><input class="form-control" id="disposal-due" type="date"></div>
         </div>
@@ -282,7 +282,7 @@ $(function () {
         selectData('#' + prefix + '-asset-account', choices.assetAccounts, asset, '-- Pilih akun aset --');
         selectData('#' + prefix + '-accum-account', choices.accumAccounts, accum, '-- Pilih akun akumulasi --');
         selectData('#' + prefix + '-expense-account', choices.expenseAccounts, expense, '-- Pilih akun beban --');
-        if (cash) selectData('#' + prefix + '-cash', choices.cashAccounts, cash, '-- Pilih akun kas/bank --');
+        if ($('#' + prefix + '-cash').length) selectData('#' + prefix + '-cash', choices.cashAccounts, cash, '-- Pilih akun kas/bank --');
     }
     function acqPaymentChanged() {
         var credit = $('#acq-payment').val() === 'kredit';

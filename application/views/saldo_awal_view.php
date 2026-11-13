@@ -90,7 +90,7 @@ foreach ($products as $product) $product_options[] = array('id' => $product->id_
             </div>
             <div class="form-group">
                 <label for="balancing-account">Akun ekuitas penyeimbang</label>
-                <select class="form-control" id="balancing-account" required></select>
+                <select class="form-control account-search" id="balancing-account" required></select>
             </div>
         </div>
         <div class="opening-journal-preview" aria-live="polite">
@@ -235,6 +235,7 @@ $(function () {
             var input;
             if (field[1] === 'select') {
                 input = $('<select class="form-control">');
+                if (kind === 'akun' || kind === 'aset') input.addClass('account-search').attr('aria-label', 'Akun ' + field[0].replace(/_/g, ' '));
                 fillSelect(input, kind === 'aset' ? assetAccounts[field[0]] : options[kind], values[field[0]]);
             } else {
                 input = $('<input class="form-control">').attr('type', field[1] === 'date' ? 'date' : 'text');

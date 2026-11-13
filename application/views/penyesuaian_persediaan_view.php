@@ -60,7 +60,7 @@
             <div class="form-group col-sm-4"><label for="adjustment-value">Total nilai perolehan</label>
                 <input id="adjustment-value" class="form-control" type="text" inputmode="decimal"></div>
             <div class="form-group col-sm-4"><label for="adjustment-account">Akun selisih pendapatan/beban</label>
-                <select id="adjustment-account" class="form-control" required>
+                <select id="adjustment-account" class="form-control account-search" required>
                     <option value="">-- Pilih akun --</option>
                     <?php foreach ($accounts as $account): ?>
                         <option value="<?= (int) $account->id_akun ?>" <?= !$account->selectable ? 'disabled' : '' ?>><?= html_escape(str_repeat('— ', $account->depth) . $account->kode_akun . ' - ' . $account->nama_akun) ?></option>

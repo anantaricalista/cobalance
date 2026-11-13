@@ -49,7 +49,7 @@
                                     <?php endforeach; ?>
                                 </select>
                             <?php elseif ($field['type'] === 'account'): ?>
-                                <select id="<?php echo html_escape($name); ?>" name="<?php echo html_escape($name); ?>" class="form-control" <?php echo !empty($field['required']) ? 'required' : ''; ?>>
+                                <select id="<?php echo html_escape($name); ?>" name="<?php echo html_escape($name); ?>" class="form-control account-search" <?php echo !empty($field['required']) ? 'required' : ''; ?>>
                                     <option value="">-- Pilih Akun --</option>
                                     <?php foreach ($accounts[$name] as $account): ?>
                                         <option value="<?php echo $account->selectable ? html_escape($account->id_akun) : ''; ?>" <?php echo $account->selectable ? '' : 'disabled'; ?>><?php echo html_escape(str_repeat('- ', $account->depth) . $account->kode_akun . ' - ' . $account->nama_akun); ?></option>

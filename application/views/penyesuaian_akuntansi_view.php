@@ -118,7 +118,7 @@ $(function () {
         $('#adjustment-message').empty().append($('<div class="alert alert-danger">').text(message));
     }
     function optionList(selected) {
-        var select = $('<select class="form-control adjustment-account" required>').append($('<option>').val('').text('-- Pilih akun --'));
+        var select = $('<select class="form-control adjustment-account account-search" aria-label="Akun penyesuaian" required>').append($('<option>').val('').text('-- Pilih akun --'));
         accounts.forEach(function (account) {
             select.append($('<option>').val(account.id).text(account.label).prop('disabled', !!account.disabled));
         });

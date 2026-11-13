@@ -47,10 +47,10 @@ foreach ($cash_accounts as $account) {
                 <div class="form-group col-sm-4"><label for="capital-date">Tanggal</label>
                     <input id="capital-date" class="form-control" type="date" value="<?= html_escape($transaction->tanggal) ?>" required></div>
                 <div class="form-group col-sm-4"><label for="capital-cash">Akun kas/bank</label>
-                    <select id="capital-cash" class="form-control" required></select></div>
+                    <select id="capital-cash" class="form-control account-search" required></select></div>
             </div>
             <div class="form-group" id="equity-container"><label for="capital-equity">Akun prive (ekuitas)</label>
-                <select id="capital-equity" class="form-control"></select></div>
+                <select id="capital-equity" class="form-control account-search"></select></div>
             <div class="form-group"><label for="capital-amount">Jumlah</label>
                 <input id="capital-amount" class="form-control" type="text" inputmode="decimal" required></div>
             <div class="form-group"><label for="capital-description">Keterangan</label>
@@ -97,10 +97,10 @@ foreach ($cash_accounts as $account) {
             <div class="form-group col-sm-3"><label for="capital-date">Tanggal</label>
                 <input id="capital-date" class="form-control" type="date" value="<?= date('Y-m-d') ?>" required></div>
             <div class="form-group col-sm-6"><label for="capital-cash">Akun kas/bank</label>
-                <select id="capital-cash" class="form-control" required></select></div>
+                <select id="capital-cash" class="form-control account-search" required></select></div>
         </div>
         <div class="form-group" id="equity-container"><label for="capital-equity">Akun prive (ekuitas)</label>
-            <select id="capital-equity" class="form-control"></select></div>
+            <select id="capital-equity" class="form-control account-search"></select></div>
         <div class="form-group"><label for="capital-amount">Jumlah</label>
             <input id="capital-amount" class="form-control" type="text" inputmode="decimal" required></div>
         <div class="form-group"><label for="capital-description">Keterangan</label>

@@ -71,7 +71,7 @@ foreach ($cash_accounts as $account) {
                 </div>
                 <div class="form-group col-sm-4">
                     <label for="receipt-cash">Dibayar dari akun kas/bank</label>
-                    <select class="form-control" id="receipt-cash" required></select>
+                    <select class="form-control account-search" id="receipt-cash" required></select>
                 </div>
             </div>
             <div class="row">

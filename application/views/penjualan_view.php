@@ -105,7 +105,7 @@ foreach ($cash_accounts as $account) {
                 </div>
                 <div class="form-group col-sm-4" id="cash-group">
                     <label for="sale-cash">Akun kas/bank</label>
-                    <select class="form-control" id="sale-cash"></select>
+                    <select class="form-control account-search" id="sale-cash"></select>
                 </div>
                 <div class="form-group col-sm-4">
                     <label for="sale-reference">Referensi</label>
