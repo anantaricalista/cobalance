@@ -12,7 +12,33 @@
 <?php if ($master['route'] === 'produk'): ?>
     <style>
         .product-list-image { width: 48px; height: 48px; object-fit: cover; border: 1px solid #e1e8f0; border-radius: 6px; }
-        .product-image-preview { max-width: 150px; max-height: 150px; object-fit: contain; border: 1px solid #e1e8f0; border-radius: 8px; padding: 4px; background: #fff; }
+        #modal_form .modal-content { border: 0; border-radius: 12px; }
+        #modal_form .modal-header { padding: 20px 24px; border-bottom: 1px solid #e4ebf2; }
+        #modal_form .modal-title { margin: 0; color: #243b5a; font-size: 20px; font-weight: 700; }
+        #modal_form .modal-body { padding: 20px 24px; background: #f7f9fc; }
+        #modal_form .modal-footer { padding: 15px 24px; }
+        .product-form-section { margin-bottom: 16px; padding: 18px; border: 1px solid #e1e8f0; border-radius: 9px; background: #fff; }
+        .product-form-section:last-child { margin-bottom: 0; }
+        .product-form-section h4 { margin: 0 0 5px; color: #243b5a; font-size: 15px; font-weight: 700; }
+        .product-form-section > p { margin: 0 0 15px; color: #718198; font-size: 12px; line-height: 1.5; }
+        .product-form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 18px; }
+        #modal_form .product-form-grid .form-group { margin: 0; min-width: 0; }
+        #modal_form .product-form-grid .control-label { display: block; float: none; width: auto; padding: 0; margin-bottom: 6px; text-align: left; }
+        #modal_form .product-form-grid .product-field-input { float: none; width: auto; padding: 0; }
+        #modal_form .product-form-grid .select2-container { max-width: 100%; }
+        .product-image-controls { display: flex; align-items: flex-start; gap: 16px; }
+        .product-image-placeholder, .product-image-preview { width: 112px; height: 112px; border: 1px solid #e1e8f0; border-radius: 8px; background: #f7f9fc; }
+        .product-image-preview { display: block; object-fit: contain; padding: 4px; }
+        .product-image-placeholder { display: flex; align-items: center; justify-content: center; padding: 10px; color: #718198; font-size: 12px; text-align: center; }
+        .product-image-input { min-width: 0; flex: 1; }
+        .product-image-input input[type="file"] { max-width: 100%; }
+        .product-image-input .help-block { margin: 7px 0; }
+        .product-image-input label { font-weight: 400; }
+        @media (max-width: 600px) {
+            #modal_form .modal-header, #modal_form .modal-body, #modal_form .modal-footer { padding-left: 16px; padding-right: 16px; }
+            .product-form-grid { grid-template-columns: minmax(0, 1fr); }
+            .product-image-controls { flex-wrap: wrap; }
+        }
     </style>
     <p class="text-muted">Harga: pemisah ribuan ditambahkan otomatis; gunakan koma untuk desimal, misalnya <strong>1.000,50</strong>.</p>
 <?php endif; ?>
@@ -31,7 +57,7 @@
 </div>
 
 <div class="modal fade" id="modal_form" role="dialog" aria-labelledby="modal_title">
-    <div class="modal-dialog"><div class="modal-content">
+    <div class="modal-dialog<?php echo $master['route'] === 'produk' ? ' modal-lg' : ''; ?>"><div class="modal-content">
         <form id="form" class="form-horizontal">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span>&times;</span></button>
@@ -40,10 +66,29 @@
             <div class="modal-body">
                 <div id="form_error" class="alert alert-danger" role="alert" style="display:none;"></div>
                 <input type="hidden" name="<?php echo html_escape($master['id']); ?>">
+                <?php if ($master['route'] === 'produk'): ?>
+                    <section class="product-form-section" aria-labelledby="product-basic-title">
+                        <h4 id="product-basic-title">Informasi Produk</h4>
+                        <p>Isi identitas, harga, dan status produk atau jasa.</p>
+                        <div class="product-form-grid">
+                <?php endif; ?>
                 <?php foreach ($master['fields'] as $name => $field): ?>
+                    <?php if ($master['route'] === 'produk' && $name === 'id_akun_pendapatan'): ?>
+                        </div></section>
+                        <section class="product-form-section" aria-labelledby="product-accounts-title">
+                            <h4 id="product-accounts-title">Pengaturan Akun</h4>
+                            <p>Pilih akun yang sesuai untuk transaksi produk atau jasa.</p>
+                            <div class="product-form-grid">
+                    <?php elseif ($master['route'] === 'produk' && $name === 'aktif'): ?>
+                        </div></section>
+                        <section class="product-form-section" aria-labelledby="product-status-title">
+                            <h4 id="product-status-title">Status Produk</h4>
+                            <p>Produk tidak aktif tidak dapat dipilih untuk transaksi baru.</p>
+                            <div class="product-form-grid">
+                    <?php endif; ?>
                     <div class="form-group">
                         <label for="<?php echo html_escape($name); ?>" class="control-label col-xs-12 col-sm-4"><?php echo html_escape($field['label']); ?></label>
-                        <div class="col-xs-12 col-sm-8">
+                        <div class="col-xs-12 col-sm-8<?php echo $master['route'] === 'produk' ? ' product-field-input' : ''; ?>">
                             <?php if ($field['type'] === 'select'): ?>
                                 <select id="<?php echo html_escape($name); ?>" name="<?php echo html_escape($name); ?>" class="form-control" <?php echo !empty($field['required']) ? 'required' : ''; ?>>
                                     <?php if (isset($field['placeholder'])): ?>
@@ -52,18 +97,6 @@
                                     <?php foreach ($field['options'] as $value => $label): ?>
                                         <option value="<?php echo html_escape((string) $value); ?>"><?php echo html_escape($label); ?></option>
                                     <?php endforeach; ?>
-                                    <?php if ($master['route'] === 'produk'): ?>
-                                        <div class="form-group">
-                                            <label for="gambar_produk" class="control-label col-xs-12 col-sm-4">Gambar produk</label>
-                                            <div class="col-xs-12 col-sm-8">
-                                                <img id="product-image-preview" class="product-image-preview" alt="Pratinjau gambar produk" style="display:none">
-                                                <p id="product-image-empty" class="text-muted">Belum ada gambar.</p>
-                                                <input id="gambar_produk" name="gambar_produk" type="file" accept="image/jpeg,image/png,image/webp">
-                                                <p class="help-block">Opsional. JPG, PNG, atau WebP, maksimal 2 MB dan 4096 x 4096 piksel.</p>
-                                                <label id="product-image-remove-label" style="display:none"><input type="checkbox" name="hapus_gambar" value="1"> Hapus gambar saat ini</label>
-                                            </div>
-                                        </div>
-                                    <?php endif; ?>
                                 </select>
                             <?php elseif ($field['type'] === 'account'): ?>
                                 <select id="<?php echo html_escape($name); ?>" name="<?php echo html_escape($name); ?>" class="form-control account-search" <?php echo !empty($field['required']) ? 'required' : ''; ?>>
@@ -71,6 +104,24 @@
                                     <?php foreach ($accounts[$name] as $account): ?>
                                         <option value="<?php echo $account->selectable ? html_escape($account->id_akun) : ''; ?>" <?php echo $account->selectable ? '' : 'disabled'; ?>><?php echo html_escape(str_repeat('- ', $account->depth) . $account->kode_akun . ' - ' . $account->nama_akun); ?></option>
                                     <?php endforeach; ?>
+                                    <?php if ($master['route'] === 'produk'): ?>
+                                            </div>
+                                        </section>
+                                        <section class="product-form-section" aria-labelledby="product-image-title">
+                                            <h4 id="product-image-title">Gambar Produk</h4>
+                                            <p>Tambahkan gambar untuk memudahkan pengenalan produk.</p>
+                                            <div class="product-image-controls">
+                                                <img id="product-image-preview" class="product-image-preview" alt="Pratinjau gambar produk" style="display:none">
+                                                <div id="product-image-empty" class="product-image-placeholder">Belum ada gambar</div>
+                                                <div class="product-image-input">
+                                                    <label for="gambar_produk">Pilih gambar</label>
+                                                    <input id="gambar_produk" name="gambar_produk" type="file" accept="image/jpeg,image/png,image/webp" aria-describedby="product-image-help">
+                                                    <p id="product-image-help" class="help-block">Opsional. JPG, PNG, atau WebP, maksimal 2 MB dan 4096 x 4096 piksel.</p>
+                                                    <label id="product-image-remove-label" style="display:none"><input type="checkbox" name="hapus_gambar" value="1"> Hapus gambar saat ini</label>
+                                                </div>
+                                            </div>
+                                        </section>
+                                    <?php endif; ?>
                                 </select>
                             <?php else: ?>
                                 <input id="<?php echo html_escape($name); ?>" name="<?php echo html_escape($name); ?>" class="form-control"
