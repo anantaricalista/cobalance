@@ -68,8 +68,23 @@ Awal** hanya mendukung satu transaksi pembukaan untuk perusahaan.
 
 Posting saldo awal hanya dapat dilakukan jika jurnal perusahaan masih kosong.
 Jika perusahaan benar-benar baru dan belum memiliki saldo yang perlu dimasukkan,
-Anda dapat melewati tahap ini. Saldo awal yang telah diposting tidak dapat diedit;
-pembatalan membuat jurnal pembalik dan dapat dibatasi jika saldo sudah digunakan.
+Anda dapat melewati tahap ini. Draft dapat diperbaiki sebelum diposting. Setelah
+saldo awal diposting, hanya Admin Perusahaan yang dapat mengoreksinya melalui
+pratinjau dampak dan konfirmasi alasan. Koreksi memperbarui jurnal saldo awal
+asli pada tanggal pembukaan dan menyimpan nilai sebelum/sesudah, dampak, alasan,
+pengguna, serta waktu ke riwayat audit. Admin harus memastikan sendiri bahwa
+periode terkait terbuka; aplikasi belum memiliki penguncian periode.
+
+Koreksi bukan penghitungan ulang penuh atas semua transaksi setelah tanggal
+pembukaan. Mutasi stok dan saldo berjalan diperbarui, tetapi jurnal HPP
+transaksi berikutnya tidak dihitung ulang. Jadwal dan jurnal penyusutan akan
+dihitung ulang; aset yang sudah dilepas tidak dapat dikoreksi melalui alur ini.
+Karena itu laporan historis dapat berubah atau menjadi tidak konsisten dengan
+aktivitas lanjutan. Pratinjau menampilkan kategori dan jumlah catatan terdampak;
+tinjau jurnal, buku besar, stok, tagihan, serta aset setelah koreksi. Sistem
+menolak penghapusan tagihan yang sudah dipakai, nominal faktur di bawah
+pembayaran/retur, penghapusan aset yang sudah digunakan, dan perubahan stok
+yang membuat saldo lanjutan tidak valid.
 
 ## 4. Catat dan posting transaksi
 
@@ -154,3 +169,5 @@ setelah meninjau hasilnya.
 - Pemasangan atau pembaruan aplikasi dapat memerlukan perubahan skema database.
   Minta administrator menyiapkan database dan migrasi yang tercantum di README
   sebelum fitur terkait digunakan.
+- Sebelum memakai koreksi saldo awal, jalankan migrasi
+  `application/sql/20261113_koreksi_saldo_awal.sql`.

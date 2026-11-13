@@ -78,6 +78,16 @@ Pengguna role `gudang` diarahkan ke `gudang/beranda` dan setiap upaya membuka
 modul perusahaan lain dialihkan kembali ke sana; modul gudang hanya dapat dibuka
 role `gudang` dan `admin`.
 
+Koreksi saldo awal yang sudah diposting hanya tersedia untuk Admin Perusahaan.
+Sebelum fitur ini digunakan, cadangkan database lalu jalankan
+`application/sql/20261113_koreksi_saldo_awal.sql` satu kali. Koreksi menulis
+riwayat nilai sebelum/sesudah dan memperbarui jurnal saldo awal yang asli.
+Pengguna harus meninjau pratinjau dampak serta mengonfirmasi secara manual bahwa
+periode terkait terbuka. Jurnal HPP historis tidak dihitung ulang, sedangkan
+jadwal dan jurnal penyusutan dihitung ulang. Aset yang sudah dilepas tidak dapat
+dikoreksi melalui alur ini. Periksa kembali laporan dan buku pembantu setelah
+koreksi.
+
 Modul Purchasing (`controllers|models|views/purchasing`) menyediakan beranda,
 daftar produk baca-saja (tanpa harga jual), serta melihat, menambah, mengedit,
 dan mengubah status pemasok melalui Master Pemasok. Penghapusan permanen tetap

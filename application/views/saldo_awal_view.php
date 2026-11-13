@@ -1,6 +1,7 @@
 <?php
 $trx = $opening['transaksi'];
-$editable = !$trx || $trx->status === 'draft';
+$correcting = $trx && $trx->status === 'diposting' && !empty($can_correct_opening);
+$editable = !$trx || $trx->status === 'draft' || $correcting;
 $control_ids = array();
 foreach ($control_accounts as $account) $control_ids[(string) $account->id_akun] = true;
 $account_options = array();
@@ -75,8 +76,8 @@ foreach ($products as $product) $product_options[] = array('id' => $product->id_
     <fieldset <?= $editable ? '' : 'disabled' ?>>
         <div class="opening-form-heading">
             <div>
-                <span class="opening-eyebrow"><?= $editable ? 'FORMULIR PEMBUKAAN' : 'SALDO YANG TELAH DICATAT' ?></span>
-                <h4><?= $editable ? 'Rincian saldo awal' : 'Rincian transaksi' ?></h4>
+                <span class="opening-eyebrow"><?= $correcting ? 'KOREKSI SALDO AWAL' : ($editable ? 'FORMULIR PEMBUKAAN' : 'SALDO YANG TELAH DICATAT') ?></span>
+                <h4><?= $correcting ? 'Perbarui rincian saldo awal' : ($editable ? 'Rincian saldo awal' : 'Rincian transaksi') ?></h4>
             </div>
             <?php if ($trx): ?>
                 <span class="opening-date-label"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span> <?= html_escape($trx->tanggal) ?></span>
@@ -85,7 +86,7 @@ foreach ($products as $product) $product_options[] = array('id' => $product->id_
         <div class="opening-basics">
             <div class="form-group">
                 <label for="opening-date">Tanggal pembukaan</label>
-                <input class="form-control" id="opening-date" type="date" required value="<?= html_escape($trx ? $trx->tanggal : date('Y-m-d')) ?>">
+                <input class="form-control" id="opening-date" type="date" required value="<?= html_escape($trx ? $trx->tanggal : date('Y-m-d')) ?>" <?= $correcting ? 'readonly' : '' ?>>
             </div>
             <div class="form-group">
                 <label for="balancing-account">Akun ekuitas penyeimbang</label>
@@ -129,10 +130,22 @@ foreach ($products as $product) $product_options[] = array('id' => $product->id_
             <?php if ($editable): ?><button type="button" class="btn btn-default add-row" data-kind="<?= $key ?>"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Tambah <?= html_escape(strtolower($title)) ?></button><?php endif; ?>
             </section>
         <?php endforeach; ?>
+        <?php if ($correcting): ?>
+            <section class="opening-cancel-panel">
+                <h4><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> Koreksi mengubah jurnal asli</h4>
+                <p>Koreksi akan memperbarui jurnal saldo awal pada tanggal pembukaan, sehingga laporan historis dapat berubah. Jurnal HPP stok tidak dihitung ulang; jadwal dan jurnal penyusutan akan dihitung ulang. Tinjau dampaknya dan pastikan periode terkait terbuka sebelum melanjutkan.</p>
+                <div class="form-group">
+                    <label for="opening-correction-reason">Alasan koreksi</label>
+                    <textarea id="opening-correction-reason" class="form-control" maxlength="1000" required></textarea>
+                </div>
+                <label><input id="opening-period-confirm" type="checkbox" value="1" required>
+                    Saya sudah memastikan secara manual bahwa periode terkait terbuka untuk koreksi.</label>
+            </section>
+        <?php endif; ?>
         <?php if ($editable): ?>
             <div class="opening-save-bar">
-                <span class="text-muted"><span class="glyphicon glyphicon-lock" aria-hidden="true"></span> Periksa kembali tanggal dan seluruh rincian sebelum menyimpan.</span>
-                <button type="submit" class="btn btn-primary btn-lg"><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span> Simpan draft saldo awal</button>
+                <span class="text-muted"><span class="glyphicon glyphicon-lock" aria-hidden="true"></span> <?= $correcting ? 'Pratinjau dampak wajib ditinjau sebelum jurnal diperbarui.' : 'Periksa kembali tanggal dan seluruh rincian sebelum menyimpan.' ?></span>
+                <button type="submit" class="btn btn-primary btn-lg"><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span> <?= $correcting ? 'Pratinjau dan koreksi jurnal' : 'Simpan draft saldo awal' ?></button>
             </div>
         <?php endif; ?>
     </fieldset>
@@ -163,12 +176,30 @@ foreach ($products as $product) $product_options[] = array('id' => $product->id_
         <p class="text-muted">Pembatalan transaksi hanya dapat dilakukan oleh Akuntansi atau Admin Perusahaan.</p>
     <?php endif; ?>
 <?php endif; ?>
+<?php if (!empty($opening['koreksi'])): ?>
+    <section class="opening-cancel-panel">
+        <h4>Riwayat koreksi saldo awal</h4>
+        <div class="table-responsive"><table class="table table-bordered table-condensed">
+            <thead><tr><th>Waktu</th><th>Pengguna</th><th>Alasan</th></tr></thead>
+            <tbody>
+            <?php foreach ($opening['koreksi'] as $correction): ?>
+                <tr><td><?= html_escape($correction['dibuat_pada']) ?></td>
+                    <td><?= html_escape($correction['pengguna']) ?> (#<?= (int) $correction['id_pengguna'] ?>)</td>
+                    <td><?= html_escape($correction['alasan']) ?></td></tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table></div>
+    </section>
+<?php endif; ?>
 <script>
 $(function () {
     var opening = <?= json_encode($opening, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
     var options = <?= json_encode(array('akun' => $account_options, 'penyeimbang' => $equity_options, 'piutang' => $customer_options, 'utang' => $supplier_options, 'stok' => $product_options), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
     var assetAccounts = <?= json_encode($asset_account_options, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
     var editable = <?= $editable ? 'true' : 'false' ?>;
+    var correcting = <?= $correcting ? 'true' : 'false' ?>;
+    var csrf = <?php if ($this->config->item('csrf_protection')): ?><?= json_encode(array(
+        'name' => $this->security->get_csrf_token_name(), 'value' => $this->security->get_csrf_hash())) ?><?php else: ?>null<?php endif; ?>;
     var fields = {
         akun: [['id_akun', 'select'], ['debit', 'money'], ['kredit', 'money']],
         piutang: [['id_pihak', 'select'], ['nomor', 'text'], ['jatuh_tempo', 'date'], ['jumlah', 'money']],
@@ -218,6 +249,9 @@ $(function () {
             input.attr('data-field', field[0]).prop('required', true);
             row.append($('<td>').append(input));
         });
+        if (kind === 'aset' && values.id_aset_tetap != null) {
+            row.append($('<input type="hidden" data-field="id_aset_tetap">').val(values.id_aset_tetap));
+        }
         if (editable) row.append($('<td>').append($('<button type="button" class="btn btn-danger btn-sm">')
             .attr('aria-label', 'Hapus rincian ' + kind).append($('<span class="glyphicon glyphicon-trash" aria-hidden="true">'))
             .on('click', function () { row.remove(); updateCounts(); updatePreview(); })));
@@ -284,11 +318,13 @@ $(function () {
     updateCounts();
     updatePreview();
     function request(url, data) {
-        <?php if ($this->config->item('csrf_protection')): ?>
-        data[<?= json_encode($this->security->get_csrf_token_name()) ?>] = <?= json_encode($this->security->get_csrf_hash()) ?>;
-        <?php endif; ?>
+        if (csrf) data[csrf.name] = csrf.value;
         $('button').prop('disabled', true);
-        $.post(url, data).done(function () { location.reload(); }).fail(function (xhr) {
+        $.post(url, data).done(function (response) {
+            if (response && response.csrf) csrf = response.csrf;
+            location.reload();
+        }).fail(function (xhr) {
+            if (xhr.responseJSON && xhr.responseJSON.csrf) csrf = xhr.responseJSON.csrf;
             $('#opening-message').empty().append($('<div class="alert alert-danger">').text(xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : 'Permintaan gagal. Silakan coba kembali.'));
             $('button').prop('disabled', false);
         });
@@ -304,6 +340,39 @@ $(function () {
                 data[kind].push(row);
             });
         });
+        if (correcting) {
+            var reason = $.trim($('#opening-correction-reason').val());
+            if (!reason || !$('#opening-period-confirm').prop('checked')) {
+                $('#opening-message').empty().append($('<div class="alert alert-warning">')
+                    .text('Isi alasan dan konfirmasikan secara manual bahwa periode terkait terbuka.'));
+                return;
+            }
+            var previewRequest = {data: JSON.stringify(data)};
+            if (csrf) previewRequest[csrf.name] = csrf.value;
+            $.post(<?= json_encode(site_url('saldo_awal/dampak_koreksi')) ?>, previewRequest).done(function (response) {
+                if (response && response.csrf) csrf = response.csrf;
+                var impact = response.data || {};
+                var warning = (impact.peringatan || []).join('\n- ');
+                var summary = (impact.ringkasan || []).join('\n- ');
+                var message = 'Dampak koreksi pada jurnal tanggal ' + (impact.tanggal_jurnal || '') + ':\n- '
+                    + summary + '\n- '
+                    + (impact.jumlah_mutasi_stok_terdampak || 0) + ' mutasi stok terkait.\n- '
+                    + (impact.jumlah_periode_penyusutan_tercatat || 0) + ' catatan periode penyusutan terkait.\n- '
+                    + (impact.jumlah_faktur_saldo_awal || 0) + ' faktur saldo awal.\n\n- ' + warning
+                    + '\n\nLanjutkan memperbarui jurnal asli?';
+                if (window.confirm(message)) {
+                    request(<?= json_encode(site_url('saldo_awal/koreksi')) ?>, {
+                        data: JSON.stringify(data), alasan: reason, konfirmasi_periode: '1',
+                        baseline: impact.baseline
+                    });
+                }
+            }).fail(function (xhr) {
+                if (xhr.responseJSON && xhr.responseJSON.csrf) csrf = xhr.responseJSON.csrf;
+                $('#opening-message').empty().append($('<div class="alert alert-danger">')
+                    .text(xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : 'Pratinjau koreksi gagal.'));
+            });
+            return;
+        }
         request(<?= json_encode(site_url('saldo_awal/simpan')) ?>, {tanggal: $('#opening-date').val(), data: JSON.stringify(data)});
     });
     $('#post-opening').on('click', function () {

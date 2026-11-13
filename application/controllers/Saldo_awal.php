@@ -15,6 +15,7 @@ class Saldo_awal extends MY_Controller
         $perusahaan = $this->session->userdata('id_perusahaan');
         $data = array(
             'opening' => $this->saldo_awal_service->get(),
+            'can_correct_opening' => $this->session->userdata('role') === 'admin',
             'accounts' => $this->akun->get_display_options(),
             'control_accounts' => $this->akun->get_selectable(array(), array('1200', '2100', '1700')),
             'equity_accounts' => $this->akun->get_display_options(array('Ekuitas')),
@@ -64,6 +65,41 @@ class Saldo_awal extends MY_Controller
         });
     }
 
+    public function dampak_koreksi()
+    {
+        if (!$this->post_only()) return;
+        if ($this->session->userdata('role') !== 'admin') {
+            return $this->error('Koreksi saldo awal hanya dapat dilakukan oleh Admin Perusahaan.', 403);
+        }
+        $raw = $this->input->post('data');
+        $data = is_string($raw) ? json_decode($raw, true) : null;
+        if (!is_array($data) || json_last_error() !== JSON_ERROR_NONE) {
+            return $this->error('Rincian koreksi tidak valid.', 400);
+        }
+        $this->perform(function () use ($data) {
+            return $this->saldo_awal_service->dampak_koreksi($data);
+        }, true);
+    }
+
+    public function koreksi()
+    {
+        if (!$this->post_only()) return;
+        if ($this->session->userdata('role') !== 'admin') {
+            return $this->error('Koreksi saldo awal hanya dapat dilakukan oleh Admin Perusahaan.', 403);
+        }
+        $raw = $this->input->post('data');
+        $data = is_string($raw) ? json_decode($raw, true) : null;
+        if (!is_array($data) || json_last_error() !== JSON_ERROR_NONE) {
+            return $this->error('Rincian koreksi tidak valid.', 400);
+        }
+        $reason = $this->input->post('alasan');
+        $confirm = $this->input->post('konfirmasi_periode') === '1';
+        $baseline = $this->input->post('baseline');
+        $this->perform(function () use ($data, $reason, $confirm, $baseline) {
+            return $this->saldo_awal_service->koreksi($data, $reason, $confirm, $baseline);
+        });
+    }
+
     private function post_only()
     {
         if ($this->input->method() !== 'post') {
@@ -73,11 +109,21 @@ class Saldo_awal extends MY_Controller
         return true;
     }
 
-    private function perform(callable $action)
+    private function perform(callable $action, $return_result = false)
     {
         try {
-            $action();
-            $this->output->set_content_type('application/json')->set_output(json_encode(array('status' => true)));
+            $result = $action();
+            $response = array('status' => true);
+            if ($return_result) {
+                $response['data'] = $result;
+            }
+            if ($this->config->item('csrf_protection')) {
+                $response['csrf'] = array(
+                    'name' => $this->security->get_csrf_token_name(),
+                    'value' => $this->security->get_csrf_hash()
+                );
+            }
+            $this->output->set_content_type('application/json')->set_output(json_encode($response));
         } catch (DomainException $e) {
             $this->error($e->getMessage(), 400);
         } catch (InvalidArgumentException $e) {
@@ -90,7 +136,14 @@ class Saldo_awal extends MY_Controller
 
     private function error($message, $status)
     {
+        $response = array('status' => false, 'message' => $message);
+        if ($this->config->item('csrf_protection')) {
+            $response['csrf'] = array(
+                'name' => $this->security->get_csrf_token_name(),
+                'value' => $this->security->get_csrf_hash()
+            );
+        }
         $this->output->set_status_header($status)->set_content_type('application/json')
-            ->set_output(json_encode(array('status' => false, 'message' => $message)));
+            ->set_output(json_encode($response));
     }
 }
