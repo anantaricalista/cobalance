@@ -33,10 +33,6 @@ class Jurnal extends MY_Controller
             $row[] = $jurnal->tanggal;
             $row[] = html_escape($info['nomor']);
             $row[] = html_escape($info['jenis_transaksi']);
-            $row[] = html_escape($info['pihak']);
-            $row[] = html_escape($info['jenis_jurnal']);
-            $row[] = html_escape($info['status_transaksi']);
-            $row[] = html_escape($jurnal->deskripsi);
             $row[] = $jurnal->total_debit === null ? '-' : 'Rp ' . html_escape(format_nominal($jurnal->total_debit));
             $row[] = html_escape($info['pelaku_jurnal']) .
                 '<br><small class="text-muted">' . html_escape($info['waktu_jurnal']) . '</small>';

@@ -20,10 +20,6 @@
                 <th>Tanggal</th>
                 <th>Nomor transaksi / referensi</th>
                 <th>Jenis transaksi</th>
-                <th>Pihak</th>
-                <th>Jenis jurnal</th>
-                <th>Status transaksi</th>
-                <th>Deskripsi jurnal</th>
                 <th class="text-right">Total debit</th>
                 <th>Pelaku jurnal</th>
                 <th style="width:190px; text-align:center;">Aksi</th>
@@ -93,8 +89,8 @@
                 "type": "POST"
             },
             "columnDefs": [
-                { "targets": [0, 4, 5, 8, 9, 10], "orderable": false },
-                { "targets": 8, "className": "journal-amount" },
+                { "targets": [0, 4, 5, 6], "orderable": false },
+                { "targets": 4, "className": "journal-amount" },
                 {
                     "targets": 1,
                     "render": function (data, type) {

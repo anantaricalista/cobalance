@@ -5,8 +5,7 @@ class M_jurnal extends CI_Model
 {
 
     var $table = 'jurnal_transaksi';
-    var $column_order = array(null, 'j.tanggal', 't.nomor_transaksi', 't.jenis_transaksi', null, null,
-        't.status', 'j.deskripsi', null, null, null);
+    var $column_order = array(null, 'j.tanggal', 't.nomor_transaksi', 't.jenis_transaksi', null, null, null);
     var $column_search = array('j.tanggal', 'j.deskripsi', 'j.referensi', 't.nomor_transaksi',
         't.jenis_transaksi', 't.deskripsi', 't.status', 'p.nama_pelanggan', 's.nama_pemasok',
         'poster.nama_lengkap', 'poster.username', 'pembatal.nama_lengkap', 'pembatal.username');

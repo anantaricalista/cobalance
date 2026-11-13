@@ -225,8 +225,8 @@ transaksi yang belum tercakup. Jurnal pemindahan tidak memengaruhi Laba Rugi.
 
 Menu Jurnal Transaksi bersifat baca-saja: jurnal hasil posting dapat dilihat dan
 detail jurnal dapat dibuka tanpa mengunduh PDF, dan dokumen dapat diekspor. Daftar
-menampilkan transaksi asal, pihak, jenis jurnal, status, total debit dan pelaku;
-detail dan PDF juga menampilkan pembuat draft serta pengguna dan waktu posting dan
+menampilkan transaksi asal, total debit dan pelaku; detail dan PDF juga menampilkan
+pihak, jenis jurnal, status, deskripsi, pembuat draft serta pengguna dan waktu posting dan
 pembatalan. Jurnal pembalik mencantumkan pembatal sebagai pelaku, dan informasi
 yang tidak tercatat tidak direka untuk jurnal lama. Nama mengikuti data pengguna saat ini; jurnal
 tidak dapat dibuat, diubah, atau dihapus langsung. Gunakan modul
