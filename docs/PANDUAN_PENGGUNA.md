@@ -103,7 +103,7 @@ Gunakan modul pada menu **Transaksi** sesuai kegiatan:
 | Mencatat setoran modal atau prive | Modal dan Prive |
 | Mencatat perolehan, penyusutan, atau pelepasan | Aset Tetap |
 | Memeriksa dan menyesuaikan jumlah/nilai stok | Persediaan → Penyesuaian Persediaan |
-| Mencatat retur pembelian atau penjualan | Retur Pembelian/Penjualan |
+| Mencatat retur pembelian atau penjualan | Retur Transaksi |
 | Membuat jurnal penyesuaian manual | Penyesuaian Akuntansi |
 | Memindahkan Laba (Rugi) Berjalan tahun lalu ke Laba Ditahan | Penyesuaian Akuntansi → Pindahkan Saldo Laba (Rugi) Berjalan (jalankan `20261114_pemindahan_laba.sql` dahulu) |
 
