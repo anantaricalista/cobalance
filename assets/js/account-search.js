@@ -31,9 +31,11 @@
         var $select = $(select);
         if ($select.hasClass('select2-hidden-accessible')) return;
         var modal = $select.closest('.modal');
+        var dropdownParent = $select.is('[data-account-dropdown-local]') ? $select.parent()
+            : (modal.length ? modal : $(document.body));
         $select.select2({
             width: '100%',
-            dropdownParent: modal.length ? modal : $(document.body),
+            dropdownParent: dropdownParent,
             language: {
                 noResults: function () { return 'Akun tidak ditemukan'; },
                 searching: function () { return 'Mencari...'; }

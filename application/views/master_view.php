@@ -24,7 +24,7 @@
         .product-form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 18px; }
         #modal_form .product-form-grid .form-group { margin: 0; min-width: 0; }
         #modal_form .product-form-grid .control-label { display: block; float: none; width: auto; padding: 0; margin-bottom: 6px; text-align: left; }
-        #modal_form .product-form-grid .product-field-input { float: none; width: auto; padding: 0; }
+        #modal_form .product-form-grid .product-field-input { position: relative; float: none; width: auto; padding: 0; }
         #modal_form .product-form-grid .select2-container { max-width: 100%; }
         .product-image-controls { display: flex; align-items: flex-start; gap: 16px; }
         .product-image-placeholder, .product-image-preview { width: 112px; height: 112px; border: 1px solid #e1e8f0; border-radius: 8px; background: #f7f9fc; }
@@ -100,7 +100,7 @@
                                     <?php endforeach; ?>
                                 </select>
                             <?php elseif ($field['type'] === 'account'): ?>
-                                <select id="<?php echo html_escape($name); ?>" name="<?php echo html_escape($name); ?>" class="form-control account-search" <?php echo !empty($field['required']) ? 'required' : ''; ?>>
+                                <select id="<?php echo html_escape($name); ?>" name="<?php echo html_escape($name); ?>" class="form-control account-search" <?php echo $master['route'] === 'produk' ? 'data-account-dropdown-local' : ''; ?> <?php echo !empty($field['required']) ? 'required' : ''; ?>>
                                     <option value="">-- Pilih Akun --</option>
                                     <?php foreach ($accounts[$name] as $account): ?>
                                         <option value="<?php echo $account->selectable ? html_escape($account->id_akun) : ''; ?>" <?php echo $account->selectable ? '' : 'disabled'; ?>><?php echo html_escape(str_repeat('- ', $account->depth) . $account->kode_akun . ' - ' . $account->nama_akun); ?></option>
