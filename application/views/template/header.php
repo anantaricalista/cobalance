@@ -828,17 +828,17 @@
             <div class="navbar-collapse" id="navbar-menu">
                 <?php if ($this->session->userdata('role') === 'gudang'): ?>
                 <ul class="nav navbar-nav">
-                    <li <?php if ($this->router->fetch_class() == 'beranda') echo 'class="active"'; ?>><a href="<?php echo site_url('gudang/beranda'); ?>">Beranda</a></li>
-                    <li <?php if ($this->router->fetch_class() == 'stok') echo 'class="active"'; ?>><a href="<?php echo site_url('gudang/stok'); ?>">Stok Barang</a></li>
-                    <li <?php if ($this->router->fetch_class() == 'opname') echo 'class="active"'; ?>><a href="<?php echo site_url('gudang/opname'); ?>">Stock Opname</a></li>
+                    <li <?php if ($this->router->fetch_class() == 'beranda') echo 'class="active"'; ?>><a href="<?php echo site_url('gudang/beranda'); ?>"><span class="glyphicon glyphicon-home cb-nav-icon" aria-hidden="true"></span>Beranda</a></li>
+                    <li <?php if ($this->router->fetch_class() == 'stok') echo 'class="active"'; ?>><a href="<?php echo site_url('gudang/stok'); ?>"><span class="glyphicon glyphicon-inbox cb-nav-icon" aria-hidden="true"></span>Stok Barang</a></li>
+                    <li <?php if ($this->router->fetch_class() == 'opname') echo 'class="active"'; ?>><a href="<?php echo site_url('gudang/opname'); ?>"><span class="glyphicon glyphicon-check cb-nav-icon" aria-hidden="true"></span>Stock Opname</a></li>
                 </ul>
                 <?php elseif ($this->session->userdata('role') === 'purchasing'): ?>
                 <ul class="nav navbar-nav">
-                    <li <?php if ($this->router->fetch_directory() == 'purchasing/' && $this->router->fetch_class() == 'beranda') echo 'class="active"'; ?>><a href="<?php echo site_url('purchasing/beranda'); ?>">Beranda</a></li>
-                    <li <?php if ($this->router->fetch_class() == 'pembelian') echo 'class="active"'; ?>><a href="<?php echo site_url('pembelian'); ?>">Pembelian</a></li>
-                    <li <?php if ($this->router->fetch_class() == 'pembayaran_utang') echo 'class="active"'; ?>><a href="<?php echo site_url('pembayaran_utang'); ?>">Pembayaran Utang</a></li>
-                    <li <?php if ($this->router->fetch_class() == 'pemasok') echo 'class="active"'; ?>><a href="<?php echo site_url('pemasok'); ?>">Pemasok</a></li>
-                    <li <?php if ($this->router->fetch_directory() == 'purchasing/' && $this->router->fetch_class() == 'produk') echo 'class="active"'; ?>><a href="<?php echo site_url('purchasing/produk'); ?>">Produk</a></li>
+                    <li <?php if ($this->router->fetch_directory() == 'purchasing/' && $this->router->fetch_class() == 'beranda') echo 'class="active"'; ?>><a href="<?php echo site_url('purchasing/beranda'); ?>"><span class="glyphicon glyphicon-home cb-nav-icon" aria-hidden="true"></span>Beranda</a></li>
+                    <li <?php if ($this->router->fetch_class() == 'pembelian') echo 'class="active"'; ?>><a href="<?php echo site_url('pembelian'); ?>"><span class="glyphicon glyphicon-shopping-cart cb-nav-icon" aria-hidden="true"></span>Pembelian</a></li>
+                    <li <?php if ($this->router->fetch_class() == 'pembayaran_utang') echo 'class="active"'; ?>><a href="<?php echo site_url('pembayaran_utang'); ?>"><span class="glyphicon glyphicon-credit-card cb-nav-icon" aria-hidden="true"></span>Pembayaran Utang</a></li>
+                    <li <?php if ($this->router->fetch_class() == 'pemasok') echo 'class="active"'; ?>><a href="<?php echo site_url('pemasok'); ?>"><span class="glyphicon glyphicon-briefcase cb-nav-icon" aria-hidden="true"></span>Pemasok</a></li>
+                    <li <?php if ($this->router->fetch_directory() == 'purchasing/' && $this->router->fetch_class() == 'produk') echo 'class="active"'; ?>><a href="<?php echo site_url('purchasing/produk'); ?>"><span class="glyphicon glyphicon-tags cb-nav-icon" aria-hidden="true"></span>Produk</a></li>
                 </ul>
                 <?php else: ?>
                 <ul class="nav navbar-nav">
@@ -847,91 +847,91 @@
                         echo 'active'; ?>">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                             aria-expanded="false">
-                            Master <span class="caret"></span>
+                            <span class="glyphicon glyphicon-th-large cb-nav-icon" aria-hidden="true"></span>Master <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu">
                             <li <?php if ($this->router->fetch_class() == 'akun')
                                 echo 'class="active"'; ?>>
-                                <a href="<?php echo site_url('akun'); ?>">Akun</a>
+                                <a href="<?php echo site_url('akun'); ?>"><span class="glyphicon glyphicon-list-alt cb-nav-icon" aria-hidden="true"></span>Akun</a>
                             </li>
                             <li <?php if ($this->router->fetch_class() == 'pengguna')
                                 echo 'class="active"'; ?>>
-                                <a href="<?php echo site_url('pengguna'); ?>">Pengguna</a>
+                                <a href="<?php echo site_url('pengguna'); ?>"><span class="glyphicon glyphicon-user cb-nav-icon" aria-hidden="true"></span>Pengguna</a>
                             </li>
                             <li <?php if ($this->router->fetch_class() == 'pelanggan')
                                 echo 'class="active"'; ?>>
-                                <a href="<?php echo site_url('pelanggan'); ?>">Pelanggan</a>
+                                <a href="<?php echo site_url('pelanggan'); ?>"><span class="glyphicon glyphicon-user cb-nav-icon" aria-hidden="true"></span>Pelanggan</a>
                             </li>
                             <li <?php if ($this->router->fetch_class() == 'pemasok')
                                 echo 'class="active"'; ?>>
-                                <a href="<?php echo site_url('pemasok'); ?>">Pemasok</a>
+                                <a href="<?php echo site_url('pemasok'); ?>"><span class="glyphicon glyphicon-briefcase cb-nav-icon" aria-hidden="true"></span>Pemasok</a>
                             </li>
                             <li <?php if ($this->router->fetch_class() == 'produk') echo 'class="active"'; ?>>
-                                <a href="<?php echo site_url('produk'); ?>">Produk dan Jasa</a>
+                                <a href="<?php echo site_url('produk'); ?>"><span class="glyphicon glyphicon-tags cb-nav-icon" aria-hidden="true"></span>Produk dan Jasa</a>
                             </li>
                             <li <?php if ($this->router->fetch_class() == 'pajak') echo 'class="active"'; ?>>
-                                <a href="<?php echo site_url('pajak'); ?>">Pajak</a>
+                                <a href="<?php echo site_url('pajak'); ?>"><span class="glyphicon glyphicon-usd cb-nav-icon" aria-hidden="true"></span>Pajak</a>
                             </li>
                             <li <?php if ($this->router->fetch_class() == 'pengaturan_akun') echo 'class="active"'; ?>>
-                                <a href="<?php echo site_url('pengaturan_akun'); ?>">Pengaturan Akun</a>
+                                <a href="<?php echo site_url('pengaturan_akun'); ?>"><span class="glyphicon glyphicon-cog cb-nav-icon" aria-hidden="true"></span>Pengaturan Akun</a>
                             </li>
                         </ul>
                     </li>
                     <li class="dropdown <?php if (in_array($this->router->fetch_class(), array('saldo_awal', 'penjualan', 'penerimaan_piutang', 'pembelian', 'pembayaran_utang', 'kas_bank', 'aset_tetap', 'persediaan', 'penyesuaian_persediaan', 'usulan_opname', 'retur_persediaan', 'modal_prive', 'penyesuaian_akuntansi'))) echo 'active'; ?>">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                             aria-expanded="false">
-                            Transaksi <span class="caret"></span>
+                            <span class="glyphicon glyphicon-transfer cb-nav-icon" aria-hidden="true"></span>Transaksi <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu">
-                            <li <?php if ($this->router->fetch_class() == 'penjualan') echo 'class="active"'; ?>><a href="<?php echo site_url('penjualan'); ?>">Penjualan</a></li>
-                            <li <?php if ($this->router->fetch_class() == 'penerimaan_piutang') echo 'class="active"'; ?>><a href="<?php echo site_url('penerimaan_piutang'); ?>">Penerimaan Piutang</a></li>
-                            <li <?php if ($this->router->fetch_class() == 'pembelian') echo 'class="active"'; ?>><a href="<?php echo site_url('pembelian'); ?>">Pembelian</a></li>
-                            <li <?php if ($this->router->fetch_class() == 'pembayaran_utang') echo 'class="active"'; ?>><a href="<?php echo site_url('pembayaran_utang'); ?>">Pembayaran Utang</a></li>
-                            <li <?php if ($this->router->fetch_class() == 'kas_bank') echo 'class="active"'; ?>><a href="<?php echo site_url('kas_bank'); ?>">Kas dan Bank</a></li>
-                            <li <?php if ($this->router->fetch_class() == 'aset_tetap') echo 'class="active"'; ?>><a href="<?php echo site_url('aset_tetap'); ?>">Aset Tetap</a></li>
-                            <li <?php if ($this->router->fetch_class() == 'persediaan') echo 'class="active"'; ?>><a href="<?php echo site_url('persediaan'); ?>">Persediaan</a></li>
-                            <li <?php if ($this->router->fetch_class() == 'penyesuaian_persediaan') echo 'class="active"'; ?>><a href="<?php echo site_url('penyesuaian_persediaan'); ?>">Penyesuaian Persediaan</a></li>
-                            <li <?php if ($this->router->fetch_class() == 'usulan_opname') echo 'class="active"'; ?>><a href="<?php echo site_url('usulan_opname'); ?>">Usulan Opname Gudang</a></li>
-                            <li <?php if ($this->router->fetch_class() == 'retur_persediaan') echo 'class="active"'; ?>><a href="<?php echo site_url('retur_persediaan'); ?>">Retur Pembelian/Penjualan</a></li>
-                            <li <?php if ($this->router->fetch_class() == 'modal_prive') echo 'class="active"'; ?>><a href="<?php echo site_url('modal_prive'); ?>">Modal dan Prive</a></li>
-                            <li <?php if ($this->router->fetch_class() == 'penyesuaian_akuntansi') echo 'class="active"'; ?>><a href="<?php echo site_url('penyesuaian_akuntansi'); ?>">Penyesuaian Akuntansi</a></li>
-                            <li <?php if ($this->router->fetch_class() == 'saldo_awal') echo 'class="active"'; ?>><a href="<?php echo site_url('saldo_awal'); ?>">Saldo Awal</a></li>
+                            <li <?php if ($this->router->fetch_class() == 'penjualan') echo 'class="active"'; ?>><a href="<?php echo site_url('penjualan'); ?>"><span class="glyphicon glyphicon-shopping-cart cb-nav-icon" aria-hidden="true"></span>Penjualan</a></li>
+                            <li <?php if ($this->router->fetch_class() == 'penerimaan_piutang') echo 'class="active"'; ?>><a href="<?php echo site_url('penerimaan_piutang'); ?>"><span class="glyphicon glyphicon-download-alt cb-nav-icon" aria-hidden="true"></span>Penerimaan Piutang</a></li>
+                            <li <?php if ($this->router->fetch_class() == 'pembelian') echo 'class="active"'; ?>><a href="<?php echo site_url('pembelian'); ?>"><span class="glyphicon glyphicon-shopping-cart cb-nav-icon" aria-hidden="true"></span>Pembelian</a></li>
+                            <li <?php if ($this->router->fetch_class() == 'pembayaran_utang') echo 'class="active"'; ?>><a href="<?php echo site_url('pembayaran_utang'); ?>"><span class="glyphicon glyphicon-credit-card cb-nav-icon" aria-hidden="true"></span>Pembayaran Utang</a></li>
+                            <li <?php if ($this->router->fetch_class() == 'kas_bank') echo 'class="active"'; ?>><a href="<?php echo site_url('kas_bank'); ?>"><span class="glyphicon glyphicon-credit-card cb-nav-icon" aria-hidden="true"></span>Kas dan Bank</a></li>
+                            <li <?php if ($this->router->fetch_class() == 'aset_tetap') echo 'class="active"'; ?>><a href="<?php echo site_url('aset_tetap'); ?>"><span class="glyphicon glyphicon-briefcase cb-nav-icon" aria-hidden="true"></span>Aset Tetap</a></li>
+                            <li <?php if ($this->router->fetch_class() == 'persediaan') echo 'class="active"'; ?>><a href="<?php echo site_url('persediaan'); ?>"><span class="glyphicon glyphicon-inbox cb-nav-icon" aria-hidden="true"></span>Persediaan</a></li>
+                            <li <?php if ($this->router->fetch_class() == 'penyesuaian_persediaan') echo 'class="active"'; ?>><a href="<?php echo site_url('penyesuaian_persediaan'); ?>"><span class="glyphicon glyphicon-edit cb-nav-icon" aria-hidden="true"></span>Penyesuaian Persediaan</a></li>
+                            <li <?php if ($this->router->fetch_class() == 'usulan_opname') echo 'class="active"'; ?>><a href="<?php echo site_url('usulan_opname'); ?>"><span class="glyphicon glyphicon-check cb-nav-icon" aria-hidden="true"></span>Usulan Opname Gudang</a></li>
+                            <li <?php if ($this->router->fetch_class() == 'retur_persediaan') echo 'class="active"'; ?>><a href="<?php echo site_url('retur_persediaan'); ?>"><span class="glyphicon glyphicon-retweet cb-nav-icon" aria-hidden="true"></span>Retur Pembelian/Penjualan</a></li>
+                            <li <?php if ($this->router->fetch_class() == 'modal_prive') echo 'class="active"'; ?>><a href="<?php echo site_url('modal_prive'); ?>"><span class="glyphicon glyphicon-usd cb-nav-icon" aria-hidden="true"></span>Modal dan Prive</a></li>
+                            <li <?php if ($this->router->fetch_class() == 'penyesuaian_akuntansi') echo 'class="active"'; ?>><a href="<?php echo site_url('penyesuaian_akuntansi'); ?>"><span class="glyphicon glyphicon-edit cb-nav-icon" aria-hidden="true"></span>Penyesuaian Akuntansi</a></li>
+                            <li <?php if ($this->router->fetch_class() == 'saldo_awal') echo 'class="active"'; ?>><a href="<?php echo site_url('saldo_awal'); ?>"><span class="glyphicon glyphicon-flag cb-nav-icon" aria-hidden="true"></span>Saldo Awal</a></li>
                         </ul>
                     </li>
                     <li <?php if ($this->router->fetch_class() == 'jurnal')
                         echo 'class="active"'; ?>>
-                        <a href="<?php echo site_url('jurnal'); ?>">Jurnal Transaksi</a>
+                        <a href="<?php echo site_url('jurnal'); ?>"><span class="glyphicon glyphicon-book cb-nav-icon" aria-hidden="true"></span>Jurnal Transaksi</a>
                     </li>
                     <li class="dropdown <?php if (in_array($this->router->fetch_class(), array('buku_besar', 'jurnal_umum', 'laporan', 'laba_rugi', 'neraca', 'bagan_akun')))
                         echo 'active'; ?>">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                             aria-expanded="false">
-                            Laporan <span class="caret"></span>
+                            <span class="glyphicon glyphicon-stats cb-nav-icon" aria-hidden="true"></span>Laporan <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu">
                             <li <?php if ($this->router->fetch_class() == 'buku_besar')
                                 echo 'class="active"'; ?>>
-                                <a href="<?php echo site_url('buku_besar'); ?>">Buku Besar</a>
+                                <a href="<?php echo site_url('buku_besar'); ?>"><span class="glyphicon glyphicon-book cb-nav-icon" aria-hidden="true"></span>Buku Besar</a>
                             </li>
                             <li <?php if ($this->router->fetch_class() == 'jurnal_umum')
                                 echo 'class="active"'; ?>>
-                                <a href="<?php echo site_url('jurnal_umum'); ?>">Jurnal Umum</a>
+                                <a href="<?php echo site_url('jurnal_umum'); ?>"><span class="glyphicon glyphicon-list-alt cb-nav-icon" aria-hidden="true"></span>Jurnal Umum</a>
                             </li>
                             <li <?php if ($this->router->fetch_class() == 'laporan')
                                 echo 'class="active"'; ?>>
-                                <a href="<?php echo site_url('laporan'); ?>">Laporan Akuntansi</a>
+                                <a href="<?php echo site_url('laporan'); ?>"><span class="glyphicon glyphicon-file cb-nav-icon" aria-hidden="true"></span>Laporan Akuntansi</a>
                             </li>
                             <li <?php if ($this->router->fetch_class() == 'laba_rugi')
                                 echo 'class="active"'; ?>>
-                                <a href="<?php echo site_url('laba_rugi'); ?>">Laba Rugi</a>
+                                <a href="<?php echo site_url('laba_rugi'); ?>"><span class="glyphicon glyphicon-signal cb-nav-icon" aria-hidden="true"></span>Laba Rugi</a>
                             </li>
                             <li <?php if ($this->router->fetch_class() == 'neraca')
                                 echo 'class="active"'; ?>>
-                                <a href="<?php echo site_url('neraca'); ?>">Neraca</a>
+                                <a href="<?php echo site_url('neraca'); ?>"><span class="glyphicon glyphicon-stats cb-nav-icon" aria-hidden="true"></span>Neraca</a>
                             </li>
                             <li <?php if ($this->router->fetch_class() == 'bagan_akun')
                                 echo 'class="active"'; ?>>
-                                <a href="<?php echo site_url('bagan_akun'); ?>">Bagan Akun</a>
+                                <a href="<?php echo site_url('bagan_akun'); ?>"><span class="glyphicon glyphicon-th-list cb-nav-icon" aria-hidden="true"></span>Bagan Akun</a>
                             </li>
                         </ul>
                     </li>

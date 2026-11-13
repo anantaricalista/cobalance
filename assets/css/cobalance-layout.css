@@ -103,7 +103,7 @@
 .cb-sidebar .dropdown-menu > li > a { padding: 9px 12px; font-size: 13px; }
 .cb-sidebar .dropdown.open > .dropdown-menu { display: block; }
 .cb-sidebar .caret { float: right; margin-top: 8px; }
-.cb-nav-icon { margin-right: 10px; }
+.cb-nav-icon { width: 18px; margin-right: 10px; text-align: center; }
 .cb-layout .content-container, .cb-layout.transaction-ui .content-container {
     width: auto;
     max-width: none;
