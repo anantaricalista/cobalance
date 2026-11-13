@@ -104,24 +104,6 @@
                                     <?php foreach ($accounts[$name] as $account): ?>
                                         <option value="<?php echo $account->selectable ? html_escape($account->id_akun) : ''; ?>" <?php echo $account->selectable ? '' : 'disabled'; ?>><?php echo html_escape(str_repeat('- ', $account->depth) . $account->kode_akun . ' - ' . $account->nama_akun); ?></option>
                                     <?php endforeach; ?>
-                                    <?php if ($master['route'] === 'produk'): ?>
-                                            </div>
-                                        </section>
-                                        <section class="product-form-section" aria-labelledby="product-image-title">
-                                            <h4 id="product-image-title">Gambar Produk</h4>
-                                            <p>Tambahkan gambar untuk memudahkan pengenalan produk.</p>
-                                            <div class="product-image-controls">
-                                                <img id="product-image-preview" class="product-image-preview" alt="Pratinjau gambar produk" style="display:none">
-                                                <div id="product-image-empty" class="product-image-placeholder">Belum ada gambar</div>
-                                                <div class="product-image-input">
-                                                    <label for="gambar_produk">Pilih gambar</label>
-                                                    <input id="gambar_produk" name="gambar_produk" type="file" accept="image/jpeg,image/png,image/webp" aria-describedby="product-image-help">
-                                                    <p id="product-image-help" class="help-block">Opsional. JPG, PNG, atau WebP, maksimal 2 MB dan 4096 x 4096 piksel.</p>
-                                                    <label id="product-image-remove-label" style="display:none"><input type="checkbox" name="hapus_gambar" value="1"> Hapus gambar saat ini</label>
-                                                </div>
-                                            </div>
-                                        </section>
-                                    <?php endif; ?>
                                 </select>
                             <?php else: ?>
                                 <input id="<?php echo html_escape($name); ?>" name="<?php echo html_escape($name); ?>" class="form-control"
@@ -133,6 +115,24 @@
                         </div>
                     </div>
                 <?php endforeach; ?>
+                <?php if ($master['route'] === 'produk'): ?>
+                        </div>
+                    </section>
+                    <section class="product-form-section" aria-labelledby="product-image-title">
+                        <h4 id="product-image-title">Gambar Produk</h4>
+                        <p>Tambahkan gambar untuk memudahkan pengenalan produk.</p>
+                        <div class="product-image-controls">
+                            <img id="product-image-preview" class="product-image-preview" alt="Pratinjau gambar produk" style="display:none">
+                            <div id="product-image-empty" class="product-image-placeholder">Belum ada gambar</div>
+                            <div class="product-image-input">
+                                <label for="gambar_produk">Pilih gambar</label>
+                                <input id="gambar_produk" name="gambar_produk" type="file" accept="image/jpeg,image/png,image/webp" aria-describedby="product-image-help">
+                                <p id="product-image-help" class="help-block">Opsional. JPG, PNG, atau WebP, maksimal 2 MB dan 4096 x 4096 piksel.</p>
+                                <label id="product-image-remove-label" style="display:none"><input type="checkbox" name="hapus_gambar" value="1"> Hapus gambar saat ini</label>
+                            </div>
+                        </div>
+                    </section>
+                <?php endif; ?>
             </div>
             <div class="modal-footer">
                 <button type="submit" id="btnSave" class="btn btn-primary btn-sm">Simpan</button>
