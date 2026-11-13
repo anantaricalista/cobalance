@@ -9,6 +9,7 @@
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet">
     <!-- DataTables CSS (jika digunakan) -->
     <link href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap.min.css" rel="stylesheet">
+    <link href="<?= base_url('assets/vendor/select2/css/select2.min.css') ?>" rel="stylesheet">
     <link href="<?= base_url('assets/css/account-search.css') ?>" rel="stylesheet">
     <script defer src="<?= base_url('assets/js/account-search.js') ?>"></script>
     <style>
@@ -951,6 +952,7 @@
 
         <!-- jQuery -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script src="<?= base_url('assets/vendor/select2/js/select2.min.js') ?>"></script>
         <script src="<?= base_url('assets/vendor/autonumeric/autoNumeric.min.js') ?>"></script>
         <?php $this->load->view('template/money_input'); ?>
         <!-- Bootstrap JS -->

@@ -127,7 +127,7 @@
         });
         $("select").change(function () {
             $(this).closest('.form-group').removeClass('has-error');
-            $(this).next().empty();
+            $(this).siblings('.help-block').empty();
         });
     });
 

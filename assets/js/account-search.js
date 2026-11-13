@@ -1,55 +1,60 @@
 (function () {
     'use strict';
 
+    var $ = window.jQuery;
     var selector = 'select.account-search';
+    var invalidFocused = false;
+    var errorId = 0;
 
-    function update(select) {
-        var control = select._accountSearch;
-        if (!control) return;
-        var term = control.input.value.trim().toLocaleLowerCase();
-        var matches = 0;
-        var keptSelection = false;
-        Array.prototype.forEach.call(select.options, function (option) {
-            var matchesTerm = !term || option.textContent.toLocaleLowerCase().indexOf(term) !== -1;
-            if (option.value && !option.disabled && matchesTerm) matches++;
-            var keep = option.selected && !matchesTerm;
-            option.hidden = !matchesTerm && !keep && option.value !== '';
-            if (keep && option.value) keptSelection = true;
-        });
-        control.input.disabled = select.matches(':disabled');
-        control.status.textContent = term
-            ? matches + ' akun cocok' + (keptSelection ? '; pilihan saat ini tetap ditampilkan' : '') + '.'
-            : '';
+    if (!$ || !$.fn.select2) {
+        console.error('Select2 atau jQuery tidak tersedia; pilihan akun menggunakan select bawaan.');
+        return;
+    }
+
+    function sync(select) {
+        if ($(select).hasClass('select2-hidden-accessible')) {
+            $(select).trigger('change.select2');
+            if (select.validity.valid || select.matches(':disabled')) clearError(select);
+        }
+    }
+
+    function clearError(select) {
+        var error = select._accountSearchError;
+        if (!error) return;
+        error.remove();
+        select._accountSearchError = null;
+        var selection = $(select).next('.select2').find('.select2-selection');
+        selection.removeAttr('aria-invalid aria-describedby');
     }
 
     function setup(select) {
-        if (select._accountSearch) return;
-        var label = select.labels && select.labels.length ? select.labels[0].textContent.trim()
-            : select.getAttribute('aria-label') || 'akun';
-        var wrapper = document.createElement('div');
-        wrapper.className = 'account-search-control';
-        var input = document.createElement('input');
-        input.type = 'search';
-        input.className = 'form-control input-sm';
-        input.placeholder = 'Cari kode atau nama akun';
-        input.setAttribute('aria-label', 'Cari ' + label);
-        input.autocomplete = 'off';
-        var status = document.createElement('span');
-        status.className = 'account-search-status';
-        status.setAttribute('aria-live', 'polite');
-        wrapper.appendChild(input);
-        wrapper.appendChild(status);
-        select.parentNode.insertBefore(wrapper, select);
-        select._accountSearch = {input: input, status: status};
-        input.addEventListener('input', function () { update(select); });
-        input.addEventListener('keydown', function (event) {
-            if (event.key === 'Enter' || event.key === 'ArrowDown') {
-                event.preventDefault();
-                select.focus();
+        var $select = $(select);
+        if ($select.hasClass('select2-hidden-accessible')) return;
+        var modal = $select.closest('.modal');
+        $select.select2({
+            width: '100%',
+            dropdownParent: modal.length ? modal : $(document.body),
+            language: {
+                noResults: function () { return 'Akun tidak ditemukan'; },
+                searching: function () { return 'Mencari...'; }
             }
         });
-        select.addEventListener('change', function () { update(select); });
-        update(select);
+        var label = select.labels && select.labels.length ? select.labels[0].textContent.trim()
+            : select.getAttribute('aria-label');
+        if (label) $select.next('.select2').find('.select2-selection').attr('aria-label', label);
+        $select.on('select2:opening', function (event) {
+            if (select.matches(':disabled')) event.preventDefault();
+        });
+        $select.on('select2:open', function () {
+            window.setTimeout(function () {
+                if (!$select.data('select2').isOpen()) return;
+                var search = document.querySelector('.select2-container--open .select2-search__field');
+                if (search) search.focus();
+            }, 0);
+        });
+        $select.on('change', function () {
+            if (select.validity.valid) clearError(select);
+        });
     }
 
     function setupWithin(root) {
@@ -58,52 +63,61 @@
         Array.prototype.forEach.call(root.querySelectorAll(selector), setup);
     }
 
-    function resetWithin(root) {
-        Array.prototype.forEach.call(root.querySelectorAll(selector), function (select) {
-            if (select._accountSearch) {
-                select._accountSearch.input.value = '';
-                update(select);
-            }
-        });
+    function syncWithin(root) {
+        Array.prototype.forEach.call(root.querySelectorAll(selector), sync);
     }
 
     function start() {
         setupWithin(document.body);
         var pending = new Set();
-        var scheduled = false;
         var observer = new MutationObserver(function (mutations) {
             mutations.forEach(function (mutation) {
-                if (mutation.type === 'attributes') {
-                    if (mutation.target.matches(selector)) pending.add(mutation.target);
-                    else if (mutation.target.tagName === 'FIELDSET') {
-                        Array.prototype.forEach.call(mutation.target.querySelectorAll(selector), function (select) {
-                            pending.add(select);
-                        });
-                    }
-                    return;
+                var select = mutation.target.closest && mutation.target.closest(selector);
+                if (select) pending.add(select);
+                if (mutation.type === 'attributes' && mutation.target.tagName === 'FIELDSET') {
+                    Array.prototype.forEach.call(mutation.target.querySelectorAll(selector), function (item) {
+                        pending.add(item);
+                    });
                 }
-                var parent = mutation.target.closest && mutation.target.closest(selector);
-                if (parent) pending.add(parent);
-                Array.prototype.forEach.call(mutation.addedNodes, function (node) {
-                    setupWithin(node);
-                });
+                Array.prototype.forEach.call(mutation.addedNodes, setupWithin);
             });
-            if (!scheduled && pending.size) {
-                scheduled = true;
-                requestAnimationFrame(function () {
-                    pending.forEach(update);
-                    pending.clear();
-                    scheduled = false;
-                });
+            pending.forEach(sync);
+            pending.clear();
+        });
+        observer.observe(document.body, {
+            subtree: true, childList: true, characterData: true,
+            attributes: true, attributeFilter: ['disabled', 'required']
+        });
+
+        document.addEventListener('invalid', function (event) {
+            var select = event.target;
+            if (!select.matches(selector) || !$(select).hasClass('select2-hidden-accessible')) return;
+            event.preventDefault();
+            if (!select._accountSearchError) {
+                var error = document.createElement('span');
+                error.id = 'account-search-error-' + (++errorId);
+                error.className = 'account-search-error';
+                error.setAttribute('role', 'alert');
+                $(select).next('.select2').after(error);
+                select._accountSearchError = error;
             }
-        });
-        observer.observe(document.body, {subtree: true, childList: true, attributes: true, attributeFilter: ['disabled']});
+            select._accountSearchError.textContent = select.validationMessage;
+            $(select).next('.select2').find('.select2-selection')
+                .attr({'aria-invalid': 'true', 'aria-describedby': select._accountSearchError.id});
+            if (!invalidFocused) {
+                invalidFocused = true;
+                $(select).select2('open');
+                window.setTimeout(function () { invalidFocused = false; }, 0);
+            }
+        }, true);
+
         document.addEventListener('reset', function (event) {
-            window.setTimeout(function () { resetWithin(event.target); }, 0);
+            window.setTimeout(function () {
+                syncWithin(event.target);
+                Array.prototype.forEach.call(event.target.querySelectorAll(selector), clearError);
+            }, 0);
         });
-        if (window.jQuery) {
-            window.jQuery(document).on('show.bs.modal', '.modal', function () { resetWithin(this); });
-        }
+        $(document).on('show.bs.modal', '.modal', function () { syncWithin(this); });
     }
 
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
