@@ -26,7 +26,8 @@ dan memperluas area kerja; pada layar kecil menu ditampilkan sebagai panel.
 Halaman login dan system admin
 mengikuti palet tampilan yang sama.
 
-Layout ini mengadaptasi pola AdminLTE untuk Co-Balance melalui
+Layout ini mengadaptasi pola AdminLTE untuk Co-Balance, termasuk transisi navigasi
+samping, melalui
 `assets/css/cobalance-layout.css`, bukan memuat CSS/JavaScript AdminLTE 4 secara
 global. Komponen aplikasi saat ini masih menggunakan Bootstrap 3, sehingga
 memuat Bootstrap 5 yang terkandung dalam AdminLTE 4 secara langsung dapat
