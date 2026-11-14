@@ -62,11 +62,15 @@ Admin Perusahaan. Penghapusan produk dilakukan oleh pengguna yang berwenang.
 
 Beranda Purchasing menampilkan draft, pembelian barang yang diposting bulan ini,
 utang pembelian yang belum lunas dan yang lewat jatuh tempo, serta daftar tagihan
-terbuka terdekat. Ringkasan pembelian mencakup transaksi yang hanya berisi barang
+terbuka terdekat. Utang mencakup pembelian kredit perusahaan yang hanya berisi
+barang, sudah diposting dan memiliki jurnal posting, tanpa membedakan pembuat
+transaksi. Sisa utang dihitung setelah pembayaran dan retur yang diposting;
+saldo awal utang dan utang dari transaksi lain tidak termasuk.
+
+Jumlah draft dan pembelian bulan ini mencakup pembelian yang hanya berisi barang
 dan dibuat oleh pengguna yang saat ini memiliki role Purchasing. Riwayat role saat
 transaksi dibuat tidak disimpan, sehingga perubahan role atau penghapusan akun
-pembuat dapat mengubah angka ringkasan. Sisa utang dihitung setelah pembayaran dan retur yang diposting;
-saldo awal utang dan utang dari transaksi lain tidak termasuk.
+pembuat dapat mengubah jumlahnya.
 
 ## 3. Masukkan saldo awal (perusahaan yang sudah memiliki saldo)
 

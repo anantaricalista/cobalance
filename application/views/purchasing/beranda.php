@@ -39,7 +39,7 @@
 <div class="purchasing-dashboard">
     <div class="purchase-heading">
         <h2>Beranda Purchasing</h2>
-        <p>Halo, <?= html_escape($nama) ?>. Berikut ringkasan pembelian barang dan tagihan Purchasing.</p>
+        <p>Halo, <?= html_escape($nama) ?>. Berikut ringkasan pembelian barang dan tagihan perusahaan.</p>
     </div>
 
     <div class="row">
@@ -113,5 +113,5 @@
             </div>
         </div>
     </div>
-    <p class="purchase-note">Ringkasan pembelian dan utang mencakup pembelian yang hanya berisi barang dan dibuat oleh pengguna yang saat ini ber-role Purchasing di perusahaan ini. Perubahan role atau penghapusan akun pembuat dapat mengubah cakupan ringkasan. Sisa utang dikurangi pembayaran dan retur yang sudah diposting; draft dan transaksi dibatalkan tidak dihitung sebagai utang.</p>
+    <p class="purchase-note">Utang mencakup pembelian kredit perusahaan yang hanya berisi barang, sudah diposting, dan memiliki jurnal posting, tanpa membedakan pembuatnya. Sisa utang dikurangi pembayaran dan retur yang sudah diposting. Jumlah draft dan pembelian bulan ini hanya mencakup pembelian barang yang dibuat oleh pengguna yang saat ini ber-role Purchasing; perubahan role atau penghapusan akun pembuat dapat mengubah jumlahnya.</p>
 </div>
