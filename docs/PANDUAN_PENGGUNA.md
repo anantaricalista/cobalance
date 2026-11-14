@@ -60,6 +60,14 @@ produk bertipe **Barang** (termasuk gambar). Tipe Jasa tidak tersedia bagi Purch
 baik di Master Produk maupun di Pembelian; pembelian jasa dilakukan oleh Akuntansi atau
 Admin Perusahaan. Penghapusan produk dilakukan oleh pengguna yang berwenang.
 
+Beranda Purchasing menampilkan draft, pembelian barang yang diposting bulan ini,
+utang pembelian yang belum lunas dan yang lewat jatuh tempo, serta daftar tagihan
+terbuka terdekat. Ringkasan pembelian mencakup transaksi yang hanya berisi barang
+dan dibuat oleh pengguna yang saat ini memiliki role Purchasing. Riwayat role saat
+transaksi dibuat tidak disimpan, sehingga perubahan role atau penghapusan akun
+pembuat dapat mengubah angka ringkasan. Sisa utang dihitung setelah pembayaran dan retur yang diposting;
+saldo awal utang dan utang dari transaksi lain tidak termasuk.
+
 ## 3. Masukkan saldo awal (perusahaan yang sudah memiliki saldo)
 
 Lakukan langkah ini sebelum mencatat transaksi rutin. Menu **Transaksi → Saldo
