@@ -1,7 +1,7 @@
 <h3>Stock Opname</h3>
 <?php if ($this->session->flashdata('sukses')): ?><div class="alert alert-success"><?= html_escape($this->session->flashdata('sukses')) ?></div><?php endif; ?>
 <?php if ($this->session->flashdata('error')): ?><div class="alert alert-danger"><?= html_escape($this->session->flashdata('error')) ?></div><?php endif; ?>
-<p>Catat hasil hitung fisik. Usulan tidak mengubah stok atau jurnal; penyesuaian diproses oleh akuntansi/admin.</p>
+<p>Catat hasil hitung fisik dengan membandingkannya terhadap stok sistem dan batas minimum. Usulan hanya menjadi pemberitahuan; stok dan jurnal baru berubah setelah penyesuaian diproses Akuntansi/Admin.</p>
 <form method="post" action="<?= site_url('gudang/opname/simpan') ?>" class="form-horizontal">
     <input type="hidden" name="gudang_form_token" value="<?= html_escape($form_token) ?>">
     <?php if ($this->config->item('csrf_protection')): ?>
@@ -11,7 +11,7 @@
         <select name="produk" class="form-control" required>
             <option value="">-- Pilih produk --</option>
             <?php foreach ($produk as $p): if (!$p->aktif) { continue; } ?>
-                <option value="<?= (int) $p->id_produk ?>"><?= html_escape($p->kode_produk . ' - ' . $p->nama_produk . ' (sistem: ' . format_jumlah_indonesia($p->jumlah) . ' ' . $p->satuan . ')') ?></option>
+                <option value="<?= (int) $p->id_produk ?>"><?= html_escape($p->kode_produk . ' - ' . $p->nama_produk . ' (stok: ' . format_jumlah_indonesia($p->jumlah) . ' ' . $p->satuan . '; minimum: ' . format_jumlah_indonesia($p->stok_minimum) . ')') ?></option>
             <?php endforeach; ?>
         </select></div></div>
     <div class="form-group"><label class="col-sm-2 control-label">Jumlah fisik</label><div class="col-sm-3">
@@ -31,13 +31,16 @@
         <tbody>
         <?php foreach ($usulan as $u): ?>
             <tr>
-                <td><?= html_escape($u->dibuat_pada) ?></td>
+                <td><?= html_escape(format_tanggal_indonesia($u->dibuat_pada)) ?></td>
                 <td><?= html_escape($u->kode_produk . ' - ' . $u->nama_produk) ?></td>
                 <td><?= html_escape(format_jumlah_indonesia($u->jumlah_sistem)) ?></td>
                 <td><?= html_escape(format_jumlah_indonesia($u->jumlah_fisik)) ?></td>
-                <td><?= html_escape(format_jumlah_indonesia(number_format((float) $u->jumlah_fisik - (float) $u->jumlah_sistem, 4, '.', ''))) ?></td>
+                <td><?= html_escape(format_jumlah_indonesia($u->selisih_jumlah)) ?></td>
                 <td><?= html_escape($u->catatan) ?></td><td><?= html_escape($u->nama_lengkap) ?></td>
-                <td><?= html_escape($u->status) ?></td>
+                <td><?php
+                    $status = array('menunggu' => array('Menunggu', 'warning'), 'diproses' => array('Selesai', 'success'), 'ditolak' => array('Ditolak', 'default'));
+                    $label = isset($status[$u->status]) ? $status[$u->status] : array($u->status, 'default');
+                ?><span class="label label-<?= $label[1] ?>"><?= html_escape($label[0]) ?></span></td>
             </tr>
         <?php endforeach; ?>
         <?php if (!$usulan): ?><tr><td colspan="8">Belum ada usulan.</td></tr><?php endif; ?>

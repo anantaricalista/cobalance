@@ -39,6 +39,7 @@
             .product-form-grid { grid-template-columns: minmax(0, 1fr); }
             .product-image-controls { flex-wrap: wrap; }
         }
+
     </style>
     <p class="text-muted">Harga: pemisah ribuan ditambahkan otomatis; gunakan koma untuk desimal, misalnya <strong>1.000,50</strong>.</p>
 <?php endif; ?>
@@ -69,7 +70,7 @@
                 <?php if ($master['route'] === 'produk'): ?>
                     <section class="product-form-section" aria-labelledby="product-basic-title">
                         <h4 id="product-basic-title">Informasi Produk</h4>
-                        <p>Isi identitas, harga, dan status produk atau jasa.</p>
+                        <p>Isi identitas, harga, batas minimum stok untuk barang, dan status produk atau jasa.</p>
                         <div class="product-form-grid">
                 <?php endif; ?>
                 <?php foreach ($master['fields'] as $name => $field): ?>
@@ -113,8 +114,10 @@
                                 <input id="<?php echo html_escape($name); ?>" name="<?php echo html_escape($name); ?>" class="form-control"
                                     type="<?php echo $field['type'] === 'decimal' ? 'number' : 'text'; ?>"
                                     <?php if ($field['type'] === 'decimal'): ?>min="0" step="<?php echo html_escape($field['step']); ?>" <?php if (isset($field['max'])): ?>max="<?php echo html_escape((string) $field['max']); ?>"<?php endif; ?><?php endif; ?>
+                                    <?php if ($field['type'] === 'quantity'): ?>inputmode="decimal" pattern="\d{1,14}(,\d{1,4})?" placeholder="Contoh: 10 atau 2,5" title="Gunakan koma untuk desimal, maksimal empat angka." aria-describedby="stok-minimum-help"<?php endif; ?>
                                     <?php if (isset($field['maxlength'])): ?>maxlength="<?php echo (int) $field['maxlength']; ?>"<?php endif; ?>
                                     <?php echo !empty($field['required']) ? 'required' : ''; ?>>
+                                <?php if ($field['type'] === 'quantity'): ?><span id="stok-minimum-help" class="help-block">Barang akan diberi peringatan saat stok sama dengan atau di bawah batas ini. Isi 0 untuk menonaktifkan peringatan hampir habis.</span><?php endif; ?>
                             <?php endif; ?>
                         </div>
                     </div>
@@ -188,6 +191,23 @@
         $('#service-account-note').text(note).toggle(isService);
     }
 
+    function updateProductStockMinimum() {
+        var isService = $('#tipe_produk').val() === 'jasa';
+        if (isService) $('#stok_minimum').val('0');
+        $('#stok_minimum').prop('readonly', isService);
+        $('#stok-minimum-help').text(isService
+            ? 'Jasa tidak memiliki stok; batas minimum stok otomatis menjadi 0.'
+            : 'Barang akan diberi peringatan saat stok sama dengan atau di bawah batas ini. Isi 0 untuk menonaktifkan peringatan hampir habis.');
+    }
+
+    function formatProductQuantity(value) {
+        var text = String(value == null ? '' : value);
+        if (!/^\d+(?:\.\d+)?$/.test(text)) return text;
+        var parts = text.split('.');
+        var fraction = (parts[1] || '').replace(/0+$/, '');
+        return parts[0] + (fraction ? ',' + fraction : '');
+    }
+
     $(document).ready(function () {
         table = $('#table').DataTable({
             processing: true, serverSide: true, order: [[1, 'asc']],
@@ -200,6 +220,7 @@
         <?php if ($master['route'] === 'produk'): ?>
         MoneyInput.init($('#harga_jual')[0], $('#harga_jual').val());
         $('#tipe_produk').on('change', updateProductAccounts);
+        $('#tipe_produk').on('change', updateProductStockMinimum);
         $('#gambar_produk').on('change', function () {
             if (productImageUrl) URL.revokeObjectURL(productImageUrl);
             productImageUrl = this.files.length ? URL.createObjectURL(this.files[0]) : null;
@@ -244,7 +265,11 @@
         originalProductType = null;
         $('#form')[0].reset();
         if (isProduct) resetProductImage('');
-        if (isProduct) updateProductAccounts();
+        if (isProduct) {
+            $('#stok_minimum').val('0');
+            updateProductAccounts();
+            updateProductStockMinimum();
+        }
         $('#form [data-money]').each(function () { MoneyInput.set(this, ''); });
         $('#form option[data-legacy]').remove();
         updateSettingOptions();
@@ -275,6 +300,7 @@
                     [masterId].concat(masterFields).forEach(function (field) {
                         var input = $('#form').find('[name="' + field + '"]').not('.service-account-placeholder');
                         var value = data[field] === null ? '' : String(data[field]);
+                        if (isProduct && field === 'stok_minimum') value = formatProductQuantity(value);
                         if (Object.prototype.hasOwnProperty.call(accountOptions, field) && value && input.find('option').filter(function () { return this.value === value && !this.disabled; }).length === 0) {
                             allAccounts.forEach(function (account) {
                                 if (String(account.id_akun) === value) {
@@ -285,7 +311,10 @@
                         if (input.is('[data-money]')) MoneyInput.set(input[0], value);
                         else input.val(value);
                     });
-                    if (isProduct) updateProductAccounts();
+                    if (isProduct) {
+                        updateProductAccounts();
+                        updateProductStockMinimum();
+                    }
                     $('#modal_title').text('Edit ' + masterTitle);
                     $('#modal_form').modal('show');
                 }, 0);

@@ -5,17 +5,21 @@
     posting draft-nya, lalu kembali ke sini dan tandai usulan <strong>Selesai</strong>. Stok saat ini dapat sudah berbeda dari saat usulan dibuat.</p>
 <div class="table-responsive">
     <table class="table table-striped table-bordered">
-        <thead><tr><th>Waktu</th><th>Produk</th><th>Sistem (saat usulan)</th><th>Fisik</th><th>Stok sekarang</th><th>Catatan</th><th>Oleh</th><th>Status</th><th>Aksi</th></tr></thead>
+        <thead><tr><th>Waktu</th><th>Produk</th><th>Sistem (saat usulan)</th><th>Fisik</th><th>Selisih</th><th>Stok sekarang</th><th>Catatan</th><th>Oleh</th><th>Status</th><th>Aksi</th></tr></thead>
         <tbody>
         <?php foreach ($rows as $u): ?>
             <tr>
-                <td><?= html_escape($u->dibuat_pada) ?></td>
+                <td><?= html_escape(format_tanggal_indonesia($u->dibuat_pada)) ?></td>
                 <td><?= html_escape($u->kode_produk . ' - ' . $u->nama_produk) ?></td>
                 <td><?= html_escape(format_jumlah_indonesia($u->jumlah_sistem)) ?></td>
                 <td><?= html_escape(format_jumlah_indonesia($u->jumlah_fisik)) ?></td>
+                <td><?= html_escape(format_jumlah_indonesia($u->selisih_jumlah)) ?></td>
                 <td><?= html_escape(format_jumlah_indonesia($u->jumlah_sekarang)) ?> <?= html_escape($u->satuan) ?></td>
                 <td><?= html_escape($u->catatan) ?></td><td><?= html_escape($u->nama_lengkap) ?></td>
-                <td><?= html_escape($u->status) ?></td>
+                <td><?php
+                    $statusLabels = array('menunggu' => array('Menunggu', 'warning'), 'diproses' => array('Selesai', 'success'), 'ditolak' => array('Ditolak', 'default'));
+                    $statusLabel = isset($statusLabels[$u->status]) ? $statusLabels[$u->status] : array($u->status, 'default');
+                ?><span class="label label-<?= $statusLabel[1] ?>"><?= html_escape($statusLabel[0]) ?></span></td>
                 <td>
                 <?php if ($u->status === 'menunggu'): ?>
                     <a class="btn btn-xs btn-primary" href="<?= site_url('penyesuaian_persediaan?' . http_build_query(array(
@@ -35,7 +39,7 @@
                 </td>
             </tr>
         <?php endforeach; ?>
-        <?php if (!$rows): ?><tr><td colspan="9">Belum ada usulan.</td></tr><?php endif; ?>
+        <?php if (!$rows): ?><tr><td colspan="10">Belum ada usulan.</td></tr><?php endif; ?>
         </tbody>
     </table>
 </div>

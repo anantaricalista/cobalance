@@ -13,8 +13,12 @@ class M_gudang extends CI_Model
     // Stok hanya jumlah; nilai rupiah sengaja tidak diambil untuk area gudang.
     public function stok($search = '')
     {
-        $sql = "SELECT p.id_produk, p.kode_produk, p.nama_produk, p.satuan, p.aktif,
-            COALESCE(s.jumlah, 0) AS jumlah
+        $sql = "SELECT p.id_produk, p.kode_produk, p.nama_produk, p.satuan, p.aktif, p.stok_minimum,
+            COALESCE(s.jumlah, 0) AS jumlah,
+            CASE WHEN p.aktif=0 THEN 'tidak_aktif'
+                WHEN COALESCE(s.jumlah, 0) <= 0 THEN 'habis'
+                WHEN p.stok_minimum > 0 AND COALESCE(s.jumlah, 0) <= p.stok_minimum THEN 'hampir_habis'
+                ELSE 'aman' END AS status_stok
             FROM produk p LEFT JOIN saldo_persediaan s
                 ON s.id_perusahaan=p.id_perusahaan AND s.id_produk=p.id_produk
             WHERE p.id_perusahaan=? AND p.tipe_produk='barang'";
@@ -31,14 +35,37 @@ class M_gudang extends CI_Model
     public function ringkasan()
     {
         $row = $this->db->query("SELECT COUNT(*) AS total_produk,
-            COALESCE(SUM(COALESCE(s.jumlah, 0) <= 0), 0) AS stok_habis
+            COALESCE(SUM(COALESCE(s.jumlah, 0) <= 0), 0) AS stok_habis,
+            COALESCE(SUM(COALESCE(s.jumlah, 0) > 0 AND p.stok_minimum > 0
+                AND s.jumlah <= p.stok_minimum), 0) AS stok_hampir_habis
             FROM produk p LEFT JOIN saldo_persediaan s
                 ON s.id_perusahaan=p.id_perusahaan AND s.id_produk=p.id_produk
-            WHERE p.id_perusahaan=? AND p.tipe_produk='barang' AND p.aktif=1", array($this->company()))->row();
+            WHERE p.id_perusahaan=? AND p.tipe_produk='barang' AND p.aktif=1", array($this->company()));
+        if (!$row) {
+            throw new RuntimeException('Gagal membaca ringkasan stok Gudang.');
+        }
+        $row = $row->row();
         $waiting = $this->db->query("SELECT COUNT(*) AS jumlah FROM usulan_opname
-            WHERE id_perusahaan=? AND status='menunggu'", array($this->company()))->row();
+            WHERE id_perusahaan=? AND status='menunggu'", array($this->company()));
+        if (!$waiting) {
+            throw new RuntimeException('Gagal membaca jumlah usulan opname.');
+        }
+        $stockWarnings = $this->db->query("SELECT p.id_produk, p.kode_produk, p.nama_produk, p.satuan, p.stok_minimum,
+            COALESCE(s.jumlah, 0) AS jumlah,
+            CASE WHEN COALESCE(s.jumlah, 0) <= 0 THEN 'habis' ELSE 'hampir_habis' END AS status_stok
+            FROM produk p LEFT JOIN saldo_persediaan s
+                ON s.id_perusahaan=p.id_perusahaan AND s.id_produk=p.id_produk
+            WHERE p.id_perusahaan=? AND p.tipe_produk='barang' AND p.aktif=1
+                AND (COALESCE(s.jumlah, 0) <= 0
+                    OR (p.stok_minimum > 0 AND s.jumlah <= p.stok_minimum))
+            ORDER BY CASE WHEN COALESCE(s.jumlah, 0) <= 0 THEN 0 ELSE 1 END,
+                s.jumlah ASC, p.kode_produk, p.id_produk LIMIT 8", array($this->company()));
+        if (!$stockWarnings) {
+            throw new RuntimeException('Gagal membaca peringatan stok.');
+        }
         return array('total_produk' => (int) $row->total_produk, 'stok_habis' => (int) $row->stok_habis,
-            'usulan_menunggu' => (int) $waiting->jumlah);
+            'stok_hampir_habis' => (int) $row->stok_hampir_habis,
+            'usulan_menunggu' => (int) $waiting->row()->jumlah, 'peringatan_stok' => $stockWarnings->result());
     }
 
     public function produk($id)
@@ -47,8 +74,12 @@ class M_gudang extends CI_Model
             || (int) $id > 2147483647) {
             return null;
         }
-        return $this->db->query("SELECT p.id_produk, p.kode_produk, p.nama_produk, p.satuan, p.aktif,
-            COALESCE(s.jumlah, 0) AS jumlah
+        return $this->db->query("SELECT p.id_produk, p.kode_produk, p.nama_produk, p.satuan, p.aktif, p.stok_minimum,
+            COALESCE(s.jumlah, 0) AS jumlah,
+            CASE WHEN p.aktif=0 THEN 'tidak_aktif'
+                WHEN COALESCE(s.jumlah, 0) <= 0 THEN 'habis'
+                WHEN p.stok_minimum > 0 AND COALESCE(s.jumlah, 0) <= p.stok_minimum THEN 'hampir_habis'
+                ELSE 'aman' END AS status_stok
             FROM produk p LEFT JOIN saldo_persediaan s
                 ON s.id_perusahaan=p.id_perusahaan AND s.id_produk=p.id_produk
             WHERE p.id_perusahaan=? AND p.id_produk=? AND p.tipe_produk='barang'",
@@ -78,7 +109,8 @@ class M_gudang extends CI_Model
 
     public function usulan()
     {
-        return $this->db->query("SELECT u.id_usulan_opname, u.jumlah_sistem, u.jumlah_fisik, u.catatan, u.status,
+        return $this->db->query("SELECT u.id_usulan_opname, u.jumlah_sistem, u.jumlah_fisik,
+            u.jumlah_fisik - u.jumlah_sistem AS selisih_jumlah, u.catatan, u.status,
             u.dibuat_pada, p.kode_produk, p.nama_produk, p.satuan, g.nama_lengkap
             FROM usulan_opname u
             JOIN produk p ON p.id_perusahaan=u.id_perusahaan AND p.id_produk=u.id_produk

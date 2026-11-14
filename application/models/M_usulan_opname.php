@@ -10,7 +10,8 @@ class M_usulan_opname extends CI_Model
 
     public function daftar()
     {
-        return $this->db->query("SELECT u.id_usulan_opname, u.id_produk, u.jumlah_sistem, u.jumlah_fisik, u.catatan,
+        return $this->db->query("SELECT u.id_usulan_opname, u.id_produk, u.jumlah_sistem, u.jumlah_fisik,
+            u.jumlah_fisik - u.jumlah_sistem AS selisih_jumlah, u.catatan,
             u.status, u.dibuat_pada, p.kode_produk, p.nama_produk, p.satuan, g.nama_lengkap,
             COALESCE(s.jumlah, 0) AS jumlah_sekarang
             FROM usulan_opname u

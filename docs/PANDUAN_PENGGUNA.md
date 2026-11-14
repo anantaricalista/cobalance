@@ -60,6 +60,13 @@ pemasok, termasuk mengubah statusnya menjadi aktif atau tidak aktif. Penghapusan
 permanen dilakukan oleh pengguna perusahaan lain yang berwenang; pemasok yang
 sudah digunakan dalam transaksi tidak dapat dihapus.
 
+Pada Master Produk, isi **Batas Minimum Stok** untuk setiap barang. Beranda
+Gudang memberi notifikasi untuk stok positif yang sama dengan atau di bawah
+batas tersebut; nilai 0 menonaktifkan peringatan hampir habis. Stok 0 tetap
+ditandai habis. Role Gudang dapat melihat stok dan kartu mutasi, serta mengirim
+usulan hitung fisik. Usulan tidak mengubah stok atau jurnal sampai Akuntansi/Admin
+memprosesnya melalui Penyesuaian Persediaan.
+
 Pengguna Purchasing juga dapat membuka menu **Produk** untuk menambah dan mengedit
 produk bertipe **Barang** (termasuk gambar). Tipe Jasa tidak tersedia bagi Purchasing,
 baik di Master Produk maupun di Pembelian; pembelian jasa dilakukan oleh Akuntansi atau
@@ -156,7 +163,9 @@ Alur transaksi umumnya:
    bukan satu. Pemisah ribuan ditambahkan otomatis saat mengetik; gunakan koma
    untuk desimal. Nilai yang ditempel harus menggunakan format Indonesia dan
    maksimal dua angka desimal.
-   Kolom jumlah barang dan tarif pajak menggunakan titik sebagai pemisah desimal.
+   Kolom jumlah barang dan tarif pajak pada transaksi umum menggunakan titik
+   sebagai pemisah desimal. Untuk role Gudang, jumlah stok dan opname memakai
+   koma sebagai pemisah desimal dan mendukung maksimal empat angka desimal.
    Gunakan browser modern yang mendukung JavaScript `BigInt` untuk perhitungan
    nominal yang akurat.
 3. Tambahkan lampiran bukti bila perlu (PDF, JPG, atau PNG, maksimal 5 MB).

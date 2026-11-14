@@ -65,6 +65,8 @@ abstract class Master_Controller extends MY_Controller
                     $value = isset($accounts[$value]) ? $accounts[$value] : '-';
                 } elseif ($this->config_master['table'] === 'produk' && $field === 'harga_jual') {
                     $value = format_nominal($value);
+                } elseif ($this->config_master['table'] === 'produk' && $field === 'stok_minimum') {
+                    $value = format_jumlah_indonesia($value);
                 }
                 $row[] = html_escape((string) $value);
             }
@@ -199,6 +201,12 @@ abstract class Master_Controller extends MY_Controller
                     $this->error($field['label'] . ' tidak valid.', 400);
                     return false;
                 }
+            } elseif ($field['type'] === 'quantity') {
+                if (!preg_match('/^\d{1,14}(?:,\d{1,4})?$/D', $value)) {
+                    $this->error($field['label'] . ' tidak valid. Gunakan koma untuk desimal, maksimal empat angka.', 400);
+                    return false;
+                }
+                $value = str_replace(',', '.', $value);
             } elseif ($field['type'] === 'account') {
                 $allowed = $this->account_options($field);
                 if ($this->config_master['table'] === 'pengaturan_akun' && isset($this->config_master['account_settings'][$data['jenis_pengaturan']])) {
