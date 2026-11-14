@@ -379,6 +379,9 @@ class Pembelian_service
             }
             $this->id($row['id_produk']);
             $product = $this->product($company, $row['id_produk']);
+            if ($product->tipe_produk !== 'barang' && $this->ci->session->userdata('role') === 'purchasing') {
+                throw new DomainException('Purchasing hanya dapat membeli produk bertipe Barang.');
+            }
             $quantity = $this->decimal($row['jumlah'], 4, 14, false);
             $price = $this->decimal($row['harga'], 2, 13, true);
             $discount = $this->decimal($row['diskon'], 2, 13, true);

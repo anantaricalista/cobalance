@@ -6,12 +6,18 @@ class M_master extends CI_Model
     private $table;
     private $id_field;
     private $fields;
+    private $product_type;
 
     public function configure($table, $id_field, array $fields)
     {
         $this->table = $table;
         $this->id_field = $id_field;
         $this->fields = array_merge(array($id_field), $fields);
+    }
+
+    public function restrict_product_type($type)
+    {
+        $this->product_type = $type;
     }
 
     private function select_fields()
@@ -26,6 +32,9 @@ class M_master extends CI_Model
     {
         $this->db->from($this->table);
         $this->db->where('id_perusahaan', $this->session->userdata('id_perusahaan'));
+        if ($this->product_type !== null) {
+            $this->db->where('tipe_produk', $this->product_type);
+        }
         if ($search !== '') {
             $this->db->group_start();
             foreach ($columns as $index => $column) {
@@ -59,6 +68,9 @@ class M_master extends CI_Model
     public function find($id)
     {
         $this->select_fields();
+        if ($this->product_type !== null) {
+            $this->db->where('tipe_produk', $this->product_type);
+        }
         return $this->db->where('id_perusahaan', $this->session->userdata('id_perusahaan'))
             ->where($this->id_field, $id)->get($this->table)->row();
     }

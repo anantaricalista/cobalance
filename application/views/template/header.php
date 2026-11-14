@@ -840,7 +840,7 @@
                     <li <?php if ($this->router->fetch_class() == 'pembelian') echo 'class="active"'; ?>><a href="<?php echo site_url('pembelian'); ?>"><span class="glyphicon glyphicon-shopping-cart cb-nav-icon" aria-hidden="true"></span>Pembelian</a></li>
                     <li <?php if ($this->router->fetch_class() == 'pembayaran_utang') echo 'class="active"'; ?>><a href="<?php echo site_url('pembayaran_utang'); ?>"><span class="glyphicon glyphicon-credit-card cb-nav-icon" aria-hidden="true"></span>Pembayaran Utang</a></li>
                     <li <?php if ($this->router->fetch_class() == 'pemasok') echo 'class="active"'; ?>><a href="<?php echo site_url('pemasok'); ?>"><span class="glyphicon glyphicon-briefcase cb-nav-icon" aria-hidden="true"></span>Pemasok</a></li>
-                    <li <?php if ($this->router->fetch_directory() == 'purchasing/' && $this->router->fetch_class() == 'produk') echo 'class="active"'; ?>><a href="<?php echo site_url('purchasing/produk'); ?>"><span class="glyphicon glyphicon-tags cb-nav-icon" aria-hidden="true"></span>Produk</a></li>
+                    <li <?php if ($this->router->fetch_class() == 'produk') echo 'class="active"'; ?>><a href="<?php echo site_url('produk'); ?>"><span class="glyphicon glyphicon-tags cb-nav-icon" aria-hidden="true"></span>Produk</a></li>
                 </ul>
                 <?php else: ?>
                 <ul class="nav navbar-nav">

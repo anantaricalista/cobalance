@@ -28,13 +28,17 @@ class Pembelian extends MY_Controller
                 return;
             }
         }
+        $this->db->select('id_produk, kode_produk, nama_produk, satuan')->where('id_perusahaan', $perusahaan)->where('aktif', 1);
+        if ($this->session->userdata('role') === 'purchasing') {
+            $this->db->where('tipe_produk', 'barang');
+        }
+        $products = $this->db->order_by('nama_produk')->get('produk')->result();
         $data = array(
             'transactions' => $this->pembelian_service->daftar(),
             'transaction' => $transaction,
             'suppliers' => $this->db->where('id_perusahaan', $perusahaan)->where('aktif', 1)
                 ->order_by('nama_pemasok')->get('pemasok')->result(),
-            'products' => $this->db->select('id_produk, kode_produk, nama_produk, satuan')->where('id_perusahaan', $perusahaan)->where('aktif', 1)
-                ->order_by('nama_produk')->get('produk')->result(),
+            'products' => $products,
             'taxes' => $this->db->where('id_perusahaan', $perusahaan)->where('aktif', 1)
                 ->order_by('kode_pajak')->get('pajak')->result(),
             'cash_accounts' => $this->akun->get_display_options(array(), array('1100'))

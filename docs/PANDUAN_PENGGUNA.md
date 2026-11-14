@@ -55,6 +55,11 @@ pemasok, termasuk mengubah statusnya menjadi aktif atau tidak aktif. Penghapusan
 permanen dilakukan oleh pengguna perusahaan lain yang berwenang; pemasok yang
 sudah digunakan dalam transaksi tidak dapat dihapus.
 
+Pengguna Purchasing juga dapat membuka menu **Produk** untuk menambah dan mengedit
+produk bertipe **Barang** (termasuk gambar). Tipe Jasa tidak tersedia bagi Purchasing,
+baik di Master Produk maupun di Pembelian; pembelian jasa dilakukan oleh Akuntansi atau
+Admin Perusahaan. Penghapusan produk dilakukan oleh pengguna yang berwenang.
+
 ## 3. Masukkan saldo awal (perusahaan yang sudah memiliki saldo)
 
 Lakukan langkah ini sebelum mencatat transaksi rutin. Menu **Transaksi → Saldo

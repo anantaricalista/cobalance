@@ -115,12 +115,14 @@ dikoreksi melalui alur ini. Periksa kembali laporan dan buku pembantu setelah
 koreksi.
 
 Modul Purchasing (`controllers|models|views/purchasing`) menyediakan beranda,
-daftar produk baca-saja (tanpa harga jual), serta melihat, menambah, mengedit,
+serta melihat, menambah, mengedit,
 dan mengubah status pemasok melalui Master Pemasok. Penghapusan permanen tetap
 dilakukan oleh pengguna perusahaan lain yang berwenang. Pengguna role `purchasing`
-juga memakai modul Pembelian dan Pembayaran Utang yang sudah ada. Pembatasan
+juga memakai modul Pembelian dan Pembayaran Utang yang sudah ada, serta Master Produk
+yang dibatasi hanya untuk produk bertipe Barang (tambah dan edit, tanpa hapus); Pembelian oleh
+Purchasing hanya menerima produk Barang dan ditolak server untuk Jasa. Pembatasan
 role ditetapkan di `MY_Controller::$role_scope`: role `purchasing` hanya dapat
-membuka controller `pembelian`, `pembayaran_utang`, dan `pemasok`, selebihnya dialihkan ke
+membuka controller `pembelian`, `pembayaran_utang`, `pemasok`, dan `produk`, selebihnya dialihkan ke
 `purchasing/beranda`. Tidak ada migrasi baru.
 
 System admin dapat membuat perusahaan beserta satu admin dan menyalin seluruh

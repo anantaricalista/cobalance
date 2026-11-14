@@ -32,6 +32,6 @@ class MY_Controller extends CI_Controller
     // Role terbatas hanya boleh membuka controller modul perusahaan yang terdaftar di sini.
     public static $role_scope = array(
         'gudang' => array('home' => 'gudang/beranda', 'classes' => array()),
-        'purchasing' => array('home' => 'purchasing/beranda', 'classes' => array('pembelian', 'pembayaran_utang', 'pemasok'))
+        'purchasing' => array('home' => 'purchasing/beranda', 'classes' => array('pembelian', 'pembayaran_utang', 'pemasok', 'produk'))
     );
 }

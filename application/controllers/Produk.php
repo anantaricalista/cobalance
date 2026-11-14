@@ -24,6 +24,26 @@ class Produk extends Master_Controller
         )
     );
 
+    public function __construct()
+    {
+        parent::__construct();
+        if ($this->session->userdata('role') === 'purchasing') {
+            $this->config_master['title'] = 'Produk';
+            $this->config_master['fields']['tipe_produk']['options'] = array('barang' => 'Barang');
+            $this->master->restrict_product_type('barang');
+        }
+    }
+
+    public function ajax_delete($id)
+    {
+        if ($this->session->userdata('role') === 'purchasing') {
+            $this->output->set_status_header(403)->set_content_type('application/json')
+                ->set_output(json_encode(array('status' => false, 'message' => 'Penghapusan produk dilakukan oleh pengguna yang berwenang.')));
+            return;
+        }
+        parent::ajax_delete($id);
+    }
+
     protected function prepare_data(array $data, $record = null)
     {
         if ($data['tipe_produk'] === 'jasa') {
@@ -89,8 +109,12 @@ class Produk extends Master_Controller
             show_404();
             return;
         }
-        $query = $this->db->select('gambar, gambar_tipe')->where('id_produk', $id)
-            ->where('id_perusahaan', $this->session->userdata('id_perusahaan'))->get('produk');
+        $this->db->select('gambar, gambar_tipe')->where('id_produk', $id)
+            ->where('id_perusahaan', $this->session->userdata('id_perusahaan'));
+        if ($this->session->userdata('role') === 'purchasing') {
+            $this->db->where('tipe_produk', 'barang');
+        }
+        $query = $this->db->get('produk');
         if (!$query) {
             log_message('error', 'Gagal membaca gambar produk.');
             show_error('Gagal membaca gambar produk.', 500);
