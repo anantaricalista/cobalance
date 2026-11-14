@@ -79,8 +79,12 @@ class Lampiran_service
         if (!is_scalar($id) || !ctype_digit((string) $id) || (int) $id < 1 || !$company) {
             return null;
         }
-        $query = $this->ci->db->query('SELECT lampiran, lampiran_nama, lampiran_tipe FROM transaksi
-            WHERE id_perusahaan=? AND id_transaksi=? AND lampiran IS NOT NULL', array($company, $id));
+        $sql = 'SELECT lampiran, lampiran_nama, lampiran_tipe FROM transaksi
+            WHERE id_perusahaan=? AND id_transaksi=? AND lampiran IS NOT NULL';
+        if ($this->ci->session->userdata('role') === 'penjualan') {
+            $sql .= " AND jenis_transaksi IN ('penjualan', 'penerimaan_piutang')";
+        }
+        $query = $this->ci->db->query($sql, array($company, $id));
         if (!$query) {
             throw new RuntimeException('Gagal membaca lampiran.');
         }

@@ -37,6 +37,9 @@
                 <div class="modal-body">
                     <div id="form_error" class="alert alert-danger" role="alert" style="display:none;"></div>
                     <input type="hidden" name="id_pelanggan">
+                    <?php if ($this->session->userdata('role') === 'penjualan'): ?>
+                        <input type="hidden" name="pelanggan_form_token" value="<?= html_escape($this->session->userdata('pelanggan_form_token')) ?>">
+                    <?php endif; ?>
                     <div class="form-group">
                         <label for="kode_pelanggan" class="control-label col-xs-12 col-sm-3">Kode Pelanggan</label>
                         <div class="col-xs-12 col-sm-9">
@@ -168,6 +171,7 @@
         $.ajax({
             url: <?php echo json_encode(site_url('pelanggan/ajax_delete')); ?> + '/' + id,
             type: 'POST',
+            data: <?php if ($this->session->userdata('role') === 'penjualan'): ?>{ pelanggan_form_token: <?= json_encode($this->session->userdata('pelanggan_form_token')) ?> }<?php else: ?>{}<?php endif; ?>,
             dataType: 'json',
             success: function () {
                 table.ajax.reload(null, false);

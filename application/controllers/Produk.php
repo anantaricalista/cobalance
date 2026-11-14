@@ -28,11 +28,60 @@ class Produk extends Master_Controller
     public function __construct()
     {
         parent::__construct();
+        if ($this->session->userdata('role') === 'penjualan'
+            && !in_array($this->router->fetch_method(), array('index', 'gambar'), true)) {
+            show_error('Role Penjualan hanya dapat melihat katalog produk.', 403);
+            exit;
+        }
         if ($this->session->userdata('role') === 'purchasing') {
             $this->config_master['title'] = 'Produk';
             $this->config_master['fields']['tipe_produk']['options'] = array('barang' => 'Barang');
             $this->master->restrict_product_type('barang');
         }
+    }
+
+    public function index()
+    {
+        if ($this->session->userdata('role') !== 'penjualan') {
+            parent::index();
+            return;
+        }
+        $search = $this->input->get('cari');
+        if ($search !== null && !is_string($search)) {
+            show_error('Pencarian tidak valid.', 400);
+            return;
+        }
+        $search = $search === null ? '' : trim($search);
+        if (strlen($search) > 100) {
+            show_error('Pencarian maksimal 100 byte.', 400);
+            return;
+        }
+        $page = $this->input->get('halaman');
+        if ($page !== null && (!is_string($page) || !preg_match('/^[1-9][0-9]{0,5}$/D', $page))) {
+            show_error('Halaman tidak valid.', 400);
+            return;
+        }
+        $page = $page === null ? 1 : (int) $page;
+        $this->db->select('p.id_produk, p.kode_produk, p.nama_produk, p.tipe_produk, p.satuan, p.harga_jual, p.aktif, COALESCE(s.jumlah, 0) AS jumlah, CASE WHEN p.gambar IS NULL THEN 0 ELSE 1 END AS memiliki_gambar', false)
+            ->from('produk p')->join('saldo_persediaan s', 's.id_perusahaan=p.id_perusahaan AND s.id_produk=p.id_produk', 'left')
+            ->where('p.id_perusahaan', $this->session->userdata('id_perusahaan'));
+        if ($search !== '') {
+            $this->db->group_start()->like('p.kode_produk', $search)->or_like('p.nama_produk', $search)->group_end();
+        }
+        $query = $this->db->order_by('p.kode_produk')->order_by('p.id_produk')->limit(51, ($page - 1) * 50)->get();
+        if (!$query) {
+            log_message('error', 'Gagal membaca katalog produk Penjualan.');
+            show_error('Katalog produk gagal dimuat.', 500);
+            return;
+        }
+        $products = $query->result();
+        $more = count($products) > 50;
+        if ($more) {
+            array_pop($products);
+        }
+        $this->load->view('template/header');
+        $this->load->view('sales/produk', array('products' => $products, 'search' => $search, 'page' => $page, 'more' => $more));
+        $this->load->view('template/footer');
     }
 
     public function ajax_delete($id)

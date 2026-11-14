@@ -25,7 +25,7 @@ Sebelum mencatat transaksi, buka menu **Master** dan lengkapi data berikut:
 2. **Pengguna** — kelola akun yang dapat masuk ke perusahaan ini dan pilih role
    **Admin Perusahaan**, **User**, **Kasir**, **Penjualan**, **Purchasing**,
    **Gudang**, **Keuangan**, **Akuntansi**, atau **Manajer / Pemilik**. Role
-   Gudang dan Purchasing memiliki tampilan serta pembatasan akses khusus;
+   Gudang, Purchasing, dan Penjualan memiliki tampilan serta pembatasan akses khusus;
    role lainnya belum dibatasi pada tingkat modul. Hanya Admin Perusahaan dan
    Akuntansi yang dapat mem-posting atau membatalkan transaksi. Perusahaan hanya
    memiliki satu admin;
@@ -76,6 +76,20 @@ Pengguna Purchasing juga dapat membuka menu **Produk** untuk menambah dan menged
 produk bertipe **Barang** (termasuk gambar). Tipe Jasa tidak tersedia bagi Purchasing,
 baik di Master Produk maupun di Pembelian; pembelian jasa dilakukan oleh Akuntansi atau
 Admin Perusahaan. Penghapusan produk dilakukan oleh pengguna yang berwenang.
+
+Role **Penjualan** memiliki beranda khusus, modul Penjualan dan Penerimaan
+Piutang, pengelolaan pelanggan, serta katalog produk dan jasa yang hanya dapat
+dilihat. Penjualan dan penerimaan disimpan sebagai draft; posting dan pembatalan
+dilakukan Akuntansi/Admin. Katalog menampilkan saldo stok saat ini tanpa
+memperhitungkan draft sebagai reservasi.
+
+Beranda Penjualan menampilkan draft dan penjualan yang diposting bulan ini untuk
+seluruh perusahaan, pelanggan aktif, serta tagihan penjualan kredit yang belum
+lunas atau lewat jatuh tempo. Piutang mencakup penjualan perusahaan yang
+terposting dan memiliki jurnal, setelah dikurangi penerimaan dan retur yang
+terposting; saldo awal piutang dan piutang dari transaksi lain tidak termasuk.
+Modul Penerimaan Piutang juga dapat mengalokasikan penerimaan ke saldo awal
+piutang dan pelepasan aset kredit yang terposting.
 
 Beranda Purchasing menampilkan draft, pembelian barang yang diposting bulan ini,
 utang pembelian yang belum lunas dan yang lewat jatuh tempo, serta daftar tagihan

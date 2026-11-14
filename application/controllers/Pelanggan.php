@@ -11,6 +11,12 @@ class Pelanggan extends MY_Controller
 
     public function index()
     {
+        if ($this->session->userdata('role') === 'penjualan') {
+            $token = $this->session->userdata('pelanggan_form_token');
+            if (!is_string($token) || $token === '') {
+                $this->session->set_userdata('pelanggan_form_token', bin2hex(random_bytes(32)));
+            }
+        }
         $this->load->view('template/header');
         $this->load->view('pelanggan_view');
         $this->load->view('template/footer');
@@ -62,6 +68,9 @@ class Pelanggan extends MY_Controller
         if (!$this->require_post()) {
             return;
         }
+        if (!$this->verify_sales_token()) {
+            return;
+        }
         $data = $this->customer_data();
         if ($data === false) {
             return;
@@ -73,6 +82,9 @@ class Pelanggan extends MY_Controller
     public function ajax_update()
     {
         if (!$this->require_post()) {
+            return;
+        }
+        if (!$this->verify_sales_token()) {
             return;
         }
         $id = $this->input->post('id_pelanggan');
@@ -89,6 +101,9 @@ class Pelanggan extends MY_Controller
     public function ajax_delete($id)
     {
         if (!$this->require_post()) {
+            return;
+        }
+        if (!$this->verify_sales_token()) {
             return;
         }
         if (!$this->pelanggan->get_by_id($id)) {
@@ -138,6 +153,20 @@ class Pelanggan extends MY_Controller
     {
         if ($this->input->method() !== 'post') {
             $this->error('Metode permintaan tidak diizinkan.', 405);
+            return false;
+        }
+        return true;
+    }
+
+    private function verify_sales_token()
+    {
+        if ($this->session->userdata('role') !== 'penjualan') {
+            return true;
+        }
+        $token = $this->input->post('pelanggan_form_token');
+        $expected = $this->session->userdata('pelanggan_form_token');
+        if (!is_string($token) || !is_string($expected) || $expected === '' || !hash_equals($expected, $token)) {
+            $this->error('Token formulir tidak valid. Muat ulang halaman.', 403);
             return false;
         }
         return true;

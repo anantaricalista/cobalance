@@ -17,8 +17,11 @@ foreach ($cash_accounts as $account) {
 }
 ?>
 <h3>Penerimaan Piutang</h3>
+<?php if ($this->session->userdata('role') === 'penjualan'): ?>
+    <p class="text-info">Penerimaan disimpan sebagai draft dan belum mengurangi piutang sampai diposting oleh Akuntansi atau Admin.</p>
+<?php endif; ?>
 <p class="text-muted" role="note">Nominal: pemisah ribuan ditambahkan otomatis; gunakan koma untuk desimal, misalnya <strong>1.000,50</strong>.</p>
-<p>Penerimaan dialokasikan ke tagihan pelanggan (penjualan kredit atau saldo awal piutang). Saat diposting, jurnal otomatis mendebit kas/bank dan mengkredit piutang usaha.</p>
+<p>Penerimaan dialokasikan ke tagihan pelanggan yang diposting (penjualan kredit, pelepasan aset kredit, atau saldo awal piutang). Saat diposting, jurnal otomatis mendebit kas/bank dan mengkredit piutang usaha.</p>
 
 <?php if ($transaction): ?>
     <p><a href="<?= site_url('penerimaan_piutang') ?>">&larr; Kembali ke daftar penerimaan piutang</a></p>
