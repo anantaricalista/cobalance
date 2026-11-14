@@ -52,19 +52,6 @@
 </div>
 
 <script type="text/javascript">
-    // Fungsi untuk mengubah tanggal ke format "d Month YYYY" (nama bulan Indonesia)
-    function formatDateIndo(dateStr) {
-        var parts = dateStr.split("-");
-        var year = parts[0];
-        var month = parseInt(parts[1], 10);
-        var day = parseInt(parts[2], 10);
-        var monthNames = [
-            "Januari", "Februari", "Maret", "April", "Mei", "Juni",
-            "Juli", "Agustus", "September", "Oktober", "November", "Desember"
-        ];
-        return day + " " + monthNames[month - 1] + " " + year;
-    }
-
     // Fungsi untuk memformat angka ke format Rupiah
     function formatRupiah(num) {
         return "Rp " + MoneyInput.display(num);
@@ -106,7 +93,7 @@
                     running_balance += (debit - kredit);
                     html += '<tr>';
                     html += '<td>' + (i + 1) + '</td>';
-                    html += '<td>' + formatDateIndo(trx.tanggal) + '</td>';
+                    html += '<td>' + $('<span>').text(formatTanggalIndonesia(trx.tanggal)).html() + '</td>';
                     html += '<td>' + trx.deskripsi + '</td>';
                     html += '<td>' + trx.referensi + '</td>';
                     html += '<td style="text-align:right;">' + formatRupiah(MoneyInput.fromCents(debit)) + '</td>';

@@ -88,7 +88,7 @@
                             <tr>
                                 <td><a href="<?= site_url('pembelian?id=' . (int) $tagihan->id_transaksi) ?>"><?= html_escape($tagihan->nomor_transaksi) ?></a></td>
                                 <td><?= html_escape($tagihan->nama_pemasok) ?></td>
-                                <td><?= $tagihan->jatuh_tempo ? html_escape(date('d/m/Y', strtotime($tagihan->jatuh_tempo))) : '-' ?></td>
+                                <td><?= html_escape(format_tanggal_indonesia($tagihan->jatuh_tempo)) ?></td>
                                 <td class="text-right">Rp <?= html_escape(format_nominal($tagihan->sisa)) ?></td>
                             </tr>
                         <?php endforeach; ?>

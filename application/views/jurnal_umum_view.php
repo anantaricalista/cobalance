@@ -70,26 +70,13 @@
                 {
                     "targets": 1,  // Kolom tanggal
                     "render": function (data, type, row, meta) {
-                        return formatDateIndo(data);
+                        return type === 'display' ? $('<span>').text(formatTanggalIndonesia(data)).html() : data;
                     }
                 }
             ],
             "order": [[1, "asc"]]
         });
     });
-
-    // Fungsi untuk mengubah tanggal ke format "d Month YYYY" dalam Bahasa Indonesia
-    function formatDateIndo(dateStr) {
-        var parts = dateStr.split("-");
-        var year = parts[0];
-        var month = parseInt(parts[1], 10);
-        var day = parseInt(parts[2], 10);
-        var monthNames = [
-            "Januari", "Februari", "Maret", "April", "Mei", "Juni",
-            "Juli", "Agustus", "September", "Oktober", "November", "Desember"
-        ];
-        return day + " " + monthNames[month - 1] + " " + year;
-    }
 
     // Fungsi untuk memformat angka ke format Rupiah
     function formatRupiah(num) {

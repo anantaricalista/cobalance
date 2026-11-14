@@ -3,9 +3,10 @@
 Panduan singkat ini menjelaskan alur dari login pertama sampai membaca laporan
 akuntansi. Nama menu mengikuti navigasi aplikasi.
 
-Tanggal pada tabel dan rincian ditampilkan dengan urutan hari/bulan/tahun; beberapa
-laporan menggunakan nama bulan Indonesia. Kolom input tanggal mengikuti format
-browser, sementara nilai yang dikirim tetap menggunakan format tahun-bulan-hari.
+Tanggal pada tabel dan rincian ditampilkan dengan singkatan nama bulan Indonesia,
+misalnya **11 Nov 2026**; tanggal pada laporan PDF menggunakan nama bulan lengkap.
+Kolom input tanggal mengikuti format browser, sementara nilai yang dikirim tetap
+menggunakan format tahun-bulan-hari.
 
 ## 1. Login
 

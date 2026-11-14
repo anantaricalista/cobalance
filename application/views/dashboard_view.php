@@ -208,7 +208,7 @@ $transaction_labels = array(
 			<h2>Selamat datang, <?= html_escape($user['nama_lengkap'] ?: $user['username']) ?></h2>
 			<p><?= html_escape($user['nama_perusahaan']) ?> · Ringkasan posisi keuangan dan aktivitas usaha</p>
 		</div>
-		<div class="dashboard-period">Data per <?= date('d/m/Y', strtotime($today)) ?></div>
+		<div class="dashboard-period">Data per <?= html_escape(format_tanggal_indonesia($today)) ?></div>
 	</div>
 
 	<div class="row">
@@ -237,7 +237,7 @@ $transaction_labels = array(
 			<a class="dashboard-card card-purple" href="<?= site_url('jurnal') ?>">
 				<span class="card-label">Transaksi Diposting</span>
 				<strong class="card-value"><?= number_format((int) $summary['monthly']->transaction_count, 0, ',', '.') ?></strong>
-				<span class="card-note">Bulan berjalan · <?= date('m/Y', strtotime($today)) ?></span>
+				<span class="card-note">Bulan berjalan · <?= html_escape(substr(format_tanggal_indonesia($today, true), 3)) ?></span>
 			</a>
 		</div>
 	</div>
@@ -247,7 +247,7 @@ $transaction_labels = array(
 			<section class="dashboard-panel">
 				<div class="dashboard-panel-heading">
 					<h3>Aktivitas Bulan Ini</h3>
-					<span class="text-muted"><?= date('m/Y', strtotime($today)) ?></span>
+					<span class="text-muted"><?= html_escape(substr(format_tanggal_indonesia($today, true), 3)) ?></span>
 				</div>
 				<div class="dashboard-panel-body">
 					<div class="dashboard-monthly">
@@ -291,7 +291,7 @@ $transaction_labels = array(
 							<tbody>
 								<?php foreach ($summary['recent_transactions'] as $transaction): ?>
 									<tr>
-										<td><?= date('d/m/Y', strtotime($transaction->tanggal)) ?></td>
+										<td><?= html_escape(format_tanggal_indonesia($transaction->tanggal)) ?></td>
 										<td><?= html_escape($transaction->nomor_transaksi) ?></td>
 										<td>
 											<?= html_escape(isset($transaction_labels[$transaction->jenis_transaksi])

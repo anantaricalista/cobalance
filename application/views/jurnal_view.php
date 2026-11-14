@@ -145,11 +145,7 @@
                     "targets": 1,
                     "render": function (data, type) {
                         if (type !== 'display' || !data) return data || '';
-                        var parts = data.split('-');
-                        if (parts.length !== 3) return $('<span>').text(data).html();
-                        var date = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
-                        return isNaN(date.getTime()) ? $('<span>').text(data).html() :
-                            date.toLocaleDateString('id-ID', {day: '2-digit', month: 'long', year: 'numeric'});
+                        return $('<span>').text(formatTanggalIndonesia(data)).html();
                     }
                 }
             ],

@@ -69,7 +69,7 @@
     <div class="info">
         <span><strong>Akun:</strong> <?php echo $akun->nama_akun . " (" . $akun->kode_akun . ")"; ?></span><br>
         <span><strong>Periode:</strong>
-            <?php echo html_escape(format_tanggal_indonesia($start_date)) . " - " . html_escape(format_tanggal_indonesia($end_date)); ?></span>
+            <?php echo html_escape(format_tanggal_indonesia($start_date, true)) . " - " . html_escape(format_tanggal_indonesia($end_date, true)); ?></span>
     </div>
     <table class="ledger-table">
         <tr>
@@ -99,7 +99,7 @@
                     <?php echo $no++; ?>
                 </td>
                 <td>
-                    <?php echo html_escape(format_tanggal_indonesia($trx->tanggal)); ?>
+                    <?php echo html_escape(format_tanggal_indonesia($trx->tanggal, true)); ?>
                 </td>
                 <td class="left">
                     <?php echo $trx->deskripsi; ?>

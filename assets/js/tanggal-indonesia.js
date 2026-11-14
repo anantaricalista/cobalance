@@ -4,7 +4,9 @@ function formatTanggalIndonesia(value) {
     var match = /^(\d{4})-(\d{2})-(\d{2})(.*)$/.exec(text);
     if (!match) return text;
     var year = Number(match[1]), month = Number(match[2]), day = Number(match[3]);
-    var date = new Date(year, month - 1, day);
-    if (date.getFullYear() !== year || date.getMonth() !== month - 1 || date.getDate() !== day) return text;
-    return match[3] + '/' + match[2] + '/' + match[1] + match[4];
+    var leap = year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
+    var days = [31, leap ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    if (year < 1 || month < 1 || month > 12 || day < 1 || day > days[month - 1]) return text;
+    var months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+    return match[3] + ' ' + months[month - 1] + ' ' + match[1] + match[4];
 }
