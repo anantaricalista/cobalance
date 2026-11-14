@@ -204,15 +204,43 @@ $(function () {
         });
     }
 
+    var invoiceRequest = null;
+    var invoiceSupplier = null;
+
     function loadInvoices() {
         var customer = $('#receipt-supplier').val();
+        if (invoiceRequest) {
+            invoiceRequest.abort();
+            invoiceRequest = null;
+        }
+        invoiceSupplier = customer || null;
         if (!customer) {
+            $('#invoice-table tbody').empty().append(
+                $('<tr>').append($('<td colspan="7" class="text-center">').text('Pilih pemasok untuk menampilkan tagihan.'))
+            );
             return;
         }
-        $.getJSON(<?= json_encode(site_url('pembayaran_utang/tagihan')) ?>, {id_pemasok: customer}).done(function (response) {
-            renderInvoices(response.data || []);
+        $('#invoice-table tbody').empty().append(
+            $('<tr>').append($('<td colspan="7" class="text-center">').text('Memuat tagihan...'))
+        );
+        invoiceRequest = $.getJSON(<?= json_encode(site_url('pembayaran_utang/tagihan')) ?>, {id_pemasok: customer}).done(function (response) {
+            if ($('#receipt-supplier').val() !== customer || invoiceSupplier !== customer) {
+                return;
+            }
+            renderInvoices(Array.isArray(response.data) ? response.data : []);
         }).fail(function (xhr) {
+            if (xhr.statusText === 'abort' || $('#receipt-supplier').val() !== customer
+                || invoiceSupplier !== customer) {
+                return;
+            }
+            $('#invoice-table tbody').empty().append(
+                $('<tr>').append($('<td colspan="7" class="text-center">').text('Daftar tagihan gagal dimuat.'))
+            );
             showError(xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : 'Daftar tagihan gagal dimuat.');
+        }).always(function () {
+            if (invoiceSupplier === customer) {
+                invoiceRequest = null;
+            }
         });
     }
 

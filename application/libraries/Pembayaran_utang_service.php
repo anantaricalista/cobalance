@@ -61,8 +61,13 @@ class Pembayaran_utang_service
                     WHERE rt.id_perusahaan=t.id_perusahaan AND rt.id_transaksi_asal=t.id_transaksi
                     AND rt.jenis_transaksi='retur_pembelian' AND rt.status='diposting'), 0) AS sisa
             FROM transaksi t WHERE t.id_perusahaan=? AND t.id_pemasok=? AND t.status='diposting'
+            AND EXISTS (SELECT 1 FROM transaksi_jurnal tj
+                JOIN jurnal_transaksi j ON j.id_perusahaan=t.id_perusahaan AND j.id_jurnal=tj.id_jurnal
+                WHERE tj.id_perusahaan=t.id_perusahaan AND tj.id_transaksi=t.id_transaksi
+                    AND tj.jenis_jurnal='posting')
             AND (t.jenis_transaksi='saldo_awal_utang'
-                OR (t.jenis_transaksi IN ('pembelian', 'perolehan_aset', 'beban_penjualan_jasa') AND t.cara_pembayaran='kredit'))
+                OR (t.jenis_transaksi IN ('pembelian', 'perolehan_aset', 'beban_penjualan_jasa')
+                    AND t.cara_pembayaran='kredit'))
             HAVING sisa > 0 ORDER BY t.tanggal, t.id_transaksi", array($company, $supplier));
         $this->ok($query);
         return $query->result_array();
@@ -223,7 +228,11 @@ class Pembayaran_utang_service
     {
         foreach ($rows as $row) {
             $query = $this->ci->db->query("SELECT t.id_pemasok, t.tanggal, t.total, t.jenis_transaksi, t.cara_pembayaran,
-                t.status, COALESCE((SELECT SUM(a.jumlah) FROM alokasi_transaksi a
+                t.status, EXISTS (SELECT 1 FROM transaksi_jurnal tj
+                    JOIN jurnal_transaksi j ON j.id_perusahaan=t.id_perusahaan AND j.id_jurnal=tj.id_jurnal
+                    WHERE tj.id_perusahaan=t.id_perusahaan AND tj.id_transaksi=t.id_transaksi
+                        AND tj.jenis_jurnal='posting') AS memiliki_jurnal_posting,
+                COALESCE((SELECT SUM(a.jumlah) FROM alokasi_transaksi a
                     JOIN transaksi r ON r.id_perusahaan=a.id_perusahaan AND r.id_transaksi=a.id_transaksi
                     WHERE a.id_perusahaan=t.id_perusahaan AND a.id_transaksi_tagihan=t.id_transaksi
                     AND r.status='diposting' AND r.jenis_transaksi='pembayaran_utang'), 0) AS terbayar,
@@ -234,7 +243,8 @@ class Pembayaran_utang_service
                 array($company, $row['id']));
             $this->ok($query);
             $invoice = $query->row();
-            if (!$invoice || (string) $invoice->id_pemasok !== (string) $supplier || $invoice->status !== 'diposting'
+            if (!$invoice || (string) $invoice->id_pemasok !== (string) $supplier
+                || $invoice->status !== 'diposting' || !$invoice->memiliki_jurnal_posting
                 || !($invoice->jenis_transaksi === 'saldo_awal_utang'
                     || (in_array($invoice->jenis_transaksi, array('pembelian', 'perolehan_aset', 'beban_penjualan_jasa'), true)
                         && $invoice->cara_pembayaran === 'kredit'))) {
