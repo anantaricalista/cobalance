@@ -10,7 +10,7 @@
         <?php foreach ($stok as $row): ?>
             <tr>
                 <td><?= html_escape($row->kode_produk) ?></td><td><?= html_escape($row->nama_produk) ?></td>
-                <td><?= html_escape($row->satuan) ?></td><td><?= html_escape($row->jumlah) ?></td>
+                <td><?= html_escape($row->satuan) ?></td><td><?= html_escape(format_jumlah_indonesia($row->jumlah)) ?></td>
                 <td><?= $row->aktif ? 'Aktif' : 'Tidak aktif' ?></td>
                 <td><a href="<?= site_url('gudang/stok/kartu/' . (int) $row->id_produk) ?>">Lihat</a></td>
             </tr>

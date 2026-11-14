@@ -88,9 +88,10 @@ class M_gudang extends CI_Model
 
     public function simpan_usulan($productId, $physical, $note)
     {
-        if (!is_string($physical) || !preg_match('/^\d{1,14}(?:\.\d{1,4})?$/D', $physical)) {
+        if (!is_string($physical) || !preg_match('/^\d{1,14}(?:,\d{1,4})?$/D', $physical)) {
             throw new InvalidArgumentException('Jumlah fisik tidak valid.');
         }
+        $physical = str_replace(',', '.', $physical);
         $note = is_string($note) ? trim($note) : '';
         if ($note === '' || strlen($note) > 255) {
             throw new InvalidArgumentException('Catatan wajib diisi dan maksimal 255 byte.');

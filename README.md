@@ -99,7 +99,12 @@ login masih dapat membuka modul perusahaan, termasuk Master Pengguna.
 
 Modul Gudang (`controllers|models|views/gudang`) menyediakan beranda, stok barang
 tanpa nilai rupiah, kartu stok, dan usulan stock opname yang tidak mengubah stok
-atau jurnal. Jalankan `application/sql/20261113_gudang_usulan_opname.sql`. Admin (juga role akuntansi/keuangan) menindaklanjuti usulan di Transaksi → Usulan Opname Gudang: tombol Buat penyesuaian membuka form Penyesuaian Persediaan yang terisi, lalu usulan ditandai Selesai atau Tolak.
+atau jurnal. Jumlah ditampilkan dengan koma sebagai tanda desimal dan tanpa nol
+desimal yang tidak diperlukan; masukkan jumlah opname memakai koma, maksimal empat
+angka desimal. Jalankan `application/sql/20261113_gudang_usulan_opname.sql`. Admin
+(juga role akuntansi/keuangan) menindaklanjuti usulan di Transaksi → Usulan Opname
+Gudang: tombol Buat penyesuaian membuka form Penyesuaian Persediaan yang terisi,
+lalu usulan ditandai Selesai atau Tolak.
 Pengguna role `gudang` diarahkan ke `gudang/beranda` dan setiap upaya membuka
 modul perusahaan lain dialihkan kembali ke sana; modul gudang hanya dapat dibuka
 role `gudang` dan `admin`.

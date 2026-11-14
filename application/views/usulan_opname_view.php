@@ -11,8 +11,9 @@
             <tr>
                 <td><?= html_escape($u->dibuat_pada) ?></td>
                 <td><?= html_escape($u->kode_produk . ' - ' . $u->nama_produk) ?></td>
-                <td><?= html_escape($u->jumlah_sistem) ?></td><td><?= html_escape($u->jumlah_fisik) ?></td>
-                <td><?= html_escape($u->jumlah_sekarang) ?> <?= html_escape($u->satuan) ?></td>
+                <td><?= html_escape(format_jumlah_indonesia($u->jumlah_sistem)) ?></td>
+                <td><?= html_escape(format_jumlah_indonesia($u->jumlah_fisik)) ?></td>
+                <td><?= html_escape(format_jumlah_indonesia($u->jumlah_sekarang)) ?> <?= html_escape($u->satuan) ?></td>
                 <td><?= html_escape($u->catatan) ?></td><td><?= html_escape($u->nama_lengkap) ?></td>
                 <td><?= html_escape($u->status) ?></td>
                 <td>

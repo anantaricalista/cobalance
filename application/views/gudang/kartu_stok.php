@@ -1,6 +1,6 @@
 <h3>Kartu Stok</h3>
 <p><strong><?= html_escape($produk->kode_produk . ' - ' . $produk->nama_produk) ?></strong>
-    | Stok saat ini: <?= html_escape($produk->jumlah) ?> <?= html_escape($produk->satuan) ?></p>
+    | Stok saat ini: <?= html_escape(format_jumlah_indonesia($produk->jumlah)) ?> <?= html_escape($produk->satuan) ?></p>
 <p><a href="<?= site_url('gudang/stok') ?>">&laquo; Kembali ke stok</a></p>
 <div class="table-responsive">
     <table class="table table-striped table-bordered">
@@ -10,8 +10,8 @@
             <tr>
                 <td><?= html_escape(format_tanggal_indonesia($row->tanggal)) ?></td><td><?= html_escape($row->nomor_transaksi) ?></td>
                 <td><?= html_escape($row->jenis_transaksi) ?></td><td><?= html_escape($row->status) ?></td>
-                <td><?= html_escape($row->jenis_mutasi) ?></td><td><?= html_escape($row->jumlah) ?></td>
-                <td><?= html_escape($row->saldo_jumlah) ?></td>
+                <td><?= html_escape($row->jenis_mutasi) ?></td><td><?= html_escape(format_jumlah_indonesia($row->jumlah)) ?></td>
+                <td><?= html_escape(format_jumlah_indonesia($row->saldo_jumlah)) ?></td>
             </tr>
         <?php endforeach; ?>
         <?php if (!$kartu['mutasi']): ?><tr><td colspan="7">Belum ada mutasi.</td></tr><?php endif; ?>

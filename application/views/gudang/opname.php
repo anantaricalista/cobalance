@@ -11,11 +11,15 @@
         <select name="produk" class="form-control" required>
             <option value="">-- Pilih produk --</option>
             <?php foreach ($produk as $p): if (!$p->aktif) { continue; } ?>
-                <option value="<?= (int) $p->id_produk ?>"><?= html_escape($p->kode_produk . ' - ' . $p->nama_produk . ' (sistem: ' . $p->jumlah . ' ' . $p->satuan . ')') ?></option>
+                <option value="<?= (int) $p->id_produk ?>"><?= html_escape($p->kode_produk . ' - ' . $p->nama_produk . ' (sistem: ' . format_jumlah_indonesia($p->jumlah) . ' ' . $p->satuan . ')') ?></option>
             <?php endforeach; ?>
         </select></div></div>
     <div class="form-group"><label class="col-sm-2 control-label">Jumlah fisik</label><div class="col-sm-3">
-        <input type="text" name="jumlah_fisik" class="form-control" inputmode="decimal" pattern="\d{1,14}(\.\d{1,4})?" required></div></div>
+        <input type="text" name="jumlah_fisik" class="form-control" inputmode="decimal"
+            maxlength="19" pattern="\d{1,14}(,\d{1,4})?" placeholder="Contoh: 12,5"
+            title="Gunakan koma untuk desimal, maksimal 4 angka di belakang koma."
+            aria-describedby="physical-quantity-help" required>
+        <span id="physical-quantity-help" class="help-block">Gunakan koma untuk desimal, misalnya 12,5 atau 0,25.</span></div></div>
     <div class="form-group"><label class="col-sm-2 control-label">Catatan</label><div class="col-sm-6">
         <input type="text" name="catatan" class="form-control" maxlength="255" required></div></div>
     <div class="form-group"><div class="col-sm-offset-2 col-sm-6"><button type="submit" class="btn btn-primary">Kirim usulan</button></div></div>
@@ -29,8 +33,9 @@
             <tr>
                 <td><?= html_escape($u->dibuat_pada) ?></td>
                 <td><?= html_escape($u->kode_produk . ' - ' . $u->nama_produk) ?></td>
-                <td><?= html_escape($u->jumlah_sistem) ?></td><td><?= html_escape($u->jumlah_fisik) ?></td>
-                <td><?= html_escape(number_format((float) $u->jumlah_fisik - (float) $u->jumlah_sistem, 4, '.', '')) ?></td>
+                <td><?= html_escape(format_jumlah_indonesia($u->jumlah_sistem)) ?></td>
+                <td><?= html_escape(format_jumlah_indonesia($u->jumlah_fisik)) ?></td>
+                <td><?= html_escape(format_jumlah_indonesia(number_format((float) $u->jumlah_fisik - (float) $u->jumlah_sistem, 4, '.', ''))) ?></td>
                 <td><?= html_escape($u->catatan) ?></td><td><?= html_escape($u->nama_lengkap) ?></td>
                 <td><?= html_escape($u->status) ?></td>
             </tr>
