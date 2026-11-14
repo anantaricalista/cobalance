@@ -9,6 +9,7 @@ class Penyesuaian_persediaan extends MY_Controller
         $this->load->library('penyesuaian_persediaan_service');
         $this->load->library('lampiran_service');
         $this->load->model('M_akun', 'akun');
+        $this->load->model('M_usulan_opname', 'usulan');
     }
 
     public function index()
@@ -28,9 +29,16 @@ class Penyesuaian_persediaan extends MY_Controller
             }
         }
         $company = $this->session->userdata('id_perusahaan');
+        $token = $this->session->userdata('usulan_form_token');
+        if (!is_string($token) || $token === '') {
+            $token = bin2hex(random_bytes(32));
+            $this->session->set_userdata('usulan_form_token', $token);
+        }
         $data = array(
             'transaction' => $transaction,
             'transactions' => $this->penyesuaian_persediaan_service->daftar(),
+            'proposals' => $this->usulan->daftar(),
+            'proposal_form_token' => $token,
             'products' => $this->db->select('id_produk, kode_produk, nama_produk')->where('id_perusahaan', $company)->where('tipe_produk', 'barang')
                 ->where('aktif', 1)->order_by('kode_produk')->get('produk')->result(),
             'accounts' => $this->akun->get_display_options(array('Pendapatan', 'Beban'), array())
@@ -51,7 +59,8 @@ class Penyesuaian_persediaan extends MY_Controller
             'jenis' => $this->input->post('jenis'),
             'jumlah' => $this->input->post('jumlah'),
             'nilai' => $this->input->post('nilai'),
-            'deskripsi' => $this->input->post('deskripsi')
+            'deskripsi' => $this->input->post('deskripsi'),
+            'usulan' => $this->input->post('usulan')
         );
         $tanggal = $this->input->post('tanggal');
         $this->perform(function () use ($tanggal, $data) {
@@ -68,6 +77,7 @@ class Penyesuaian_persediaan extends MY_Controller
         $id = $this->input->post('id');
         $this->perform(function () use ($id) {
             $this->penyesuaian_persediaan_service->posting($id);
+            $this->session->set_flashdata('sukses', 'Penyesuaian berhasil diposting; stok dan jurnal telah diperbarui.');
             return array('id_transaksi' => (int) $id);
         });
     }
@@ -82,6 +92,7 @@ class Penyesuaian_persediaan extends MY_Controller
         $alasan = $this->input->post('alasan');
         $this->perform(function () use ($id, $tanggal, $alasan) {
             $this->penyesuaian_persediaan_service->batalkan($id, $tanggal, $alasan);
+            $this->session->set_flashdata('sukses', 'Penyesuaian berhasil dibatalkan.');
             return array('id_transaksi' => (int) $id);
         });
     }

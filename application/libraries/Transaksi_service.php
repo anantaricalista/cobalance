@@ -44,9 +44,9 @@ class Transaksi_service
         });
     }
 
-    public function posting($id, callable $siapkan_jurnal, array $akun_induk_diizinkan = array())
+    public function posting($id, callable $siapkan_jurnal, array $akun_induk_diizinkan = array(), callable $setelah_posting = null)
     {
-        return $this->atomic(function ($perusahaan, $pengguna) use ($id, $siapkan_jurnal, $akun_induk_diizinkan) {
+        return $this->atomic(function ($perusahaan, $pengguna) use ($id, $siapkan_jurnal, $akun_induk_diizinkan, $setelah_posting) {
             $transaksi = $this->lock_transaksi($id, $perusahaan);
             if ($transaksi->status !== 'draft') {
                 throw new DomainException('Hanya transaksi draft yang dapat diposting.');
@@ -61,16 +61,19 @@ class Transaksi_service
             if ($this->ci->db->affected_rows() !== 1) {
                 throw new RuntimeException('Status transaksi gagal diperbarui.');
             }
+            if ($setelah_posting !== null) {
+                $setelah_posting($transaksi, $this->ci->db);
+            }
             return $id_jurnal;
         });
     }
 
-    public function batalkan($id, $tanggal, $alasan, callable $batalkan_dampak)
+    public function batalkan($id, $tanggal, $alasan, callable $batalkan_dampak, callable $setelah_batal = null)
     {
         if (!$this->tanggal_valid($tanggal) || !is_string($alasan) || trim($alasan) === '' || strlen($alasan) > 255) {
             throw new InvalidArgumentException('Tanggal dan alasan pembatalan wajib valid.');
         }
-        return $this->atomic(function ($perusahaan, $pengguna) use ($id, $tanggal, $alasan, $batalkan_dampak) {
+        return $this->atomic(function ($perusahaan, $pengguna) use ($id, $tanggal, $alasan, $batalkan_dampak, $setelah_batal) {
             $db = $this->ci->db;
             $transaksi = $this->lock_transaksi($id, $perusahaan);
             if ($transaksi->status !== 'diposting' || $tanggal < $transaksi->tanggal) {
@@ -100,6 +103,9 @@ class Transaksi_service
                     'waktu_pembatalan' => date('Y-m-d H:i:s'), 'alasan_pembatalan' => trim($alasan))));
             if ($db->affected_rows() !== 1) {
                 throw new RuntimeException('Status pembatalan gagal diperbarui.');
+            }
+            if ($setelah_batal !== null) {
+                $setelah_batal($transaksi, $db);
             }
             return $id_jurnal;
         });

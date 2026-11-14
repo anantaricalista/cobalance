@@ -105,8 +105,10 @@ angka desimal. Jalankan migrasi `application/sql/20261113_gudang_usulan_opname.s
 dan `application/sql/20261114_stok_minimum_produk.sql`. Batas minimum diatur per
 barang pada Master Produk; stok nol ditandai habis, sedangkan stok positif pada
 atau di bawah batas ditandai hampir habis. Admin (juga role akuntansi/keuangan)
-menindaklanjuti usulan di Transaksi → Usulan Opname Gudang: tombol Buat penyesuaian
-membuka form Penyesuaian Persediaan yang terisi, lalu usulan ditandai Selesai atau Tolak.
+menindaklanjuti usulan di Transaksi → Opname & Penyesuaian: usulan dan form
+penyesuaian tersedia dalam satu tampilan. Jumlah fisik terisi otomatis untuk
+ditinjau, dan status selesai hanya berubah setelah draft diposting. Jika
+penyesuaian terkait dibatalkan, usulan kembali menunggu.
 Pengguna role `gudang` diarahkan ke `gudang/beranda` dan setiap upaya membuka
 modul perusahaan lain dialihkan kembali ke sana; modul gudang hanya dapat dibuka
 role `gudang` dan `admin`.

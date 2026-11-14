@@ -65,7 +65,12 @@ Gudang memberi notifikasi untuk stok positif yang sama dengan atau di bawah
 batas tersebut; nilai 0 menonaktifkan peringatan hampir habis. Stok 0 tetap
 ditandai habis. Role Gudang dapat melihat stok dan kartu mutasi, serta mengirim
 usulan hitung fisik. Usulan tidak mengubah stok atau jurnal sampai Akuntansi/Admin
-memprosesnya melalui Penyesuaian Persediaan.
+memprosesnya melalui **Transaksi → Opname & Penyesuaian**. Di halaman yang sama,
+Akuntansi/Admin dapat meninjau usulan, membuat draft penyesuaian dengan jumlah
+fisik terisi otomatis, lalu mem-postingnya. Status usulan baru menjadi selesai
+setelah posting berhasil; pembatalan penyesuaian terkait mengembalikannya menjadi
+menunggu. Jumlah di modul persediaan menggunakan koma desimal dan ditampilkan
+tanpa nol desimal yang tidak diperlukan.
 
 Pengguna Purchasing juga dapat membuka menu **Produk** untuk menambah dan mengedit
 produk bertipe **Barang** (termasuk gambar). Tipe Jasa tidak tersedia bagi Purchasing,
@@ -138,7 +143,7 @@ Gunakan modul pada menu **Transaksi** sesuai kegiatan:
 | Mencatat penerimaan, pengeluaran, atau transfer kas | Kas dan Bank |
 | Mencatat setoran modal atau prive | Modal dan Prive |
 | Mencatat perolehan, penyusutan, atau pelepasan | Aset Tetap |
-| Memeriksa dan menyesuaikan jumlah/nilai stok | Persediaan → Penyesuaian Persediaan |
+| Memeriksa dan menyesuaikan jumlah/nilai stok | Transaksi → Opname & Penyesuaian |
 | Mencatat retur pembelian atau penjualan | Retur Transaksi |
 | Membuat jurnal penyesuaian manual | Penyesuaian Akuntansi |
 | Memindahkan Laba (Rugi) Berjalan tahun lalu ke Laba Ditahan | Penyesuaian Akuntansi → Pindahkan Saldo Laba (Rugi) Berjalan (jalankan `20261114_pemindahan_laba.sql` dahulu) |

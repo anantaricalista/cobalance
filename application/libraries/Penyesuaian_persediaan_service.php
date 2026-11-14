@@ -62,10 +62,33 @@ class Penyesuaian_persediaan_service
         if ($description === '' || strlen($description) > 255) {
             throw new InvalidArgumentException('Keterangan wajib diisi dan maksimal 255 byte.');
         }
+        $proposalId = isset($data['usulan']) && $data['usulan'] !== '' ? $data['usulan'] : null;
+        if ($proposalId !== null) {
+            $this->id($proposalId);
+            if ($data['jenis'] !== 'opname') {
+                throw new InvalidArgumentException('Usulan opname harus menggunakan jenis penyesuaian opname.');
+            }
+        }
         return $this->ci->transaksi_service->buat_draft('penyesuaian_persediaan', $tanggal, $description,
-            function ($id, $company, $db) use ($data, $quantity, $value, $lampiran) {
+            function ($id, $company, $db) use ($data, $quantity, $value, $lampiran, $proposalId, $description) {
                 $this->product($company, $data['produk']);
                 $this->account($company, $data['akun'], false);
+                $transactionDescription = $description;
+                if ($proposalId !== null) {
+                    $proposal = $db->query("SELECT id_produk FROM usulan_opname
+                        WHERE id_perusahaan=? AND id_usulan_opname=? AND status='menunggu' FOR UPDATE",
+                        array($company, (int) $proposalId));
+                    $this->ok($proposal);
+                    if (!$proposal->row() || (int) $proposal->row()->id_produk !== (int) $data['produk']) {
+                        throw new DomainException('Usulan opname sudah diproses atau produknya tidak sesuai.');
+                    }
+                    $transactionDescription = 'Opname gudang #' . (int) $proposalId . ': ' . $description;
+                    if (strlen($transactionDescription) > 255) {
+                        throw new InvalidArgumentException('Keterangan terlalu panjang untuk usulan opname.');
+                    }
+                    $this->ok($db->where('id_perusahaan', $company)->where('id_transaksi', $id)
+                        ->update('transaksi', array('deskripsi' => $transactionDescription)));
+                }
                 $this->ok($db->insert('detail_transaksi', array(
                     'id_perusahaan' => $company, 'id_transaksi' => $id,
                     'id_produk' => $data['produk'], 'id_akun' => $data['akun'],
@@ -183,6 +206,29 @@ class Penyesuaian_persediaan_service
                 array('id_akun' => $detail->id_akun, 'debit' => $delta < 0 ? $this->money($cost) : '0.00',
                     'kredit' => $delta > 0 ? $this->money($cost) : '0.00')
             );
+        }, array(), function ($transaction, $db) {
+            $proposalId = $this->proposal_id($transaction->deskripsi);
+            if ($proposalId === null) {
+                return;
+            }
+            $proposal = $db->query("SELECT id_produk FROM usulan_opname
+                WHERE id_perusahaan=? AND id_usulan_opname=? AND status='menunggu' FOR UPDATE",
+                array($transaction->id_perusahaan, $proposalId));
+            $this->ok($proposal);
+            $details = $db->query("SELECT id_produk, deskripsi FROM detail_transaksi
+                WHERE id_perusahaan=? AND id_transaksi=?", array($transaction->id_perusahaan, $transaction->id_transaksi));
+            $this->ok($details);
+            $detail = $details->row();
+            if (!$proposal->row() || !$detail || (int) $detail->id_produk !== (int) $proposal->row()->id_produk
+                || $detail->deskripsi !== 'opname' || $details->num_rows() !== 1) {
+                throw new DomainException('Usulan opname tidak lagi sesuai dengan penyesuaian ini.');
+            }
+            $this->ok($db->where('id_perusahaan', $transaction->id_perusahaan)
+                ->where('id_usulan_opname', $proposalId)->where('status', 'menunggu')
+                ->update('usulan_opname', array('status' => 'diproses')));
+            if ($db->affected_rows() !== 1) {
+                throw new DomainException('Status usulan opname gagal diperbarui.');
+            }
         });
     }
 
@@ -240,7 +286,27 @@ class Penyesuaian_persediaan_service
                 'jumlah' => $move->jumlah, 'nilai' => $move->nilai, 'saldo_jumlah' => $quantity,
                 'saldo_nilai' => $value, 'harga_pokok_rata_rata' => $average
             )));
+        }, function ($transaction, $db) {
+            $proposalId = $this->proposal_id($transaction->deskripsi);
+            if ($proposalId === null) {
+                return;
+            }
+            $this->ok($db->where('id_perusahaan', $transaction->id_perusahaan)
+                ->where('id_usulan_opname', $proposalId)->where('status', 'diproses')
+                ->update('usulan_opname', array('status' => 'menunggu')));
+            if ($db->affected_rows() !== 1) {
+                throw new DomainException('Status usulan opname gagal dikembalikan.');
+            }
         });
+    }
+
+    private function proposal_id($description)
+    {
+        if (!is_string($description) || !preg_match('/^Opname gudang #([1-9][0-9]{0,9}): /D', $description, $match)) {
+            return null;
+        }
+        $id = (int) $match[1];
+        return $id <= 2147483647 ? $id : null;
     }
 
     private function product($company, $id)

@@ -25,7 +25,7 @@ class M_usulan_opname extends CI_Model
     // Hanya usulan berstatus menunggu yang dapat berpindah status.
     public function ubah_status($id, $status)
     {
-        if (!is_string($id) || !preg_match('/^[1-9][0-9]{0,9}$/D', $id) || !in_array($status, array('diproses', 'ditolak'), true)) {
+        if (!is_string($id) || !preg_match('/^[1-9][0-9]{0,9}$/D', $id) || $status !== 'ditolak') {
             return false;
         }
         $this->db->query("UPDATE usulan_opname SET status=? WHERE id_perusahaan=? AND id_usulan_opname=? AND status='menunggu'",

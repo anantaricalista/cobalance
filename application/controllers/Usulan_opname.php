@@ -15,14 +15,7 @@ class Usulan_opname extends MY_Controller
 
     public function index()
     {
-        $token = $this->session->userdata('usulan_form_token');
-        if (!is_string($token) || $token === '') {
-            $token = bin2hex(random_bytes(32));
-            $this->session->set_userdata('usulan_form_token', $token);
-        }
-        $this->load->view('template/header');
-        $this->load->view('usulan_opname_view', array('rows' => $this->usulan->daftar(), 'form_token' => $token));
-        $this->load->view('template/footer');
+        redirect('penyesuaian_persediaan#usulan-opname');
     }
 
     public function ubah()
@@ -38,11 +31,15 @@ class Usulan_opname extends MY_Controller
             return;
         }
         $status = $this->input->post('status');
+        if ($status !== 'ditolak') {
+            show_error('Usulan hanya dapat ditolak dari halaman ini. Status selesai diperbarui saat penyesuaian diposting.', 400);
+            return;
+        }
         if ($this->usulan->ubah_status($this->input->post('id'), $status)) {
             $this->session->set_flashdata('sukses', 'Status usulan diperbarui.');
         } else {
             $this->session->set_flashdata('error', 'Usulan tidak ditemukan atau sudah diproses.');
         }
-        redirect('usulan_opname');
+        redirect('penyesuaian_persediaan#usulan-opname');
     }
 }
