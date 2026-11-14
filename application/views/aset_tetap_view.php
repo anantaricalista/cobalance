@@ -37,7 +37,7 @@ $isDraft = $transaction && $transaction->status === 'draft';
 <?php if ($transaction): ?>
     <p><a href="<?= site_url('aset_tetap') ?>">&larr; Kembali ke daftar aset</a></p>
     <h4><?= html_escape($transaction->nomor_transaksi) ?> — <?= html_escape($transaction->jenis_transaksi) ?></h4>
-    <p><strong>Tanggal/periode:</strong> <?= html_escape($transaction->tanggal) ?>
+    <p><strong>Tanggal/periode:</strong> <?= html_escape(format_tanggal_indonesia($transaction->tanggal)) ?>
         &nbsp; <strong>Status:</strong> <?= html_escape($transaction->status) ?>
         <?php if ($transaction->total !== null): ?>&nbsp; <strong>Total:</strong> Rp <?= html_escape(format_nominal($transaction->total)) ?><?php endif; ?>
     </p>
@@ -46,7 +46,7 @@ $isDraft = $transaction && $transaction->status === 'draft';
             <thead><tr><th>Kode</th><th>Aset</th><th>Periode</th><th>Penyusutan</th></tr></thead><tbody>
             <?php foreach ($transaction->details as $row): ?>
                 <tr><td><?= html_escape($row['kode_aset']) ?></td><td><?= html_escape($row['nama_aset']) ?></td>
-                    <td><?= html_escape($row['periode']) ?></td><td>Rp <?= html_escape(format_nominal($row['nilai_penyusutan'])) ?></td></tr>
+                    <td><?= html_escape(format_tanggal_indonesia($row['periode'])) ?></td><td>Rp <?= html_escape(format_nominal($row['nilai_penyusutan'])) ?></td></tr>
             <?php endforeach; ?>
             </tbody></table></div>
     <?php elseif ($transaction->jenis_transaksi === 'pelepasan_aset' && $transaction->disposal): ?>
@@ -195,7 +195,7 @@ $isDraft = $transaction && $transaction->status === 'draft';
     <p>Perolehan Rp <?= html_escape(format_nominal($asset->nilai_perolehan)) ?>; residu Rp <?= html_escape(format_nominal($asset->nilai_residu)) ?>;
         akumulasi Rp <?= html_escape(format_nominal($asset->akumulasi_tercatat)) ?>; nilai buku Rp <?= html_escape(format_nominal($asset->nilai_buku)) ?>;
         status <?= html_escape($asset->status) ?>.</p>
-    <p>Jadwal mulai <?= html_escape($asset->tanggal_mulai_penyusutan) ?>, umur <?= (int) $asset->umur_manfaat_bulan ?> bulan.</p>
+    <p>Jadwal mulai <?= html_escape(format_tanggal_indonesia($asset->tanggal_mulai_penyusutan)) ?>, umur <?= (int) $asset->umur_manfaat_bulan ?> bulan.</p>
 <?php endif; ?>
 
 <?php if (!$transaction): ?>
@@ -205,7 +205,7 @@ $isDraft = $transaction && $transaction->status === 'draft';
     <tbody>
     <?php foreach ($assets as $item): ?>
         <tr><td><?= html_escape($item->kode_aset) ?></td><td><?= html_escape($item->nama_aset) ?></td>
-            <td><?= html_escape($item->tanggal_perolehan) ?></td><td>Rp <?= html_escape(format_nominal($item->nilai_perolehan)) ?></td>
+            <td><?= html_escape(format_tanggal_indonesia($item->tanggal_perolehan)) ?></td><td>Rp <?= html_escape(format_nominal($item->nilai_perolehan)) ?></td>
             <td>Rp <?= html_escape(format_nominal($item->akumulasi_tercatat)) ?></td><td>Rp <?= html_escape(format_nominal($item->nilai_buku)) ?></td>
             <td><?= html_escape($item->status === 'dilepas' ? 'Dilepas' : $item->status_perolehan) ?></td>
             <td><a class="btn btn-default btn-xs" href="<?= site_url('aset_tetap?id=' . (int) $item->id_aset_tetap) ?>">Lihat</a>
@@ -219,7 +219,7 @@ $isDraft = $transaction && $transaction->status === 'draft';
     <thead><tr><th>Tanggal/periode</th><th>Nomor</th><th>Jenis</th><th>Rincian</th><th>Status</th><th>Aksi</th></tr></thead>
     <tbody>
     <?php foreach ($transactions as $item): ?>
-        <tr><td><?= html_escape($item->tanggal) ?></td><td><?= html_escape($item->nomor_transaksi) ?></td>
+        <tr><td><?= html_escape(format_tanggal_indonesia($item->tanggal)) ?></td><td><?= html_escape($item->nomor_transaksi) ?></td>
             <td><?= html_escape($item->jenis_transaksi) ?></td><td><?= html_escape($item->nama_aset ?: $item->deskripsi) ?></td>
             <td><?= html_escape($item->status) ?></td><td><a class="btn btn-default btn-xs" href="<?= site_url('aset_tetap?trx=' . (int) $item->id_transaksi) ?>">Lihat</a></td></tr>
     <?php endforeach; ?>

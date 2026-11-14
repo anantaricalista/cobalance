@@ -181,7 +181,7 @@ foreach ($cash_accounts as $account) {
         <tbody>
         <?php foreach ($transactions as $item): ?>
             <tr>
-                <td><?= html_escape($item->tanggal) ?></td>
+                <td><?= html_escape(format_tanggal_indonesia($item->tanggal)) ?></td>
                 <td><?= html_escape($item->nomor_transaksi) ?></td>
                 <td><?= html_escape($item->nama_pelanggan) ?></td>
                 <td><?= html_escape($item->cara_pembayaran === 'kredit' ? 'Kredit' : 'Tunai') ?></td>

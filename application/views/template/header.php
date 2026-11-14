@@ -14,6 +14,7 @@
     <link href="<?= base_url('assets/vendor/select2/css/select2.min.css') ?>" rel="stylesheet">
     <link href="<?= base_url('assets/css/account-search.css') ?>" rel="stylesheet">
     <script defer src="<?= base_url('assets/js/account-search.js') ?>"></script>
+    <script src="<?= base_url('assets/js/tanggal-indonesia.js') ?>"></script>
     <style>
         /* Sticky header */
         .sticky-header {

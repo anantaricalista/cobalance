@@ -48,7 +48,7 @@
                     <option value="">-- Pilih rincian --</option>
                     <?php foreach ($sources as $source): ?>
                         <option value="<?= (int) $source->id_detail_transaksi ?>" <?= !$source->tipe_produk ? 'disabled' : '' ?>><?= html_escape(
-                            $source->tanggal . ' | ' . $source->nomor_transaksi . ' | ' . $source->jenis_transaksi .
+                            format_tanggal_indonesia($source->tanggal) . ' | ' . $source->nomor_transaksi . ' | ' . $source->jenis_transaksi .
                             ' (' . $source->cara_pembayaran . ') | ' . $source->kode_produk . ' - ' . $source->deskripsi .
                             ' | jumlah asal ' . $source->jumlah . ' ' . $source->satuan .
                             (!$source->tipe_produk ? ' | riwayat akun tidak tersedia' : '')) ?></option>
@@ -79,7 +79,7 @@
     <thead><tr><th>Tanggal</th><th>Nomor</th><th>Jenis</th><th>Transaksi asal</th><th>Total</th><th>Status</th><th>Aksi</th></tr></thead>
     <tbody>
     <?php foreach ($transactions as $row): ?>
-        <tr><td><?= html_escape($row->tanggal) ?></td><td><?= html_escape($row->nomor_transaksi) ?></td>
+        <tr><td><?= html_escape(format_tanggal_indonesia($row->tanggal)) ?></td><td><?= html_escape($row->nomor_transaksi) ?></td>
             <td><?= html_escape($row->jenis_transaksi) ?></td><td><?= html_escape($row->nomor_asal) ?></td>
             <td><?= html_escape(format_nominal($row->total)) ?></td><td><?= html_escape($row->status) ?></td>
             <td><a href="<?= site_url('retur_persediaan?id=' . (int) $row->id_transaksi) ?>">Lihat</a></td></tr>

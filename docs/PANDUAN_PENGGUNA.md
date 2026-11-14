@@ -3,6 +3,10 @@
 Panduan singkat ini menjelaskan alur dari login pertama sampai membaca laporan
 akuntansi. Nama menu mengikuti navigasi aplikasi.
 
+Tanggal pada tabel dan rincian ditampilkan dengan urutan hari/bulan/tahun; beberapa
+laporan menggunakan nama bulan Indonesia. Kolom input tanggal mengikuti format
+browser, sementara nilai yang dikirim tetap menggunakan format tahun-bulan-hari.
+
 ## 1. Login
 
 1. Buka alamat Co-Balance dan masuk menggunakan username serta kata sandi yang

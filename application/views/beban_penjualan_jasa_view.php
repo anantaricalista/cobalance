@@ -12,7 +12,7 @@
             <select id="expense-sale" class="form-control" required>
                 <option value="">-- Pilih jasa terjual --</option>
                 <?php foreach ($sales as $sale): ?>
-                    <option value="<?= (int) $sale->id_detail_transaksi ?>"><?= html_escape($sale->nomor_transaksi . ' - ' . $sale->tanggal . ' - ' . $sale->deskripsi . ' (rincian #' . $sale->id_detail_transaksi . ') - ' . $sale->nama_pelanggan) ?></option>
+                    <option value="<?= (int) $sale->id_detail_transaksi ?>"><?= html_escape($sale->nomor_transaksi . ' - ' . format_tanggal_indonesia($sale->tanggal) . ' - ' . $sale->deskripsi . ' (rincian #' . $sale->id_detail_transaksi . ') - ' . $sale->nama_pelanggan) ?></option>
                 <?php endforeach; ?>
             </select>
         </div>
@@ -79,7 +79,7 @@
         <tbody>
         <?php foreach ($sales as $sale): ?>
             <tr>
-                <td><?= html_escape($sale->nomor_transaksi . ' - ' . $sale->tanggal) ?></td>
+                <td><?= html_escape($sale->nomor_transaksi . ' - ' . format_tanggal_indonesia($sale->tanggal)) ?></td>
                 <td><?= html_escape($sale->deskripsi . ' (rincian #' . $sale->id_detail_transaksi . ')') ?></td>
                 <td>Rp <?= html_escape(format_nominal($sale->nilai_sebelum_pajak)) ?></td>
                 <td>Rp <?= html_escape(format_nominal($sale->retur)) ?></td>
@@ -99,7 +99,7 @@
         <tbody>
         <?php foreach ($transactions as $item): ?>
             <tr>
-                <td><?= html_escape($item->tanggal) ?></td><td><?= html_escape($item->nomor_transaksi) ?></td>
+                <td><?= html_escape(format_tanggal_indonesia($item->tanggal)) ?></td><td><?= html_escape($item->nomor_transaksi) ?></td>
                 <td><?= html_escape($item->nomor_penjualan . ' - ' . $item->jasa . ' (rincian #' . $item->id_detail_asal . ')') ?></td><td><?= html_escape($item->rincian) ?></td>
                 <td><?= html_escape($item->kode_akun . ' - ' . $item->nama_akun) ?></td>
                 <td>
@@ -107,7 +107,7 @@
                     <?php if ($item->cara_pembayaran === 'tunai'): ?>
                         <?= html_escape($item->kode_kas . ' - ' . $item->nama_kas) ?>
                     <?php else: ?>
-                        <?= html_escape($item->nama_pemasok) ?> (jatuh tempo <?= html_escape($item->jatuh_tempo) ?>)
+                        <?= html_escape($item->nama_pemasok) ?> (jatuh tempo <?= html_escape(format_tanggal_indonesia($item->jatuh_tempo)) ?>)
                     <?php endif; ?>
                 </td>
                 <td>Rp <?= html_escape(format_nominal($item->total)) ?></td><td><?= html_escape($item->status) ?></td>

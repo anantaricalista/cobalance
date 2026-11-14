@@ -136,7 +136,7 @@ $map = function ($accounts) {
         <tbody>
         <?php foreach ($transactions as $item): ?>
             <tr>
-                <td><?= html_escape($item->tanggal) ?></td>
+                <td><?= html_escape(format_tanggal_indonesia($item->tanggal)) ?></td>
                 <td><?= html_escape($item->nomor_transaksi) ?></td>
                 <td><?= html_escape($types[$item->jenis_transaksi]) ?></td>
                 <td><?= html_escape($item->kode_akun . ' - ' . $item->nama_akun) ?></td>

@@ -26,7 +26,7 @@ foreach ($cash_accounts as $account) {
     <p><a href="<?= site_url('modal_prive') ?>">&larr; Kembali ke daftar</a></p>
     <h4><?= html_escape($transaction->jenis_transaksi === 'setoran_modal' ? 'Setoran modal' : 'Prive') ?></h4>
     <p><strong>Nomor:</strong> <?= html_escape($transaction->nomor_transaksi) ?> |
-        <strong>Tanggal:</strong> <?= html_escape($transaction->tanggal) ?> |
+        <strong>Tanggal:</strong> <?= html_escape(format_tanggal_indonesia($transaction->tanggal)) ?> |
         <strong>Status:</strong> <?= html_escape($transaction->status) ?> |
         <strong>Jumlah:</strong> Rp <?= html_escape(format_nominal($transaction->total)) ?></p>
     <p>Kas/bank: <?= html_escape($transaction->kode_kas . ' - ' . $transaction->nama_kas) ?> |
@@ -115,7 +115,7 @@ foreach ($cash_accounts as $account) {
     <thead><tr><th>Tanggal</th><th>Nomor</th><th>Jenis</th><th>Kas/bank</th><th>Akun lawan</th><th>Jumlah</th><th>Status</th><th>Aksi</th></tr></thead>
     <tbody>
     <?php foreach ($transactions as $item): ?>
-        <tr><td><?= html_escape($item->tanggal) ?></td><td><?= html_escape($item->nomor_transaksi) ?></td>
+        <tr><td><?= html_escape(format_tanggal_indonesia($item->tanggal)) ?></td><td><?= html_escape($item->nomor_transaksi) ?></td>
             <td><?= html_escape($item->jenis_transaksi === 'setoran_modal' ? 'Setoran modal' : 'Prive') ?></td>
             <td><?= html_escape($item->kode_kas . ' - ' . $item->nama_kas) ?></td>
             <td><?= html_escape($item->kode_lawan . ' - ' . $item->nama_lawan) ?></td>

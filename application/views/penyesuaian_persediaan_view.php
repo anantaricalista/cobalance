@@ -80,7 +80,7 @@
     <thead><tr><th>Tanggal</th><th>Nomor</th><th>Produk</th><th>Jenis</th><th>Jumlah input</th><th>Nilai</th><th>Status</th><th>Aksi</th></tr></thead>
     <tbody>
     <?php foreach ($transactions as $row): ?>
-        <tr><td><?= html_escape($row->tanggal) ?></td><td><?= html_escape($row->nomor_transaksi) ?></td>
+        <tr><td><?= html_escape(format_tanggal_indonesia($row->tanggal)) ?></td><td><?= html_escape($row->nomor_transaksi) ?></td>
             <td><?= html_escape($row->nama_produk) ?></td><td><?= html_escape($row->jenis) ?></td>
             <td><?= html_escape($row->jumlah) ?></td><td><?= html_escape(format_nominal($row->total)) ?></td>
             <td><?= html_escape($row->status) ?></td><td><a href="<?= site_url('penyesuaian_persediaan?id=' . (int) $row->id_transaksi) ?>">Lihat</a></td></tr>

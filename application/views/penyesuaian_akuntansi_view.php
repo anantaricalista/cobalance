@@ -56,7 +56,7 @@ foreach ($accounts as $account) {
     <p><a href="<?= site_url('penyesuaian_akuntansi') ?>">&larr; Kembali ke daftar</a></p>
     <h4><?= html_escape($transaction->deskripsi) ?></h4>
     <p><strong>Nomor:</strong> <?= html_escape($transaction->nomor_transaksi) ?> |
-        <strong>Tanggal:</strong> <?= html_escape($transaction->tanggal) ?> |
+        <strong>Tanggal:</strong> <?= html_escape(format_tanggal_indonesia($transaction->tanggal)) ?> |
         <strong>Status:</strong> <?= html_escape($transaction->status) ?></p>
     <?php if ($transaction->lampiran_nama): ?>
         <p><strong>Lampiran:</strong> <a href="<?= site_url('lampiran/unduh/' . (int) $transaction->id_transaksi) ?>"><?= html_escape($transaction->lampiran_nama) ?></a></p>
@@ -142,7 +142,7 @@ foreach ($accounts as $account) {
     <thead><tr><th>Tanggal</th><th>Nomor</th><th>Keterangan</th><th>Total debet</th><th>Total kredit</th><th>Status</th><th>Aksi</th></tr></thead>
     <tbody>
     <?php foreach ($transactions as $item): ?>
-        <tr><td><?= html_escape($item->tanggal) ?></td><td><?= html_escape($item->nomor_transaksi) ?></td>
+        <tr><td><?= html_escape(format_tanggal_indonesia($item->tanggal)) ?></td><td><?= html_escape($item->nomor_transaksi) ?></td>
             <td><?= html_escape($item->deskripsi) ?></td><td>Rp <?= html_escape(format_nominal($item->total_debit)) ?></td>
             <td>Rp <?= html_escape(format_nominal($item->total_kredit)) ?></td><td><?= html_escape($item->status) ?></td>
             <td><a href="<?= site_url('penyesuaian_akuntansi?id=' . (int) $item->id_transaksi) ?>">Lihat</a></td></tr>
@@ -305,7 +305,7 @@ $(function () {
             .append($('<br>'))
             .append($('<strong>').text(label + ' bersih ' + data.tahun + ': Rp ' + data.total + '. '))
             .append(document.createTextNode('Sudah dipindahkan: Rp ' + data.diposting + '; dalam draft: Rp ' + data.draft
-                + '; belum dipindahkan: Rp ' + data.belum + '. Tanggal jurnal: ' + data.tanggal_jurnal + '.'));
+                + '; belum dipindahkan: Rp ' + data.belum + '. Tanggal jurnal: ' + formatTanggalIndonesia(data.tanggal_jurnal) + '.'));
         var journals = $('#transfer-journals').empty();
         data.pemindahan.forEach(function (item) {
             journals.append($('<div>').append($('<a>').attr('href', <?= json_encode(site_url('penyesuaian_akuntansi?id=')) ?> + item.id_transaksi)
@@ -318,7 +318,7 @@ $(function () {
                 .addClass(line.status === 'diposting' ? 'label-success' : (line.status === 'draft' ? 'label-info' : 'label-warning'))
                 .text(statusLabels[line.status]));
             if (line.nomor_pemindahan) status.append(document.createTextNode(' ' + line.nomor_pemindahan));
-            tbody.append($('<tr>').append($('<td>').text(line.tanggal), $('<td>').text(line.referensi || line.jurnal || ''),
+            tbody.append($('<tr>').append($('<td>').text(formatTanggalIndonesia(line.tanggal)), $('<td>').text(line.referensi || line.jurnal || ''),
                 $('<td>').text(line.akun), $('<td class="text-right">').text(line.debit),
                 $('<td class="text-right">').text(line.kredit), status));
         });

@@ -80,7 +80,7 @@ foreach ($products as $product) $product_options[] = array('id' => $product->id_
                 <h4><?= $correcting ? 'Perbarui rincian saldo awal' : ($editable ? 'Rincian saldo awal' : 'Rincian transaksi') ?></h4>
             </div>
             <?php if ($trx): ?>
-                <span class="opening-date-label"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span> <?= html_escape($trx->tanggal) ?></span>
+                <span class="opening-date-label"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span> <?= html_escape(format_tanggal_indonesia($trx->tanggal)) ?></span>
             <?php endif; ?>
         </div>
         <div class="opening-basics">
@@ -355,7 +355,7 @@ $(function () {
                 var impact = response.data || {};
                 var warning = (impact.peringatan || []).join('\n- ');
                 var summary = (impact.ringkasan || []).join('\n- ');
-                var message = 'Dampak koreksi pada jurnal tanggal ' + (impact.tanggal_jurnal || '') + ':\n- '
+                var message = 'Dampak koreksi pada jurnal tanggal ' + formatTanggalIndonesia(impact.tanggal_jurnal) + ':\n- '
                     + summary + '\n- '
                     + (impact.jumlah_mutasi_stok_terdampak || 0) + ' mutasi stok terkait.\n- '
                     + (impact.jumlah_periode_penyusutan_tercatat || 0) + ' catatan periode penyusutan terkait.\n- '

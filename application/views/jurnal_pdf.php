@@ -88,7 +88,7 @@
                 <strong>Tanggal</strong>
             </td>
             <td>
-                <?php echo ": " . html_escape($jurnal->tanggal); ?>
+                <?php echo ": " . html_escape(format_tanggal_indonesia($jurnal->tanggal)); ?>
             </td>
         </tr>
         <tr>
@@ -116,9 +116,9 @@
             'Keterangan transaksi' => $info['deskripsi_transaksi'],
             'Pembuat draft' => $info['pembuat'],
             'Diposting oleh' => $info['poster'],
-            'Waktu posting' => $info['waktu_posting'],
+            'Waktu posting' => format_tanggal_indonesia($info['waktu_posting']),
             'Dibatalkan oleh' => $info['pembatal'],
-            'Waktu pembatalan' => $info['waktu_pembatalan'],
+            'Waktu pembatalan' => format_tanggal_indonesia($info['waktu_pembatalan']),
             'Alasan pembatalan' => $info['alasan_pembatalan']
         ) as $label => $value): ?>
         <tr><td style="text-align: left;"><strong><?= html_escape($label) ?></strong></td>

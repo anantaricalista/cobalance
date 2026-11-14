@@ -28,7 +28,7 @@
             <tbody>
             <?php foreach ($riwayat['mutasi'] as $row): ?>
                 <tr>
-                    <td><?= html_escape($row->tanggal) ?></td><td><?= html_escape($row->nomor_transaksi) ?></td>
+                    <td><?= html_escape(format_tanggal_indonesia($row->tanggal)) ?></td><td><?= html_escape($row->nomor_transaksi) ?></td>
                     <td><?= html_escape($row->jenis_transaksi) ?></td><td><?= html_escape($row->status) ?></td>
                     <td><?= html_escape($row->jenis_mutasi) ?></td><td><?= html_escape($row->jumlah) ?></td>
                     <td><?= html_escape(format_nominal($row->nilai)) ?></td><td><?= html_escape($row->saldo_jumlah) ?></td>

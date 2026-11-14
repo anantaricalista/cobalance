@@ -65,7 +65,7 @@
 <body>
     <h1>Laporan Neraca (Balance Sheet)</h1>
     <h3>Periode:
-        <?php echo date("d F Y", strtotime($end_date)); ?>
+        <?php echo html_escape(format_tanggal_indonesia($end_date)); ?>
     </h3>
 
     <div style="width:33%; float:left;">

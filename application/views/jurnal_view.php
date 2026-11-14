@@ -185,7 +185,7 @@
             $.getJSON(<?= json_encode(site_url('jurnal/ajax_detail')) ?> + '/' + encodeURIComponent(id))
                 .done(function (journal) {
                     if (request !== journalRequest) return;
-                    $('#journal-detail-date').text(journal.tanggal || '-');
+                    $('#journal-detail-date').text(formatTanggalIndonesia(journal.tanggal));
                     $('#journal-detail-description').text(journal.deskripsi || '-');
                     $('#journal-detail-reference').text(journal.referensi || '-');
                     $('#journal-detail-number').text(journal.nomor || '-');
@@ -196,9 +196,9 @@
                     $('#journal-detail-transaction-description').text(journal.deskripsi_transaksi || '-');
                     $('#journal-detail-creator').text(journal.pembuat || '-');
                     $('#journal-detail-poster').text(journal.poster || '-');
-                    $('#journal-detail-posted-at').text(journal.waktu_posting || '-');
+                    $('#journal-detail-posted-at').text(formatTanggalIndonesia(journal.waktu_posting));
                     $('#journal-detail-canceller').text(journal.pembatal || '-');
-                    $('#journal-detail-cancelled-at').text(journal.waktu_pembatalan || '-');
+                    $('#journal-detail-cancelled-at').text(formatTanggalIndonesia(journal.waktu_pembatalan));
                     $('#journal-detail-reason').text(journal.alasan_pembatalan || '-');
                     var debitTotal = BigInt(0);
                     var creditTotal = BigInt(0);

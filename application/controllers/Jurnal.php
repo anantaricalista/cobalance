@@ -35,7 +35,7 @@ class Jurnal extends MY_Controller
             $row[] = html_escape($info['jenis_transaksi']);
             $row[] = $jurnal->total_debit === null ? '-' : 'Rp ' . html_escape(format_nominal($jurnal->total_debit));
             $row[] = html_escape($info['pelaku_jurnal']) .
-                '<br><small class="text-muted">' . html_escape($info['waktu_jurnal']) . '</small>';
+                '<br><small class="text-muted">' . html_escape(format_tanggal_indonesia($info['waktu_jurnal'])) . '</small>';
             $row[] = '<div class="journal-actions">' .
                 '<button type="button" class="btn btn-sm btn-primary view-journal" data-jurnal-id="' .
                 (int) $jurnal->id_jurnal . '"><i class="glyphicon glyphicon-list-alt"></i> Detail</button>' .

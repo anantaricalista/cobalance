@@ -39,7 +39,7 @@ foreach ($cash_accounts as $account) {
                 <?php foreach ($transaction->alokasi as $row): ?>
                     <tr>
                         <td><?= html_escape($row['nomor_transaksi']) ?></td>
-                        <td><?= html_escape($row['tanggal']) ?></td>
+                        <td><?= html_escape(format_tanggal_indonesia($row['tanggal'])) ?></td>
                         <td>Rp <?= html_escape(format_nominal($row['total'])) ?></td>
                         <td>Rp <?= html_escape(format_nominal($row['jumlah'])) ?></td>
                     </tr>
@@ -138,7 +138,7 @@ foreach ($cash_accounts as $account) {
         <tbody>
         <?php foreach ($transactions as $item): ?>
             <tr>
-                <td><?= html_escape($item->tanggal) ?></td>
+                <td><?= html_escape(format_tanggal_indonesia($item->tanggal)) ?></td>
                 <td><?= html_escape($item->nomor_transaksi) ?></td>
                 <td><?= html_escape($item->nama_pemasok) ?></td>
                 <td>Rp <?= html_escape(format_nominal($item->total)) ?></td>
@@ -195,8 +195,8 @@ $(function () {
             amount.prop('required', check.prop('checked'));
             tr.append($('<td>').append(check))
                 .append($('<td>').text(row.nomor_transaksi))
-                .append($('<td>').text(row.tanggal))
-                .append($('<td>').text(row.jatuh_tempo || '-'))
+                .append($('<td>').text(formatTanggalIndonesia(row.tanggal)))
+                .append($('<td>').text(formatTanggalIndonesia(row.jatuh_tempo)))
                 .append($('<td>').text('Rp ' + MoneyInput.display(row.total)))
                 .append($('<td>').text('Rp ' + MoneyInput.display(row.sisa)))
                 .append($('<td>').append(amount));
