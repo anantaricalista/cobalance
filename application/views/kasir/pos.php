@@ -152,17 +152,20 @@
             box.textContent = '';
             if (total > zero && total <= maximum) {
                 var choices = [{value: total, label: 'Uang pas'}];
-                var denominations = [1000, 2000, 5000, 10000, 20000, 50000, 100000];
-                for (var i = 0; i < denominations.length; i++) {
-                    var denomination = BigInt(denominations[i]) * hundred;
-                    if (denomination > total) {
-                        choices.push({value: denomination});
-                        break;
-                    }
-                }
-                [50000, 100000, 500000].forEach(function (step) {
+                var steps = total >= BigInt(10000) * hundred
+                    ? [10000, 50000, 100000, 200000, 500000]
+                    : (total >= BigInt(1000) * hundred
+                        ? [1000, 5000, 10000, 20000, 50000, 100000]
+                        : [100, 500, 1000, 2000, 5000, 10000]);
+                var suggested = {};
+                steps.forEach(function (step) {
                     var unit = BigInt(step) * hundred;
-                    choices.push({value: ((total + unit - BigInt(1)) / unit) * unit});
+                    var value = (total / unit + BigInt(1)) * unit;
+                    var key = value.toString();
+                    if (choices.length < 4 && value <= maximum && !suggested[key]) {
+                        suggested[key] = true;
+                        choices.push({value: value});
+                    }
                 });
                 var seen = {};
                 choices.forEach(function (choice) {

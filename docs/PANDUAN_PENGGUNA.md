@@ -88,8 +88,9 @@ Di menu **Kasir**, cari nama atau pindai kode produk yang tersimpan, tambahkan k
 keranjang dan atur jumlah (gunakan koma untuk desimal). Pilih pelanggan, mode dan
 tarif pajak untuk seluruh item, metode pembayaran, serta akun penerimaan yang
 sesuai. Untuk tunai, masukkan uang yang diterima atau gunakan tombol uang pas
-dan rekomendasi nominal. Pilihan Rp500.000 adalah jumlah beberapa lembar uang,
-bukan satu pecahan. Kembalian dihitung otomatis.
+dan rekomendasi nominal pembulatan terdekat. Misalnya, total Rp125.000 menawarkan
+Rp130.000, Rp150.000, dan Rp200.000. Nominal dapat berupa kombinasi beberapa
+pecahan; kembalian dihitung otomatis.
 Untuk kartu, transfer, dan QRIS, pastikan pembayaran sudah diterima di perangkat
 atau aplikasi penyedia: Co-Balance hanya mencatat, tidak memproses atau memverifikasi
 pembayaran elektronik. Tekan **Bayar dan selesaikan** untuk langsung membuat
