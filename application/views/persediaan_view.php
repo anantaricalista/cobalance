@@ -1,6 +1,8 @@
 <h3>Persediaan</h3>
+<?php if ($this->session->userdata('role') !== 'manajer'): ?>
 <p><a href="<?= site_url('penyesuaian_persediaan') ?>">Opname &amp; Penyesuaian</a> |
     <a href="<?= site_url('retur_persediaan') ?>">Retur pembelian dan penjualan</a></p>
+<?php endif; ?>
 <h4>Saldo stok</h4>
 <div class="table-responsive">
     <table class="table table-striped table-bordered">

@@ -23,6 +23,24 @@ class MY_Controller extends CI_Controller
             redirect(self::$role_scope[$role]['home']);
             exit;
         }
+        if ($role === 'manajer') {
+            $read_methods = array(
+                'manajer' => array('index', 'kas', 'penjualan', 'tagihan'),
+                'persediaan' => array('index'),
+                'jurnal' => array('index', 'ajax_list', 'ajax_detail', 'export_pdf'),
+                'jurnal_umum' => array('index', 'ajax_list', 'ajax_detail'),
+                'buku_besar' => array('index', 'ajax_get_ledger', 'export_pdf'),
+                'laporan' => array('index', 'export_pdf'),
+                'laba_rugi' => array('index', 'ajax_get_laba_rugi', 'export_pdf'),
+                'neraca' => array('index', 'ajax_get_neraca', 'export_pdf'),
+                'bagan_akun' => array('index', 'ajax_get_chart', 'export_pdf')
+            );
+            $class = $this->router->fetch_class();
+            if (!isset($read_methods[$class]) || !in_array($this->router->fetch_method(), $read_methods[$class], true)) {
+                show_error('Role Manajer/Pemilik hanya memiliki akses baca-saja.', 403);
+                exit;
+            }
+        }
         if (in_array($this->router->fetch_method(), array('posting', 'batalkan'), true)
             && !$this->can_post_transactions) {
             show_error('Hanya Akuntansi atau Admin Perusahaan yang dapat mem-posting atau membatalkan transaksi.', 403);
@@ -48,6 +66,8 @@ class MY_Controller extends CI_Controller
         'purchasing' => array('home' => 'purchasing/beranda', 'classes' => array('pembelian', 'pembayaran_utang', 'pemasok', 'produk')),
         'kasir' => array('home' => 'kasir/beranda', 'classes' => array('pos', 'penjualan', 'produk', 'pelanggan', 'lampiran')),
         'keuangan' => array('home' => 'keuangan/beranda', 'classes' => array('kas_bank', 'pembayaran_utang', 'penerimaan_piutang', 'lampiran')),
+        'manajer' => array('home' => 'manajer', 'classes' => array('manajer', 'persediaan', 'jurnal',
+            'jurnal_umum', 'buku_besar', 'laporan', 'laba_rugi', 'neraca', 'bagan_akun')),
         'akuntansi' => array('home' => 'akuntansi/beranda', 'classes' => array(
             'akun', 'pelanggan', 'pemasok', 'produk', 'pajak', 'pengaturan_akun',
             'saldo_awal', 'penjualan', 'beban_penjualan_jasa', 'penerimaan_piutang',

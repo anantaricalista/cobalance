@@ -25,7 +25,8 @@ Sebelum mencatat transaksi, buka menu **Master** dan lengkapi data berikut:
 2. **Pengguna** — kelola akun yang dapat masuk ke perusahaan ini dan pilih role
    **Admin Perusahaan**, **User**, **Kasir**, **Penjualan**, **Purchasing**,
    **Gudang**, **Keuangan**, **Akuntansi**, atau **Manajer / Pemilik**. Role
-   Gudang, Purchasing, Penjualan, Kasir, Keuangan, dan Akuntansi memiliki tampilan serta pembatasan akses khusus;
+   Gudang, Purchasing, Penjualan, Kasir, Keuangan, Akuntansi, dan Manajer/Pemilik
+   memiliki tampilan serta pembatasan akses khusus;
    role lainnya belum dibatasi pada tingkat modul. Admin Perusahaan dan
    Akuntansi dapat mem-posting atau membatalkan transaksi; Kasir juga dapat
    menyelesaikan dan langsung mem-posting transaksi baru melalui POS, tetapi tidak
@@ -140,6 +141,23 @@ pengguna hanya tersedia bagi pengguna yang berwenang selain role Akuntansi.
 Koreksi saldo awal yang sudah diposting tetap khusus Admin Perusahaan. Sebelum
 menggunakan beranda Akuntansi, pastikan migrasi gudang
 `application/sql/20261113_gudang_usulan_opname.sql` sudah dijalankan.
+
+Role **Manajer / Pemilik** memiliki akses baca-saja ke beranda, penjualan dan
+retur, utang, piutang, persediaan, jurnal, dan laporan. Beranda menampilkan saldo
+kas dari jurnal sampai hari ini, laba/rugi bulan berjalan sampai hari ini, total
+utang/piutang terbuka, penjualan dan retur bulan berjalan, serta stok pada atau
+di bawah batas minimum yang telah diatur. Tagihan mengikuti status saat ini,
+termasuk tagihan bertanggal mendatang; draft belum mengurangi tagihan.
+
+Menu **Mutasi Kas & Bank** memungkinkan pemilihan periode dan menampilkan saldo
+awal, masuk dan keluar bersih per jurnal, serta saldo akhir. Jurnal pembalik
+disertakan; transfer antar akun kas/bank bersih nol tidak ditampilkan. Ini
+merupakan ringkasan mutasi jurnal, bukan laporan arus kas yang terklasifikasi
+menurut aktivitas operasi, investasi, dan pendanaan, serta bukan koneksi langsung
+ke bank. Menu Penjualan dan tagihan menyediakan rincian dan halaman berikutnya.
+Laporan laba rugi, neraca dan laporan lain dapat dibuka atau diekspor sesuai
+fasilitas yang ada. Stok minimum memerlukan migrasi
+`application/sql/20261114_stok_minimum_produk.sql`.
 
 Beranda Penjualan menampilkan draft dan penjualan yang diposting bulan ini untuk
 seluruh perusahaan, pelanggan aktif, serta tagihan penjualan kredit yang belum

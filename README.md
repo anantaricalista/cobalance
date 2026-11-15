@@ -94,7 +94,7 @@ karena migrasi akan gagal. Perusahaan lama tanpa admin tidak diubah otomatis.
 Untuk pilihan role tambahan di Master Pengguna, cadangkan database lalu jalankan
 `application/sql/20261112_role_pengguna.sql` pada setiap database setelah migrasi
 admin perusahaan. Role lama `admin` dan `user` tetap dipertahankan. Role ini
-belum membatasi akses, kecuali role `gudang`, `purchasing`, `penjualan`, `kasir`, `keuangan`, dan `akuntansi` (lihat di bawah): role lain yang
+belum membatasi akses, kecuali role `gudang`, `purchasing`, `penjualan`, `kasir`, `keuangan`, `akuntansi`, dan `manajer` (lihat di bawah): role lain yang
 login masih dapat membuka modul perusahaan, termasuk Master Pengguna.
 
 Modul Gudang (`controllers|models|views/gudang`) menyediakan beranda, stok barang
@@ -155,6 +155,18 @@ untuk Admin. Antrian menampilkan 15 draft tertua berdasarkan tanggal transaksi;
 rincian piutang/utang saldo awal yang diposting bersama induknya tidak dihitung
 sebagai draft terpisah. Tidak ada migrasi baru khusus role ini; beranda memakai
 tabel `usulan_opname` dari migrasi `20261113_gudang_usulan_opname.sql`.
+
+Role `manajer` (Manajer/Pemilik) memiliki ruang kerja baca-saja untuk beranda,
+penjualan dan retur terposting, tagihan utang/piutang, persediaan, jurnal, dan
+laporan yang tersedia. Mutasi kas/bank menampilkan saldo awal/akhir serta
+perubahan bersih per jurnal untuk periode yang dipilih, termasuk jurnal
+pembalik; transfer internal bersih nol tidak ditampilkan. Ini bukan laporan arus
+kas terklasifikasi operasi, investasi, dan pendanaan. Nilai kas berasal dari
+jurnal akun di bawah `1100`, bukan koneksi langsung ke bank. Tagihan terbuka
+mengikuti status saat ini (termasuk tanggal mendatang), bukan saldo historis.
+Saldo awal dan mutasi kas dihitung berdasarkan tanggal jurnal. Tidak diperlukan
+migrasi baru; batas stok minimum membutuhkan migrasi
+`20261114_stok_minimum_produk.sql` yang sudah tersedia.
 
 Koreksi saldo awal yang sudah diposting hanya tersedia untuk Admin Perusahaan.
 Sebelum fitur ini digunakan, cadangkan database lalu jalankan

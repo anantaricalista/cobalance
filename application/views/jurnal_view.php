@@ -41,8 +41,10 @@
 <div class="journal-page">
 <h3>Jurnal Transaksi</h3>
 <p>Jurnal transaksi hanya dapat dilihat dan diekspor. Pilih <strong>Detail</strong> untuk memeriksa akun serta nilai
-    debit/kredit, atau <strong>PDF</strong> untuk membuka dokumen. Untuk koreksi manual, gunakan
-    <a href="<?= site_url('penyesuaian_akuntansi') ?>">Penyesuaian Akuntansi</a>.</p>
+    debit/kredit, atau <strong>PDF</strong> untuk membuka dokumen.
+    <?php if ($this->session->userdata('role') !== 'manajer'): ?>
+    Untuk koreksi manual, gunakan <a href="<?= site_url('penyesuaian_akuntansi') ?>">Penyesuaian Akuntansi</a>.
+    <?php endif; ?></p>
 <p class="text-muted">Nominal adalah total debit jurnal. Pelaku jurnal pembalik adalah pengguna yang membatalkan transaksi.
     Informasi jurnal lama yang tidak tersedia ditandai “Tidak tercatat”.</p>
 <div class="journal-panel"><div class="table-responsive">

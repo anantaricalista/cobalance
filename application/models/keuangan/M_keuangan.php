@@ -47,7 +47,15 @@ class M_keuangan extends CI_Model
             'piutang' => $this->tagihan($company, $today, 'piutang'));
     }
 
-    private function tagihan($company, $today, $type)
+    public function daftar_tagihan($type, $page)
+    {
+        if (!in_array($type, array('utang', 'piutang'), true) || !is_int($page) || $page < 1 || $page > 999999) {
+            throw new InvalidArgumentException('Halaman tagihan tidak valid.');
+        }
+        return $this->tagihan($this->session->userdata('id_perusahaan'), date('Y-m-d'), $type, 51, ($page - 1) * 50);
+    }
+
+    private function tagihan($company, $today, $type, $limit = 8, $offset = 0)
     {
         if ($type === 'utang') {
             $party_table = 'pemasok';
@@ -88,7 +96,7 @@ class M_keuangan extends CI_Model
             FROM (" . $open . ") tagihan WHERE sisa > 0",
             array($today, $today, $payment, $return_type, $company))->row();
         $items = $this->query("SELECT * FROM (" . $open . ") tagihan WHERE sisa > 0
-            ORDER BY jatuh_tempo IS NULL, jatuh_tempo, tanggal, id_transaksi LIMIT 8",
+            ORDER BY jatuh_tempo IS NULL, jatuh_tempo, tanggal, id_transaksi LIMIT " . (int) $limit . " OFFSET " . (int) $offset,
             array($payment, $return_type, $company))->result();
         return array('ringkasan' => $summary, 'tagihan' => $items);
     }

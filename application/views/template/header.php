@@ -843,6 +843,27 @@
                     <li <?php if ($this->router->fetch_class() == 'pemasok') echo 'class="active"'; ?>><a href="<?php echo site_url('pemasok'); ?>"><span class="glyphicon glyphicon-briefcase cb-nav-icon" aria-hidden="true"></span>Pemasok</a></li>
                     <li <?php if ($this->router->fetch_class() == 'produk') echo 'class="active"'; ?>><a href="<?php echo site_url('produk'); ?>"><span class="glyphicon glyphicon-tags cb-nav-icon" aria-hidden="true"></span>Produk</a></li>
                 </ul>
+                <?php elseif ($this->session->userdata('role') === 'manajer'): ?>
+                <ul class="nav navbar-nav">
+                    <li <?php if ($this->router->fetch_class() === 'manajer' && $this->router->fetch_method() === 'index') echo 'class="active"'; ?>><a href="<?= site_url('manajer') ?>"><span class="glyphicon glyphicon-home cb-nav-icon" aria-hidden="true"></span>Beranda</a></li>
+                    <li><a href="<?= site_url('manajer/kas') ?>"><span class="glyphicon glyphicon-transfer cb-nav-icon" aria-hidden="true"></span>Mutasi Kas &amp; Bank</a></li>
+                    <li><a href="<?= site_url('manajer/penjualan') ?>"><span class="glyphicon glyphicon-shopping-cart cb-nav-icon" aria-hidden="true"></span>Penjualan</a></li>
+                    <li><a href="<?= site_url('manajer/tagihan/utang') ?>"><span class="glyphicon glyphicon-credit-card cb-nav-icon" aria-hidden="true"></span>Utang</a></li>
+                    <li><a href="<?= site_url('manajer/tagihan/piutang') ?>"><span class="glyphicon glyphicon-download-alt cb-nav-icon" aria-hidden="true"></span>Piutang</a></li>
+                    <li><a href="<?= site_url('persediaan') ?>"><span class="glyphicon glyphicon-inbox cb-nav-icon" aria-hidden="true"></span>Persediaan</a></li>
+                    <li><a href="<?= site_url('jurnal') ?>"><span class="glyphicon glyphicon-book cb-nav-icon" aria-hidden="true"></span>Jurnal</a></li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-stats cb-nav-icon" aria-hidden="true"></span>Laporan <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="<?= site_url('laba_rugi') ?>">Laba Rugi</a></li>
+                            <li><a href="<?= site_url('neraca') ?>">Neraca</a></li>
+                            <li><a href="<?= site_url('laporan') ?>">Laporan Akuntansi</a></li>
+                            <li><a href="<?= site_url('buku_besar') ?>">Buku Besar</a></li>
+                            <li><a href="<?= site_url('jurnal_umum') ?>">Jurnal Umum</a></li>
+                            <li><a href="<?= site_url('bagan_akun') ?>">Bagan Akun</a></li>
+                        </ul>
+                    </li>
+                </ul>
                 <?php elseif ($this->session->userdata('role') === 'keuangan'): ?>
                 <ul class="nav navbar-nav">
                     <li <?php if ($this->router->fetch_directory() == 'keuangan/' && $this->router->fetch_class() == 'beranda') echo 'class="active"'; ?>><a href="<?= site_url('keuangan/beranda') ?>"><span class="glyphicon glyphicon-home cb-nav-icon" aria-hidden="true"></span>Beranda</a></li>
