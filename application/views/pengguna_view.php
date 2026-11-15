@@ -9,7 +9,7 @@
     </div>
 </div>
 <p class="text-muted">
-    Role menentukan peran pengguna. Pembatasan akses modul dan tampilan khusus belum diterapkan.
+    Pilih role sesuai tugas pengguna. Admin Perusahaan dibuat saat perusahaan didaftarkan dan tidak dapat ditambah, dihapus, atau diubah rolenya di sini.
 </p>
 
 <div class="table-responsive">
@@ -56,11 +56,14 @@
                     <div class="form-group">
                         <label for="role">Role</label>
                         <select id="role" name="role" class="form-control" required>
+                            <option value="">Pilih role</option>
                             <?php foreach ($roles as $value => $label): ?>
+                                <?php if ($value === 'admin') continue; ?>
                                 <option value="<?= html_escape($value) ?>"><?= html_escape($label) ?></option>
                             <?php endforeach; ?>
                         </select>
-                        <p class="help-block">Perusahaan memiliki satu admin. Memilih admin baru akan memindahkan role admin saat ini menjadi User.</p>
+                        <input type="hidden" id="admin_role" name="role" value="admin" disabled>
+                        <p class="help-block">Role Admin Perusahaan tidak dapat diubah.</p>
                     </div>
                     <div class="form-group">
                         <label for="password">Password <span id="password_required">*</span></label>
@@ -122,6 +125,8 @@
 
     function add_pengguna() {
         $('#form')[0].reset();
+        $('#role').prop('disabled', false).find('option[value="admin"]').remove();
+        $('#admin_role').prop('disabled', true);
         $('#form [name="id_pengguna"]').val('');
         $('#form_error').hide().text('');
         $('#password').prop('required', true);
@@ -141,7 +146,13 @@
                 $('#form [name="id_pengguna"]').val(user.id_pengguna);
                 $('#form [name="nama_lengkap"]').val(user.nama_lengkap);
                 $('#form [name="username"]').val(user.username);
-                $('#form [name="role"]').val(user.role);
+                var isAdmin = user.role === 'admin';
+                $('#role').prop('disabled', false).find('option[value="admin"]').remove();
+                if (isAdmin) {
+                    $('#role').append($('<option>', { value: 'admin', text: 'Admin Perusahaan' }));
+                }
+                $('#role').val(user.role === 'user' ? '' : user.role).prop('disabled', isAdmin);
+                $('#admin_role').prop('disabled', !isAdmin);
                 $('#password').prop('required', false);
                 $('#password_required').hide();
                 $('#modal_title').text('Edit Pengguna');

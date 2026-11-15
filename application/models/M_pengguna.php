@@ -6,7 +6,6 @@ class M_pengguna extends CI_Model
     public function roles()
     {
         return array(
-            'user' => 'User',
             'admin' => 'Admin Perusahaan',
             'kasir' => 'Kasir',
             'penjualan' => 'Penjualan',
@@ -140,31 +139,11 @@ class M_pengguna extends CI_Model
                 throw new DomainException('Username sudah digunakan.');
             }
 
-            $admins = $this->db->query(
-                "SELECT id_pengguna FROM pengguna
-                WHERE id_perusahaan = ? AND role = 'admin' FOR UPDATE",
-                array($company)
-            );
-            if (!$admins) {
-                throw new RuntimeException('Tidak dapat memeriksa admin perusahaan.');
+            if ($target && $target->role === 'admin' && $data['role'] !== 'admin') {
+                throw new DomainException('Role Admin Perusahaan tidak dapat diubah.');
             }
-            $admin_rows = $admins->result();
-            if (!$admin_rows && $data['role'] !== 'admin') {
-                throw new DomainException('Perusahaan harus memiliki satu admin. Pilih role admin untuk pengguna ini.');
-            }
-            if ($data['role'] !== 'admin' && $target && $target->role === 'admin' && count($admin_rows) <= 1) {
-                throw new DomainException('Perusahaan harus memiliki satu admin. Tetapkan admin pengganti sebelum mengubah role ini.');
-            }
-
-            if ($data['role'] === 'admin') {
-                $demote = $this->db->query(
-                    "UPDATE pengguna SET role = 'user'
-                    WHERE id_perusahaan = ? AND role = 'admin' AND id_pengguna != ?",
-                    array($company, $id === null ? 0 : $id)
-                );
-                if (!$demote) {
-                    throw new RuntimeException('Gagal memindahkan role admin.');
-                }
+            if ($data['role'] === 'admin' && (!$target || $target->role !== 'admin')) {
+                throw new DomainException('Admin Perusahaan hanya dibuat saat perusahaan didaftarkan.');
             }
 
             if ($id === null) {
@@ -195,7 +174,7 @@ class M_pengguna extends CI_Model
         }
     }
 
-    public function delete_company_user($company, $id, $actor_id)
+    public function delete_company_user($company, $id)
     {
         $debug = $this->db->db_debug;
         $this->db->db_debug = false;
@@ -224,21 +203,8 @@ class M_pengguna extends CI_Model
             if (!$user) {
                 throw new DomainException('Pengguna tidak ditemukan pada perusahaan ini.');
             }
-            if ($user->role === 'admin' && (int) $user->id_pengguna === (int) $actor_id) {
-                throw new DomainException('Admin perusahaan tidak dapat menghapus akunnya sendiri. Tetapkan admin pengganti dan masuk dengan akun tersebut terlebih dahulu.');
-            }
             if ($user->role === 'admin') {
-                $admin_query = $this->db->query(
-                    "SELECT COUNT(*) AS total FROM pengguna WHERE id_perusahaan = ? AND role = 'admin'",
-                    array($company)
-                );
-                if (!$admin_query) {
-                    throw new RuntimeException('Tidak dapat memeriksa admin perusahaan.');
-                }
-                $admins = $admin_query->row();
-                if ((int) $admins->total <= 1) {
-                    throw new DomainException('Admin terakhir perusahaan tidak dapat dihapus.');
-                }
+                throw new DomainException('Admin Perusahaan tidak dapat dihapus.');
             }
             $deleted = $this->db->where('id_perusahaan', $company)
                 ->where('id_pengguna', $id)->delete('pengguna');

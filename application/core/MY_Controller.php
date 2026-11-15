@@ -18,6 +18,11 @@ class MY_Controller extends CI_Controller
             redirect('auth');
         }
         $role = $this->session->userdata('role');
+        if ($role === 'user') {
+            $this->session->sess_destroy();
+            show_error('Role User tidak lagi tersedia. Hubungi Admin Perusahaan untuk menetapkan role baru.', 403);
+            exit;
+        }
         $this->can_post_transactions = in_array($role, array('admin', 'akuntansi'), true);
         if (isset(self::$role_scope[$role]) && !in_array($this->router->fetch_class(), self::$role_scope[$role]['classes'], true)) {
             redirect(self::$role_scope[$role]['home']);

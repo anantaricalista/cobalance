@@ -23,17 +23,19 @@ Sebelum mencatat transaksi, buka menu **Master** dan lengkapi data berikut:
 1. **Akun** — periksa Bagan Akun. Tambahkan akun yang diperlukan dengan tipe dan
    akun induk yang sesuai. Transaksi memakai akun rincian, bukan akun induk.
 2. **Pengguna** — kelola akun yang dapat masuk ke perusahaan ini dan pilih role
-   **Admin Perusahaan**, **User**, **Kasir**, **Penjualan**, **Purchasing**,
+   **Admin Perusahaan**, **Kasir**, **Penjualan**, **Purchasing**,
    **Gudang**, **Keuangan**, **Akuntansi**, atau **Manajer / Pemilik**. Role
    Gudang, Purchasing, Penjualan, Kasir, Keuangan, Akuntansi, dan Manajer/Pemilik
-   memiliki tampilan serta pembatasan akses khusus;
-   role lainnya belum dibatasi pada tingkat modul. Admin Perusahaan dan
+   memiliki tampilan serta pembatasan akses khusus. Admin Perusahaan dan
    Akuntansi dapat mem-posting atau membatalkan transaksi; Kasir juga dapat
    menyelesaikan dan langsung mem-posting transaksi baru melalui POS, tetapi tidak
-   membatalkannya. Perusahaan hanya
-   memiliki satu admin;
-   memilih Admin untuk pengguna lain akan memindahkan role admin saat ini menjadi
-   User. Password baru minimal 8 karakter; password saat mengedit boleh dikosongkan
+   membatalkannya. Admin Perusahaan dibuat ketika System Admin mendaftarkan
+   perusahaan. Di Master Pengguna, admin tidak dapat ditambah, dihapus, atau
+   diubah rolenya, tetapi nama, username, dan password dapat diperbarui. Role User
+   tidak lagi tersedia; jika ada akun User lama, Admin harus memilih role baru
+   untuk akun tersebut sebelum dapat login. Setelah akun lama ditangani, jalankan
+   migrasi `application/sql/20261115_hapus_role_user.sql` sesuai README.
+   Password baru minimal 8 karakter; password saat mengedit boleh dikosongkan
    agar tidak berubah.
 3. **Pelanggan** dan **Pemasok** — masukkan pihak yang akan muncul pada penjualan,
    pembelian, penerimaan piutang, atau pembayaran utang.

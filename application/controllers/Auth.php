@@ -77,6 +77,11 @@ class Auth extends CI_Controller
         $eligible = $user && ($is_system
             ? $user->id_perusahaan === null && $user->role === 'admin'
             : $user->id_perusahaan !== null && $user->nama_perusahaan !== null);
+        if ($valid && $eligible && !$is_system && $user->role === 'user') {
+            $this->session->set_flashdata('error', 'Role User tidak lagi tersedia. Hubungi Admin Perusahaan untuk menetapkan role baru.');
+            redirect('auth');
+            return;
+        }
         if ($valid && $eligible) {
             if ($legacy || password_needs_rehash($user->password, PASSWORD_DEFAULT)) {
                 $hash = password_hash($password, PASSWORD_DEFAULT);

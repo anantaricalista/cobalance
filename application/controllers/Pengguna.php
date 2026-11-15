@@ -6,6 +6,10 @@ class Pengguna extends MY_Controller
     public function __construct()
     {
         parent::__construct();
+        if ($this->session->userdata('role') !== 'admin') {
+            show_error('Hanya Admin Perusahaan yang dapat mengelola pengguna.', 403);
+            exit;
+        }
         $this->load->model('M_pengguna', 'pengguna');
     }
 
@@ -44,9 +48,9 @@ class Pengguna extends MY_Controller
                 ++$start,
                 html_escape($user->nama_lengkap),
                 html_escape($user->username),
-                html_escape(isset($roles[$user->role]) ? $roles[$user->role] : (string) $user->role),
+                html_escape(isset($roles[$user->role]) ? $roles[$user->role] : ($user->role === 'user' ? 'User (perlu role baru)' : (string) $user->role)),
                 '<button type="button" class="btn btn-sm btn-primary" title="Edit" onclick="edit_pengguna(' . $id . ')"><i class="glyphicon glyphicon-pencil"></i></button> '
-                . '<button type="button" class="btn btn-sm btn-danger" title="Hapus" onclick="delete_pengguna(' . $id . ')"><i class="glyphicon glyphicon-trash"></i></button>'
+                . ($user->role === 'admin' ? '' : '<button type="button" class="btn btn-sm btn-danger" title="Hapus" onclick="delete_pengguna(' . $id . ')"><i class="glyphicon glyphicon-trash"></i></button>')
             );
         }
         $this->json(array(
@@ -127,9 +131,8 @@ class Pengguna extends MY_Controller
         if (!$this->valid_id($id)) {
             return $this->error('ID pengguna tidak valid.', 400);
         }
-        $actor_id = (int) $this->session->userdata('id_pengguna');
         try {
-            $this->pengguna->delete_company_user($this->company_id(), (int) $id, $actor_id);
+            $this->pengguna->delete_company_user($this->company_id(), (int) $id);
         } catch (DomainException $e) {
             return $this->error($e->getMessage(), 409);
         } catch (RuntimeException $e) {

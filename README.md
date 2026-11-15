@@ -93,9 +93,19 @@ karena migrasi akan gagal. Perusahaan lama tanpa admin tidak diubah otomatis.
 
 Untuk pilihan role tambahan di Master Pengguna, cadangkan database lalu jalankan
 `application/sql/20261112_role_pengguna.sql` pada setiap database setelah migrasi
-admin perusahaan. Role lama `admin` dan `user` tetap dipertahankan. Role ini
-belum membatasi akses, kecuali role `gudang`, `purchasing`, `penjualan`, `kasir`, `keuangan`, `akuntansi`, dan `manajer` (lihat di bawah): role lain yang
-login masih dapat membuka modul perusahaan, termasuk Master Pengguna.
+admin perusahaan. Migrasi ini mempertahankan role lama sementara. Setelahnya, cadangkan database
+dan jalankan `application/sql/20261115_hapus_role_user.sql` untuk menghapus
+role `user` dari skema. Sebelumnya, periksa `SELECT id_pengguna, id_perusahaan,
+username, role FROM pengguna WHERE role = 'user' OR role IS NULL OR role = '';`.
+Jika ada akun tersebut, Admin Perusahaan harus menetapkan role yang sesuai
+melalui Master Pengguna terlebih dahulu; akun User lama tidak dapat login.
+Migrasi menggunakan mode ketat agar gagal, bukan mengubah role secara diam-diam.
+
+Admin Perusahaan dibuat oleh System Admin saat perusahaan didaftarkan. Master
+Pengguna tidak dapat menambah, menghapus, atau mengubah role Admin Perusahaan;
+nama, username, dan password admin tetap dapat diperbarui. Batas maksimum satu
+admin ditegakkan oleh migrasi `20261112_satu_admin_perusahaan.sql`. Perusahaan
+lama tanpa admin perlu dipulihkan terlebih dahulu oleh pengelola database.
 
 Modul Gudang (`controllers|models|views/gudang`) menyediakan beranda, stok barang
 tanpa nilai rupiah, kartu stok, dan usulan stock opname yang tidak mengubah stok
