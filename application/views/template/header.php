@@ -843,6 +843,13 @@
                     <li <?php if ($this->router->fetch_class() == 'pemasok') echo 'class="active"'; ?>><a href="<?php echo site_url('pemasok'); ?>"><span class="glyphicon glyphicon-briefcase cb-nav-icon" aria-hidden="true"></span>Pemasok</a></li>
                     <li <?php if ($this->router->fetch_class() == 'produk') echo 'class="active"'; ?>><a href="<?php echo site_url('produk'); ?>"><span class="glyphicon glyphicon-tags cb-nav-icon" aria-hidden="true"></span>Produk</a></li>
                 </ul>
+                <?php elseif ($this->session->userdata('role') === 'kasir'): ?>
+                <ul class="nav navbar-nav">
+                    <li <?php if ($this->router->fetch_directory() == 'kasir/' && $this->router->fetch_class() == 'beranda') echo 'class="active"'; ?>><a href="<?= site_url('kasir/beranda') ?>"><span class="glyphicon glyphicon-home cb-nav-icon" aria-hidden="true"></span>Beranda</a></li>
+                    <li <?php if ($this->router->fetch_class() == 'penjualan') echo 'class="active"'; ?>><a href="<?= site_url('penjualan') ?>"><span class="glyphicon glyphicon-shopping-cart cb-nav-icon" aria-hidden="true"></span>Kasir / Penjualan</a></li>
+                    <li <?php if ($this->router->fetch_class() == 'pelanggan') echo 'class="active"'; ?>><a href="<?= site_url('pelanggan') ?>"><span class="glyphicon glyphicon-user cb-nav-icon" aria-hidden="true"></span>Pelanggan</a></li>
+                    <li <?php if ($this->router->fetch_class() == 'produk') echo 'class="active"'; ?>><a href="<?= site_url('produk') ?>"><span class="glyphicon glyphicon-tags cb-nav-icon" aria-hidden="true"></span>Katalog Produk</a></li>
+                </ul>
                 <?php elseif ($this->session->userdata('role') === 'penjualan'): ?>
                 <ul class="nav navbar-nav">
                     <li <?php if ($this->router->fetch_directory() == 'sales/' && $this->router->fetch_class() == 'beranda') echo 'class="active"'; ?>><a href="<?= site_url('sales/beranda') ?>"><span class="glyphicon glyphicon-home cb-nav-icon" aria-hidden="true"></span>Beranda</a></li>

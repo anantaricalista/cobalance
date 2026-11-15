@@ -94,7 +94,7 @@ karena migrasi akan gagal. Perusahaan lama tanpa admin tidak diubah otomatis.
 Untuk pilihan role tambahan di Master Pengguna, cadangkan database lalu jalankan
 `application/sql/20261112_role_pengguna.sql` pada setiap database setelah migrasi
 admin perusahaan. Role lama `admin` dan `user` tetap dipertahankan. Role ini
-belum membatasi akses, kecuali role `gudang`, `purchasing`, dan `penjualan` (lihat di bawah): role lain yang
+belum membatasi akses, kecuali role `gudang`, `purchasing`, `penjualan`, dan `kasir` (lihat di bawah): role lain yang
 login masih dapat membuka modul perusahaan, termasuk Master Pengguna.
 
 Modul Gudang (`controllers|models|views/gudang`) menyediakan beranda, stok barang
@@ -119,6 +119,12 @@ mengubahnya. Lampiran dibatasi pada dua jenis transaksi tersebut. Posting dan
 pembatalan tetap oleh Akuntansi/Admin. Beranda menghitung piutang penjualan kredit
 perusahaan yang terposting dan memiliki jurnal, dikurangi penerimaan serta retur
 terposting; saldo awal dan piutang lain tidak termasuk.
+
+Role `kasir` memakai beranda interaktif (jam, ringkasan hari ini, grafik 7 hari,
+produk terlaris, stok hampir habis) dan hanya dapat mencatat Penjualan tunai
+(server menolak kredit), mengelola pelanggan, serta melihat katalog produk.
+Lampiran dibatasi pada penjualan; posting dan pembatalan tetap oleh Akuntansi/Admin.
+Ringkasan mencakup seluruh perusahaan dan tidak termasuk penjualan dibatalkan.
 
 Koreksi saldo awal yang sudah diposting hanya tersedia untuk Admin Perusahaan.
 Sebelum fitur ini digunakan, cadangkan database lalu jalankan

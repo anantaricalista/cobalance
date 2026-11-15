@@ -34,6 +34,8 @@ foreach ($cash_accounts as $account) {
 <h3>Penjualan</h3>
 <?php if ($this->session->userdata('role') === 'penjualan'): ?>
     <p class="text-info">Penjualan barang dan jasa disimpan sebagai draft untuk ditinjau dan diposting oleh Akuntansi atau Admin.</p>
+<?php elseif ($this->session->userdata('role') === 'kasir'): ?>
+    <p class="text-info">Kasir mencatat penjualan tunai. Transaksi tersimpan sebagai draft sampai diposting oleh Akuntansi atau Admin.</p>
 <?php endif; ?>
 <p class="text-muted" role="note">Nominal: pemisah ribuan ditambahkan otomatis; gunakan koma untuk desimal, misalnya <strong>1.000,50</strong>.</p>
 <p>Draft baru diposting menjadi jurnal otomatis. Penjualan barang mengurangi persediaan menggunakan harga pokok rata-rata.</p>
@@ -97,7 +99,7 @@ foreach ($cash_accounts as $account) {
                     <label for="sale-payment">Cara pembayaran</label>
                     <select class="form-control" id="sale-payment" required>
                         <option value="tunai">Tunai</option>
-                        <option value="kredit">Kredit</option>
+                        <?php if ($this->session->userdata('role') !== 'kasir'): ?><option value="kredit">Kredit</option><?php endif; ?>
                     </select>
                 </div>
             </div>

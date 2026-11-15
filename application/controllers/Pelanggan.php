@@ -11,7 +11,7 @@ class Pelanggan extends MY_Controller
 
     public function index()
     {
-        if ($this->session->userdata('role') === 'penjualan') {
+        if (in_array($this->session->userdata('role'), array('penjualan', 'kasir'), true)) {
             $token = $this->session->userdata('pelanggan_form_token');
             if (!is_string($token) || $token === '') {
                 $this->session->set_userdata('pelanggan_form_token', bin2hex(random_bytes(32)));
@@ -160,7 +160,7 @@ class Pelanggan extends MY_Controller
 
     private function verify_sales_token()
     {
-        if ($this->session->userdata('role') !== 'penjualan') {
+        if (!in_array($this->session->userdata('role'), array('penjualan', 'kasir'), true)) {
             return true;
         }
         $token = $this->input->post('pelanggan_form_token');

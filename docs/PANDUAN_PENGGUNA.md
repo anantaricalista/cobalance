@@ -25,7 +25,7 @@ Sebelum mencatat transaksi, buka menu **Master** dan lengkapi data berikut:
 2. **Pengguna** — kelola akun yang dapat masuk ke perusahaan ini dan pilih role
    **Admin Perusahaan**, **User**, **Kasir**, **Penjualan**, **Purchasing**,
    **Gudang**, **Keuangan**, **Akuntansi**, atau **Manajer / Pemilik**. Role
-   Gudang, Purchasing, dan Penjualan memiliki tampilan serta pembatasan akses khusus;
+   Gudang, Purchasing, Penjualan, dan Kasir memiliki tampilan serta pembatasan akses khusus;
    role lainnya belum dibatasi pada tingkat modul. Hanya Admin Perusahaan dan
    Akuntansi yang dapat mem-posting atau membatalkan transaksi. Perusahaan hanya
    memiliki satu admin;
@@ -76,6 +76,12 @@ Pengguna Purchasing juga dapat membuka menu **Produk** untuk menambah dan menged
 produk bertipe **Barang** (termasuk gambar). Tipe Jasa tidak tersedia bagi Purchasing,
 baik di Master Produk maupun di Pembelian; pembelian jasa dilakukan oleh Akuntansi atau
 Admin Perusahaan. Penghapusan produk dilakukan oleh pengguna yang berwenang.
+
+Role **Kasir** memiliki beranda interaktif berisi jam, penjualan dan penerimaan
+tunai hari ini, grafik 7 hari, produk terlaris, serta stok hampir habis. Kasir
+hanya mencatat penjualan **tunai** (disimpan sebagai draft dan diposting oleh
+Akuntansi/Admin), mengelola pelanggan, dan melihat katalog produk. Gunakan kotak
+pencarian di beranda untuk memeriksa harga dan stok.
 
 Role **Penjualan** memiliki beranda khusus, modul Penjualan dan Penerimaan
 Piutang, pengelolaan pelanggan, serta katalog produk dan jasa yang hanya dapat

@@ -28,9 +28,9 @@ class Produk extends Master_Controller
     public function __construct()
     {
         parent::__construct();
-        if ($this->session->userdata('role') === 'penjualan'
+        if (in_array($this->session->userdata('role'), array('penjualan', 'kasir'), true)
             && !in_array($this->router->fetch_method(), array('index', 'gambar'), true)) {
-            show_error('Role Penjualan hanya dapat melihat katalog produk.', 403);
+            show_error('Role ini hanya dapat melihat katalog produk.', 403);
             exit;
         }
         if ($this->session->userdata('role') === 'purchasing') {
@@ -42,7 +42,7 @@ class Produk extends Master_Controller
 
     public function index()
     {
-        if ($this->session->userdata('role') !== 'penjualan') {
+        if (!in_array($this->session->userdata('role'), array('penjualan', 'kasir'), true)) {
             parent::index();
             return;
         }

@@ -33,6 +33,7 @@ class MY_Controller extends CI_Controller
     public static $role_scope = array(
         'gudang' => array('home' => 'gudang/beranda', 'classes' => array()),
         'purchasing' => array('home' => 'purchasing/beranda', 'classes' => array('pembelian', 'pembayaran_utang', 'pemasok', 'produk')),
+        'kasir' => array('home' => 'kasir/beranda', 'classes' => array('penjualan', 'produk', 'pelanggan', 'lampiran')),
         'penjualan' => array('home' => 'sales/beranda', 'classes' => array('penjualan', 'penerimaan_piutang', 'pelanggan', 'produk', 'lampiran'))
     );
 }

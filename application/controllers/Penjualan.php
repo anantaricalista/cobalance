@@ -54,6 +54,9 @@ class Penjualan extends MY_Controller
         if (!is_array($data) || json_last_error() !== JSON_ERROR_NONE) {
             return $this->error('Rincian penjualan tidak valid.', 400);
         }
+        if ($this->session->userdata('role') === 'kasir' && (!isset($data['cara_pembayaran']) || $data['cara_pembayaran'] !== 'tunai')) {
+            return $this->error('Kasir hanya dapat mencatat penjualan tunai.', 403);
+        }
         $id = $this->input->post('id');
         $tanggal = $this->input->post('tanggal');
         $hapus = $this->input->post('hapus_lampiran') === '1';
