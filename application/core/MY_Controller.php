@@ -48,6 +48,14 @@ class MY_Controller extends CI_Controller
         'purchasing' => array('home' => 'purchasing/beranda', 'classes' => array('pembelian', 'pembayaran_utang', 'pemasok', 'produk')),
         'kasir' => array('home' => 'kasir/beranda', 'classes' => array('pos', 'penjualan', 'produk', 'pelanggan', 'lampiran')),
         'keuangan' => array('home' => 'keuangan/beranda', 'classes' => array('kas_bank', 'pembayaran_utang', 'penerimaan_piutang', 'lampiran')),
+        'akuntansi' => array('home' => 'akuntansi/beranda', 'classes' => array(
+            'akun', 'pelanggan', 'pemasok', 'produk', 'pajak', 'pengaturan_akun',
+            'saldo_awal', 'penjualan', 'beban_penjualan_jasa', 'penerimaan_piutang',
+            'pembelian', 'pembayaran_utang', 'kas_bank', 'aset_tetap', 'persediaan',
+            'penyesuaian_persediaan', 'usulan_opname', 'retur_persediaan', 'modal_prive',
+            'penyesuaian_akuntansi', 'jurnal', 'buku_besar', 'jurnal_umum', 'laporan',
+            'laba_rugi', 'neraca', 'bagan_akun', 'lampiran'
+        )),
         'penjualan' => array('home' => 'sales/beranda', 'classes' => array('penjualan', 'penerimaan_piutang', 'pelanggan', 'produk', 'lampiran'))
     );
 }

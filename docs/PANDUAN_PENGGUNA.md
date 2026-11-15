@@ -25,7 +25,7 @@ Sebelum mencatat transaksi, buka menu **Master** dan lengkapi data berikut:
 2. **Pengguna** — kelola akun yang dapat masuk ke perusahaan ini dan pilih role
    **Admin Perusahaan**, **User**, **Kasir**, **Penjualan**, **Purchasing**,
    **Gudang**, **Keuangan**, **Akuntansi**, atau **Manajer / Pemilik**. Role
-   Gudang, Purchasing, Penjualan, Kasir, dan Keuangan memiliki tampilan serta pembatasan akses khusus;
+   Gudang, Purchasing, Penjualan, Kasir, Keuangan, dan Akuntansi memiliki tampilan serta pembatasan akses khusus;
    role lainnya belum dibatasi pada tingkat modul. Admin Perusahaan dan
    Akuntansi dapat mem-posting atau membatalkan transaksi; Kasir juga dapat
    menyelesaikan dan langsung mem-posting transaksi baru melalui POS, tetapi tidak
@@ -125,6 +125,21 @@ saldo awal, penjualan dan pelepasan aset kredit yang diposting. Pembayaran,
 penerimaan, serta retur mengurangi sisa hanya setelah diposting; tagihan dan
 draft bertanggal mendatang tetap ditampilkan menurut status saat ini. Saldo kas
 berasal dari jurnal, bukan koneksi langsung ke rekening bank.
+
+Role **Akuntansi** memiliki beranda dengan jumlah draft per jenis, 15 draft
+terawal menurut tanggal transaksi, serta jumlah usulan opname menunggu. Pilih
+**Tinjau** atau **Buka modul** untuk memeriksa rincian dan bukti sebelum
+posting; periksa usulan opname melalui **Opname & Penyesuaian**. Draft dari
+seluruh perusahaan ditampilkan, termasuk yang bertanggal mendatang. Rincian
+piutang/utang saldo awal yang diposting bersama saldo awal induk tidak dihitung
+sebagai draft terpisah.
+
+Akuntansi dapat mengelola master akun, pelanggan, pemasok, produk, pajak dan
+pengaturan akun, serta menggunakan modul transaksi, jurnal dan laporan. Menu
+pengguna hanya tersedia bagi pengguna yang berwenang selain role Akuntansi.
+Koreksi saldo awal yang sudah diposting tetap khusus Admin Perusahaan. Sebelum
+menggunakan beranda Akuntansi, pastikan migrasi gudang
+`application/sql/20261113_gudang_usulan_opname.sql` sudah dijalankan.
 
 Beranda Penjualan menampilkan draft dan penjualan yang diposting bulan ini untuk
 seluruh perusahaan, pelanggan aktif, serta tagihan penjualan kredit yang belum

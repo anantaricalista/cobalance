@@ -94,7 +94,7 @@ karena migrasi akan gagal. Perusahaan lama tanpa admin tidak diubah otomatis.
 Untuk pilihan role tambahan di Master Pengguna, cadangkan database lalu jalankan
 `application/sql/20261112_role_pengguna.sql` pada setiap database setelah migrasi
 admin perusahaan. Role lama `admin` dan `user` tetap dipertahankan. Role ini
-belum membatasi akses, kecuali role `gudang`, `purchasing`, `penjualan`, `kasir`, dan `keuangan` (lihat di bawah): role lain yang
+belum membatasi akses, kecuali role `gudang`, `purchasing`, `penjualan`, `kasir`, `keuangan`, dan `akuntansi` (lihat di bawah): role lain yang
 login masih dapat membuka modul perusahaan, termasuk Master Pengguna.
 
 Modul Gudang (`controllers|models|views/gudang`) menyediakan beranda, stok barang
@@ -144,6 +144,17 @@ kredit yang diposting dan memiliki jurnal; piutang mencakup saldo awal,
 penjualan, serta pelepasan aset kredit yang diposting. Sisa dikurangi alokasi dan
 retur terposting. Tagihan bertanggal mendatang tetap termasuk; saldo rekening
 tidak terhubung langsung ke bank. Tidak diperlukan migrasi baru.
+
+Role `akuntansi` memiliki beranda dengan antrian draft seluruh perusahaan,
+jumlah usulan opname menunggu, dan akses cepat jurnal serta laporan. Akuntansi
+dapat mengelola master akun, pelanggan, pemasok, produk, pajak, dan pengaturan
+akun, serta mengakses modul transaksi, jurnal, dan laporan. Pengelolaan pengguna
+tidak tersedia untuk role ini. Posting dan pembatalan tetap dapat dilakukan
+Akuntansi/Admin, sedangkan koreksi saldo awal yang sudah diposting tetap hanya
+untuk Admin. Antrian menampilkan 15 draft tertua berdasarkan tanggal transaksi;
+rincian piutang/utang saldo awal yang diposting bersama induknya tidak dihitung
+sebagai draft terpisah. Tidak ada migrasi baru khusus role ini; beranda memakai
+tabel `usulan_opname` dari migrasi `20261113_gudang_usulan_opname.sql`.
 
 Koreksi saldo awal yang sudah diposting hanya tersedia untuk Admin Perusahaan.
 Sebelum fitur ini digunakan, cadangkan database lalu jalankan

@@ -868,7 +868,7 @@
                 </ul>
                 <?php else: ?>
                 <ul class="nav navbar-nav">
-                    <li <?php if ($this->router->fetch_class() == 'dashboard') echo 'class="active"'; ?>><a href="<?= site_url('dashboard') ?>"><span class="glyphicon glyphicon-home cb-nav-icon" aria-hidden="true"></span>Beranda</a></li>
+                    <li <?php if ($this->router->fetch_class() == 'dashboard' || ($this->router->fetch_directory() == 'akuntansi/' && $this->router->fetch_class() == 'beranda')) echo 'class="active"'; ?>><a href="<?= site_url($this->session->userdata('role') === 'akuntansi' ? 'akuntansi/beranda' : 'dashboard') ?>"><span class="glyphicon glyphicon-home cb-nav-icon" aria-hidden="true"></span>Beranda</a></li>
                     <li class="dropdown <?php if (in_array($this->router->fetch_class(), array('akun', 'pengguna', 'pelanggan', 'pemasok', 'produk', 'pajak', 'pengaturan_akun')))
                         echo 'active'; ?>">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
@@ -880,10 +880,12 @@
                                 echo 'class="active"'; ?>>
                                 <a href="<?php echo site_url('akun'); ?>"><span class="glyphicon glyphicon-list-alt cb-nav-icon" aria-hidden="true"></span>Akun</a>
                             </li>
+                            <?php if ($this->session->userdata('role') !== 'akuntansi'): ?>
                             <li <?php if ($this->router->fetch_class() == 'pengguna')
                                 echo 'class="active"'; ?>>
                                 <a href="<?php echo site_url('pengguna'); ?>"><span class="glyphicon glyphicon-user cb-nav-icon" aria-hidden="true"></span>Pengguna</a>
                             </li>
+                            <?php endif; ?>
                             <li <?php if ($this->router->fetch_class() == 'pelanggan')
                                 echo 'class="active"'; ?>>
                                 <a href="<?php echo site_url('pelanggan'); ?>"><span class="glyphicon glyphicon-user cb-nav-icon" aria-hidden="true"></span>Pelanggan</a>
