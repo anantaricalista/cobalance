@@ -14,6 +14,16 @@ class Transaksi_service
 
     public function buat_draft($jenis, $tanggal, $deskripsi, callable $simpan_detail)
     {
+        return $this->atomic(function ($perusahaan, $pengguna) use ($jenis, $tanggal, $deskripsi, $simpan_detail) {
+            return $this->buat_draft_di_dalam_transaksi($jenis, $tanggal, $deskripsi, $simpan_detail);
+        });
+    }
+
+    public function buat_draft_di_dalam_transaksi($jenis, $tanggal, $deskripsi, callable $simpan_detail)
+    {
+        if (!$this->ci->db->trans_active()) {
+            throw new RuntimeException('Pembuatan draft membutuhkan transaksi database aktif.');
+        }
         $jenis_valid = array('penjualan', 'pembelian', 'penerimaan_piutang', 'pembayaran_utang',
             'kas_masuk', 'kas_keluar', 'transfer_kas', 'retur_penjualan', 'retur_pembelian',
             'saldo_awal', 'saldo_awal_piutang', 'saldo_awal_utang', 'saldo_awal_persediaan',
@@ -23,49 +33,59 @@ class Transaksi_service
             || !is_string($deskripsi) || strlen($deskripsi) > 255) {
             throw new InvalidArgumentException('Data transaksi tidak valid.');
         }
-        return $this->atomic(function ($perusahaan, $pengguna) use ($jenis, $tanggal, $deskripsi, $simpan_detail) {
-            $db = $this->ci->db;
-            $uuid = $db->query('SELECT UUID() AS nomor');
-            if (!$uuid) {
-                throw new RuntimeException('Gagal membuat nomor transaksi.');
-            }
-            $this->check($db->insert('transaksi', array(
-                'id_perusahaan' => $perusahaan, 'jenis_transaksi' => $jenis,
-                'nomor_transaksi' => 'DRAFT-' . $uuid->row()->nomor,
-                'tanggal' => $tanggal, 'deskripsi' => $deskripsi,
-                'status' => 'draft', 'id_pengguna_pembuat' => $pengguna
-            )));
-            $id = $db->insert_id();
-            $nomor = 'TRX-' . str_pad((string) $id, 10, '0', STR_PAD_LEFT);
-            $this->check($db->where('id_transaksi', $id)->where('id_perusahaan', $perusahaan)
-                ->update('transaksi', array('nomor_transaksi' => $nomor)));
-            $simpan_detail($id, $perusahaan, $db);
-            return array('id_transaksi' => $id, 'nomor_transaksi' => $nomor);
-        });
+        $perusahaan = $this->ci->session->userdata('id_perusahaan');
+        $pengguna = $this->ci->session->userdata('id_pengguna');
+        $db = $this->ci->db;
+        $uuid = $db->query('SELECT UUID() AS nomor');
+        if (!$uuid) {
+            throw new RuntimeException('Gagal membuat nomor transaksi.');
+        }
+        $this->check($db->insert('transaksi', array(
+            'id_perusahaan' => $perusahaan, 'jenis_transaksi' => $jenis,
+            'nomor_transaksi' => 'DRAFT-' . $uuid->row()->nomor,
+            'tanggal' => $tanggal, 'deskripsi' => $deskripsi,
+            'status' => 'draft', 'id_pengguna_pembuat' => $pengguna
+        )));
+        $id = $db->insert_id();
+        $nomor = 'TRX-' . str_pad((string) $id, 10, '0', STR_PAD_LEFT);
+        $this->check($db->where('id_transaksi', $id)->where('id_perusahaan', $perusahaan)
+            ->update('transaksi', array('nomor_transaksi' => $nomor)));
+        $simpan_detail($id, $perusahaan, $db);
+        return array('id_transaksi' => $id, 'nomor_transaksi' => $nomor);
     }
 
     public function posting($id, callable $siapkan_jurnal, array $akun_induk_diizinkan = array(), callable $setelah_posting = null)
     {
         return $this->atomic(function ($perusahaan, $pengguna) use ($id, $siapkan_jurnal, $akun_induk_diizinkan, $setelah_posting) {
-            $transaksi = $this->lock_transaksi($id, $perusahaan);
-            if ($transaksi->status !== 'draft') {
-                throw new DomainException('Hanya transaksi draft yang dapat diposting.');
-            }
-            $detail = $siapkan_jurnal($transaksi, $this->ci->db);
-            $this->validasi_jurnal($detail, $perusahaan, false, $akun_induk_diizinkan);
-            $id_jurnal = $this->simpan_jurnal($transaksi, $transaksi->tanggal, $detail, 'posting');
-            $this->check($this->ci->db->where('id_transaksi', $transaksi->id_transaksi)
-                ->where('id_perusahaan', $perusahaan)->where('status', 'draft')
-                ->update('transaksi', array('status' => 'diposting', 'id_pengguna_posting' => $pengguna,
-                    'waktu_posting' => date('Y-m-d H:i:s'))));
-            if ($this->ci->db->affected_rows() !== 1) {
-                throw new RuntimeException('Status transaksi gagal diperbarui.');
-            }
-            if ($setelah_posting !== null) {
-                $setelah_posting($transaksi, $this->ci->db);
-            }
-            return $id_jurnal;
+            return $this->posting_di_dalam_transaksi($id, $siapkan_jurnal, $akun_induk_diizinkan, $setelah_posting);
         });
+    }
+
+    public function posting_di_dalam_transaksi($id, callable $siapkan_jurnal, array $akun_induk_diizinkan = array(), callable $setelah_posting = null)
+    {
+        if (!$this->ci->db->trans_active()) {
+            throw new RuntimeException('Posting membutuhkan transaksi database aktif.');
+        }
+        $perusahaan = $this->ci->session->userdata('id_perusahaan');
+        $pengguna = $this->ci->session->userdata('id_pengguna');
+        $transaksi = $this->lock_transaksi($id, $perusahaan);
+        if ($transaksi->status !== 'draft') {
+            throw new DomainException('Hanya transaksi draft yang dapat diposting.');
+        }
+        $detail = $siapkan_jurnal($transaksi, $this->ci->db);
+        $this->validasi_jurnal($detail, $perusahaan, false, $akun_induk_diizinkan);
+        $id_jurnal = $this->simpan_jurnal($transaksi, $transaksi->tanggal, $detail, 'posting');
+        $this->check($this->ci->db->where('id_transaksi', $transaksi->id_transaksi)
+            ->where('id_perusahaan', $perusahaan)->where('status', 'draft')
+            ->update('transaksi', array('status' => 'diposting', 'id_pengguna_posting' => $pengguna,
+                'waktu_posting' => date('Y-m-d H:i:s'))));
+        if ($this->ci->db->affected_rows() !== 1) {
+            throw new RuntimeException('Status transaksi gagal diperbarui.');
+        }
+        if ($setelah_posting !== null) {
+            $setelah_posting($transaksi, $this->ci->db);
+        }
+        return $id_jurnal;
     }
 
     public function batalkan($id, $tanggal, $alasan, callable $batalkan_dampak, callable $setelah_batal = null)

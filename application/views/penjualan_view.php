@@ -1,5 +1,5 @@
 <?php
-$editable = !$transaction || $transaction->status === 'draft';
+$editable = (!$transaction || $transaction->status === 'draft') && $this->session->userdata('role') !== 'kasir';
 $product_options = array();
 foreach ($products as $product) {
     $product_options[] = array(
@@ -35,7 +35,7 @@ foreach ($cash_accounts as $account) {
 <?php if ($this->session->userdata('role') === 'penjualan'): ?>
     <p class="text-info">Penjualan barang dan jasa disimpan sebagai draft untuk ditinjau dan diposting oleh Akuntansi atau Admin.</p>
 <?php elseif ($this->session->userdata('role') === 'kasir'): ?>
-    <p class="text-info">Kasir mencatat penjualan tunai. Transaksi tersimpan sebagai draft sampai diposting oleh Akuntansi atau Admin.</p>
+    <p class="text-info">Rincian transaksi hanya dapat dilihat. <a href="<?= site_url('pos') ?>">Buka kasir</a>.</p>
 <?php endif; ?>
 <p class="text-muted" role="note">Nominal: pemisah ribuan ditambahkan otomatis; gunakan koma untuk desimal, misalnya <strong>1.000,50</strong>.</p>
 <p>Draft baru diposting menjadi jurnal otomatis. Penjualan barang mengurangi persediaan menggunakan harga pokok rata-rata.</p>
@@ -49,6 +49,7 @@ foreach ($cash_accounts as $account) {
     <p>
         <strong>Nomor:</strong> <?= html_escape($transaction->nomor_transaksi) ?>
         &nbsp; <strong>Status:</strong> <?= html_escape($transaction->status) ?>
+        <?php if ($transaction->metode_kasir): ?>&nbsp; <strong>Pembayaran kasir:</strong> <?= html_escape(strtoupper($transaction->metode_kasir)) ?><?php endif; ?>
         <?php if (!$editable): ?>
             &nbsp; <strong>Total:</strong> Rp <?= html_escape(format_nominal($transaction->total)) ?>
         <?php endif; ?>
@@ -80,7 +81,7 @@ foreach ($cash_accounts as $account) {
     <?php endif; ?>
 <?php endif; ?>
 
-<?php if (!$transaction || $editable): ?>
+<?php if ($editable): ?>
     <div id="sale-message" role="alert"></div>
     <form id="sale-form" enctype="multipart/form-data">
         <fieldset>
@@ -189,7 +190,7 @@ foreach ($cash_accounts as $account) {
                 <td><?= html_escape(format_tanggal_indonesia($item->tanggal)) ?></td>
                 <td><?= html_escape($item->nomor_transaksi) ?></td>
                 <td><?= html_escape($item->nama_pelanggan) ?></td>
-                <td><?= html_escape($item->cara_pembayaran === 'kredit' ? 'Kredit' : 'Tunai') ?></td>
+                <td><?= html_escape($item->metode_kasir ? strtoupper($item->metode_kasir) : ($item->cara_pembayaran === 'kredit' ? 'Kredit' : 'Tunai')) ?></td>
                 <td>Rp <?= html_escape(format_nominal($item->total)) ?></td>
                 <td><?php if ($item->lampiran_nama): ?><a href="<?= site_url('lampiran/unduh/' . (int) $item->id_transaksi) ?>">Unduh</a><?php else: ?>-<?php endif; ?></td>
                 <td><?= html_escape($item->status) ?></td>

@@ -18,8 +18,9 @@ class Penjualan_service
     {
         $perusahaan = $this->company();
         $query = $this->ci->db->query("SELECT t.id_transaksi, t.nomor_transaksi, t.tanggal, t.status,
-            t.cara_pembayaran, t.total, t.id_pelanggan, p.nama_pelanggan, t.lampiran_nama
+            t.cara_pembayaran, t.total, t.id_pelanggan, p.nama_pelanggan, t.lampiran_nama, pk.metode AS metode_kasir
             FROM transaksi t JOIN pelanggan p ON p.id_perusahaan=t.id_perusahaan AND p.id_pelanggan=t.id_pelanggan
+            LEFT JOIN pembayaran_kasir pk ON pk.id_perusahaan=t.id_perusahaan AND pk.id_transaksi=t.id_transaksi
             WHERE t.id_perusahaan=? AND t.jenis_transaksi='penjualan'
             ORDER BY t.tanggal DESC, t.id_transaksi DESC", array($perusahaan));
         $this->ok($query);
@@ -30,8 +31,9 @@ class Penjualan_service
     {
         $perusahaan = $this->company();
         $this->id($id);
-        $query = $this->ci->db->query("SELECT " . Lampiran_service::KOLOM_TRANSAKSI . ", p.nama_pelanggan FROM transaksi t
+        $query = $this->ci->db->query("SELECT " . Lampiran_service::KOLOM_TRANSAKSI . ", p.nama_pelanggan, pk.metode AS metode_kasir FROM transaksi t
             JOIN pelanggan p ON p.id_perusahaan=t.id_perusahaan AND p.id_pelanggan=t.id_pelanggan
+            LEFT JOIN pembayaran_kasir pk ON pk.id_perusahaan=t.id_perusahaan AND pk.id_transaksi=t.id_transaksi
             WHERE t.id_perusahaan=? AND t.id_transaksi=? AND t.jenis_transaksi='penjualan'",
             array($perusahaan, $id));
         $this->ok($query);
@@ -95,7 +97,82 @@ class Penjualan_service
 
     public function posting($id)
     {
-        return $this->ci->transaksi_service->posting($id, function ($transaction, $db) {
+        return $this->ci->transaksi_service->posting($id, $this->jurnal_penjualan());
+    }
+
+    public function selesaikan_kasir($key, $data)
+    {
+        if ($this->ci->session->userdata('role') !== 'kasir') {
+            throw new DomainException('Transaksi kasir hanya tersedia untuk role Kasir.');
+        }
+        if (!is_string($key) || !preg_match('/^[a-f0-9]{32}$/D', $key)
+            || !is_array($data) || !isset($data['metode'], $data['dibayar'], $data['total'], $data['details'])
+            || !in_array($data['metode'], array('tunai', 'kartu', 'transfer', 'qris'), true)
+            || !is_array($data['details']) || !$data['details'] || count($data['details']) > 200) {
+            throw new InvalidArgumentException('Data pembayaran kasir tidak valid.');
+        }
+        $paid = $this->cents($data['dibayar']);
+        $expected_total = $this->cents($data['total']);
+        $hash = hash('sha256', json_encode($data));
+        return $this->ci->transaksi_service->atomic(function ($company, $user) use ($key, $data, $paid, $expected_total, $hash) {
+            $db = $this->ci->db;
+            $existing = $db->query('SELECT id_transaksi, payload_hash FROM pembayaran_kasir
+                WHERE id_perusahaan=? AND kunci_permintaan=?', array($company, $key));
+            $this->ok($existing);
+            if ($existing->row()) {
+                if (!hash_equals($existing->row()->payload_hash, $hash)) {
+                    throw new DomainException('Permintaan ini sudah digunakan untuk transaksi lain.');
+                }
+                return array('id_transaksi' => (int) $existing->row()->id_transaksi);
+            }
+            $details = array();
+            foreach ($data['details'] as $line) {
+                if (!is_array($line) || !isset($line['id_produk'], $line['jumlah'], $line['harga'])) {
+                    throw new InvalidArgumentException('Rincian kasir tidak lengkap.');
+                }
+                $this->id($line['id_produk']);
+                $product = $db->query('SELECT harga_jual FROM produk WHERE id_perusahaan=? AND id_produk=? AND aktif=1 FOR UPDATE',
+                    array($company, $line['id_produk']));
+                $this->ok($product);
+                if (!$product->row() || $this->cents($product->row()->harga_jual) !== $this->cents($line['harga'])) {
+                    throw new DomainException('Produk tidak tersedia atau harga telah berubah. Muat ulang halaman.');
+                }
+                $details[] = array('id_produk' => $line['id_produk'], 'jumlah' => $line['jumlah'],
+                    'harga' => $product->row()->harga_jual, 'diskon' => '0.00',
+                    'mode_pajak' => isset($data['mode_pajak']) ? $data['mode_pajak'] : null,
+                    'id_pajak' => isset($data['id_pajak']) ? $data['id_pajak'] : null);
+            }
+            $sale = array('id_pelanggan' => isset($data['id_pelanggan']) ? $data['id_pelanggan'] : null,
+                'id_akun_kas' => isset($data['id_akun_kas']) ? $data['id_akun_kas'] : null,
+                'cara_pembayaran' => 'tunai', 'deskripsi' => 'Penjualan kasir',
+                'details' => $details);
+            $date = date('Y-m-d');
+            $clean = $this->validate($company, $date, $sale);
+            $total = $this->cents($clean['total']);
+            if ($total !== $expected_total) {
+                throw new DomainException('Total berubah, kemungkinan tarif pajak telah diperbarui. Muat ulang halaman.');
+            }
+            if ($paid < $total || ($data['metode'] !== 'tunai' && $paid !== $total)) {
+                throw new DomainException('Jumlah pembayaran tidak sesuai dengan total penjualan.');
+            }
+            $draft = $this->ci->transaksi_service->buat_draft_di_dalam_transaksi(
+                'penjualan', $date, 'Penjualan kasir', function ($id, $company, $db) use ($clean) {
+                    $this->write_draft($id, $company, $clean, $db);
+                });
+            $this->ci->transaksi_service->posting_di_dalam_transaksi($draft['id_transaksi'], $this->jurnal_penjualan());
+            $this->ok($db->insert('pembayaran_kasir', array(
+                'id_perusahaan' => $company, 'id_transaksi' => $draft['id_transaksi'],
+                'id_pengguna' => $user, 'kunci_permintaan' => $key, 'payload_hash' => $hash,
+                'metode' => $data['metode'], 'dibayar' => $this->money($paid),
+                'kembalian' => $this->money($paid - $total)
+            )));
+            return $draft;
+        });
+    }
+
+    private function jurnal_penjualan()
+    {
+        return function ($transaction, $db) {
             $company = $transaction->id_perusahaan;
             if ($transaction->jenis_transaksi !== 'penjualan') {
                 throw new DomainException('Transaksi penjualan tidak ditemukan.');
@@ -216,7 +293,7 @@ class Penjualan_service
                 }
             }
             return $normalized;
-        });
+        };
     }
 
     public function batalkan($id, $date, $reason)

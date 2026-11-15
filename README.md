@@ -120,11 +120,19 @@ pembatalan tetap oleh Akuntansi/Admin. Beranda menghitung piutang penjualan kred
 perusahaan yang terposting dan memiliki jurnal, dikurangi penerimaan serta retur
 terposting; saldo awal dan piutang lain tidak termasuk.
 
-Role `kasir` memakai beranda interaktif (jam, ringkasan hari ini, grafik 7 hari,
-produk terlaris, stok hampir habis) dan hanya dapat mencatat Penjualan tunai
-(server menolak kredit), mengelola pelanggan, serta melihat katalog produk.
-Lampiran dibatasi pada penjualan; posting dan pembatalan tetap oleh Akuntansi/Admin.
-Ringkasan mencakup seluruh perusahaan dan tidak termasuk penjualan dibatalkan.
+Role `kasir` menggunakan halaman POS untuk memilih produk/jasa, menentukan jumlah,
+pelanggan, pajak, akun penerimaan, dan pembayaran tunai, kartu, transfer atau QRIS.
+Cadangkan database dan jalankan `application/sql/20261115_pembayaran_kasir.sql`
+sekali pada setiap database perusahaan sebelum menggunakan versi ini. Siapkan
+pelanggan umum dan akun kas/bank yang sesuai. Pajak yang dipilih berlaku untuk
+seluruh item; harga diambil dari master produk. Kartu, transfer, dan QRIS dicatat
+setelah dikonfirmasi kasir, bukan diproses atau diverifikasi oleh aplikasi.
+Penyelesaian langsung mem-posting penjualan dan membuat jurnal serta mutasi stok
+dalam satu transaksi; pembatalan tetap dilakukan Akuntansi/Admin. Struk dapat
+dicetak ulang. Bila koneksi terputus saat pembayaran, gunakan tombol coba ulang
+di perangkat yang sama untuk memastikan hasil tanpa membuat transaksi ganda.
+Ringkasan beranda mencakup seluruh perusahaan; nilai penjualan hanya yang
+terposting, sementara draft ditampilkan terpisah.
 
 Koreksi saldo awal yang sudah diposting hanya tersedia untuk Admin Perusahaan.
 Sebelum fitur ini digunakan, cadangkan database lalu jalankan

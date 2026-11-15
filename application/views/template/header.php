@@ -846,7 +846,8 @@
                 <?php elseif ($this->session->userdata('role') === 'kasir'): ?>
                 <ul class="nav navbar-nav">
                     <li <?php if ($this->router->fetch_directory() == 'kasir/' && $this->router->fetch_class() == 'beranda') echo 'class="active"'; ?>><a href="<?= site_url('kasir/beranda') ?>"><span class="glyphicon glyphicon-home cb-nav-icon" aria-hidden="true"></span>Beranda</a></li>
-                    <li <?php if ($this->router->fetch_class() == 'penjualan') echo 'class="active"'; ?>><a href="<?= site_url('penjualan') ?>"><span class="glyphicon glyphicon-shopping-cart cb-nav-icon" aria-hidden="true"></span>Kasir / Penjualan</a></li>
+                    <li <?php if (in_array($this->router->fetch_class(), array('pos', 'penjualan'))) echo 'class="active"'; ?>><a href="<?= site_url('pos') ?>"><span class="glyphicon glyphicon-shopping-cart cb-nav-icon" aria-hidden="true"></span>Kasir</a></li>
+                    <li><a href="<?= site_url('pos/riwayat') ?>"><span class="glyphicon glyphicon-list-alt cb-nav-icon" aria-hidden="true"></span>Riwayat Kasir</a></li>
                     <li <?php if ($this->router->fetch_class() == 'pelanggan') echo 'class="active"'; ?>><a href="<?= site_url('pelanggan') ?>"><span class="glyphicon glyphicon-user cb-nav-icon" aria-hidden="true"></span>Pelanggan</a></li>
                     <li <?php if ($this->router->fetch_class() == 'produk') echo 'class="active"'; ?>><a href="<?= site_url('produk') ?>"><span class="glyphicon glyphicon-tags cb-nav-icon" aria-hidden="true"></span>Katalog Produk</a></li>
                 </ul>

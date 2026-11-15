@@ -13,6 +13,10 @@ class Penjualan extends MY_Controller
 
     public function index()
     {
+        if ($this->session->userdata('role') === 'kasir' && $this->input->get('id') === null) {
+            redirect('pos');
+            return;
+        }
         $perusahaan = $this->session->userdata('id_perusahaan');
         $id = $this->input->get('id');
         $transaction = null;
@@ -46,6 +50,9 @@ class Penjualan extends MY_Controller
 
     public function simpan()
     {
+        if ($this->session->userdata('role') === 'kasir') {
+            return $this->error('Gunakan halaman kasir untuk membuat penjualan.', 403);
+        }
         if (!$this->post_only()) {
             return;
         }
@@ -53,9 +60,6 @@ class Penjualan extends MY_Controller
         $data = is_string($raw) ? json_decode($raw, true) : null;
         if (!is_array($data) || json_last_error() !== JSON_ERROR_NONE) {
             return $this->error('Rincian penjualan tidak valid.', 400);
-        }
-        if ($this->session->userdata('role') === 'kasir' && (!isset($data['cara_pembayaran']) || $data['cara_pembayaran'] !== 'tunai')) {
-            return $this->error('Kasir hanya dapat mencatat penjualan tunai.', 403);
         }
         $id = $this->input->post('id');
         $tanggal = $this->input->post('tanggal');

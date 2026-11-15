@@ -26,8 +26,10 @@ Sebelum mencatat transaksi, buka menu **Master** dan lengkapi data berikut:
    **Admin Perusahaan**, **User**, **Kasir**, **Penjualan**, **Purchasing**,
    **Gudang**, **Keuangan**, **Akuntansi**, atau **Manajer / Pemilik**. Role
    Gudang, Purchasing, Penjualan, dan Kasir memiliki tampilan serta pembatasan akses khusus;
-   role lainnya belum dibatasi pada tingkat modul. Hanya Admin Perusahaan dan
-   Akuntansi yang dapat mem-posting atau membatalkan transaksi. Perusahaan hanya
+   role lainnya belum dibatasi pada tingkat modul. Admin Perusahaan dan
+   Akuntansi dapat mem-posting atau membatalkan transaksi; Kasir juga dapat
+   menyelesaikan dan langsung mem-posting transaksi baru melalui POS, tetapi tidak
+   membatalkannya. Perusahaan hanya
    memiliki satu admin;
    memilih Admin untuk pengguna lain akan memindahkan role admin saat ini menjadi
    User. Password baru minimal 8 karakter; password saat mengedit boleh dikosongkan
@@ -77,11 +79,27 @@ produk bertipe **Barang** (termasuk gambar). Tipe Jasa tidak tersedia bagi Purch
 baik di Master Produk maupun di Pembelian; pembelian jasa dilakukan oleh Akuntansi atau
 Admin Perusahaan. Penghapusan produk dilakukan oleh pengguna yang berwenang.
 
-Role **Kasir** memiliki beranda interaktif berisi jam, penjualan dan penerimaan
-tunai hari ini, grafik 7 hari, produk terlaris, serta stok hampir habis. Kasir
-hanya mencatat penjualan **tunai** (disimpan sebagai draft dan diposting oleh
-Akuntansi/Admin), mengelola pelanggan, dan melihat katalog produk. Gunakan kotak
-pencarian di beranda untuk memeriksa harga dan stok.
+Role **Kasir** memiliki beranda dan halaman POS. Sebelum digunakan, cadangkan
+database dan jalankan `application/sql/20261115_pembayaran_kasir.sql` sekali per
+database perusahaan. Siapkan pelanggan umum di menu Pelanggan, akun penerimaan
+kas/bank, harga produk, dan pengaturan akun transaksi.
+
+Di menu **Kasir**, cari nama atau pindai kode produk yang tersimpan, tambahkan ke
+keranjang dan atur jumlah (gunakan koma untuk desimal). Pilih pelanggan, mode dan
+tarif pajak untuk seluruh item, metode pembayaran, serta akun penerimaan yang
+sesuai. Untuk tunai, masukkan uang yang diterima; kembalian dihitung otomatis.
+Untuk kartu, transfer, dan QRIS, pastikan pembayaran sudah diterima di perangkat
+atau aplikasi penyedia: Co-Balance hanya mencatat, tidak memproses atau memverifikasi
+pembayaran elektronik. Tekan **Bayar dan selesaikan** untuk langsung membuat
+jurnal dan mengurangi stok. Cetak struk dari halaman hasil; struk transaksi kasir
+juga dapat dibuka kembali melalui transaksi terbaru di beranda atau menu
+**Riwayat Kasir**.
+
+Jika koneksi terputus saat pembayaran, jangan membuat transaksi baru. Gunakan
+**Periksa / coba ulang pembayaran** pada browser dan perangkat yang sama untuk
+memastikan hasil tanpa membuat transaksi ganda. Pembatalan transaksi terposting
+tetap dilakukan oleh Akuntansi/Admin. Beranda menampilkan penjualan terposting
+seluruh perusahaan dan menghitung draft secara terpisah.
 
 Role **Penjualan** memiliki beranda khusus, modul Penjualan dan Penerimaan
 Piutang, pengelolaan pelanggan, serta katalog produk dan jasa yang hanya dapat
@@ -197,9 +215,9 @@ Alur transaksi umumnya:
 4. Simpan sebagai **draft**. Buka draft dari riwayat untuk memeriksa atau
    memperbaikinya sebelum diposting.
 5. Pilih **Posting** setelah data benar. Aplikasi membuat jurnal secara otomatis
-   untuk transaksi yang mendukung posting. Hanya Admin Perusahaan dan Akuntansi
-   yang dapat melakukan posting atau pembatalan; role lain menyimpan draft untuk
-   ditinjau dan diposting oleh salah satu role tersebut.
+   untuk transaksi yang mendukung posting. Pada alur draft ini, hanya Admin
+   Perusahaan dan Akuntansi yang dapat melakukan posting atau pembatalan; POS
+   Kasir memiliki alur penyelesaian langsung tersendiri.
 
 Penjualan kredit dan pembelian kredit membuat tagihan. Catat penerimaan piutang
 atau pembayaran utang melalui modul alokasi yang sesuai; pilih tagihan dan

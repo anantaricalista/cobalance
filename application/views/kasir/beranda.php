@@ -48,7 +48,7 @@ $selisih = $ringkasan['kemarin'] > 0 ? (($hari['total'] - $ringkasan['kemarin'])
     </div>
 
     <div class="cta">
-        <a class="btn btn-success btn-lg" href="<?= site_url('penjualan') ?>"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Transaksi baru</a>
+        <a class="btn btn-success btn-lg" href="<?= site_url('pos') ?>"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Transaksi baru</a>
         <form method="get" action="<?= site_url('produk') ?>" role="search">
             <label class="sr-only" for="kasir-cari">Cari produk</label>
             <input id="kasir-cari" name="cari" class="form-control input-lg" type="text" maxlength="100" placeholder="Cari harga atau stok produk…">
@@ -59,25 +59,25 @@ $selisih = $ringkasan['kemarin'] > 0 ? (($hari['total'] - $ringkasan['kemarin'])
     <div class="row">
         <div class="col-sm-6 col-lg-3"><div class="stat">
             <span class="label">Penjualan hari ini</span>
-            <span class="value">Rp <span data-count="<?= html_escape(number_format($hari['total'], 0, '.', '')) ?>"><?= html_escape(format_nominal($hari['total'])) ?></span></span>
+            <span class="value">Rp <?= html_escape(format_nominal($hari['total'])) ?></span>
             <?php if ($selisih === null): ?><span class="text-muted">Belum ada pembanding kemarin</span>
             <?php else: ?><span class="<?= $selisih >= 0 ? 'up' : 'down' ?>"><?= $selisih >= 0 ? '▲' : '▼' ?> <?= html_escape(number_format(abs($selisih), 1, ',', '.')) ?>% dari kemarin</span><?php endif; ?>
         </div></div>
         <div class="col-sm-6 col-lg-3"><div class="stat cash">
             <span class="label">Penerimaan tunai</span>
-            <span class="value">Rp <span data-count="<?= html_escape(number_format($hari['tunai'], 0, '.', '')) ?>"><?= html_escape(format_nominal($hari['tunai'])) ?></span></span>
-            Sisanya penjualan kredit
+            <span class="value">Rp <?= html_escape(format_nominal($hari['tunai'])) ?></span>
+            Penjualan terposting; tidak termasuk pembayaran non-tunai
         </div></div>
         <div class="col-sm-6 col-lg-3"><div class="stat count">
             <span class="label">Jumlah transaksi</span>
             <span class="value"><span data-count="<?= (int) $hari['jumlah'] ?>"><?= (int) $hari['jumlah'] ?></span></span>
-            Rata-rata Rp <?= html_escape(format_nominal($hari['jumlah'] > 0 ? $hari['total'] / $hari['jumlah'] : 0)) ?>
+            Rata-rata Rp <?= html_escape(format_nominal($hari['rata_rata'])) ?>
         </div></div>
-        <div class="col-sm-6 col-lg-3"><a class="stat draft" style="display:block;color:inherit;text-decoration:none" href="<?= site_url('penjualan') ?>">
+        <div class="col-sm-6 col-lg-3"><div class="stat draft">
             <span class="label">Menunggu posting</span>
             <span class="value"><span data-count="<?= (int) $hari['draft'] ?>"><?= (int) $hari['draft'] ?></span></span>
             Draft hari ini, diposting Akuntansi/Admin
-        </a></div>
+        </div></div>
     </div>
 
     <div class="row">
@@ -97,11 +97,11 @@ $selisih = $ringkasan['kemarin'] > 0 ? (($hari['total'] - $ringkasan['kemarin'])
                 <div class="table-responsive"><table class="table table-hover">
                     <thead><tr><th>Nomor</th><th>Tanggal</th><th>Pelanggan</th><th>Bayar</th><th class="text-right">Total</th></tr></thead>
                     <tbody><?php foreach ($ringkasan['terbaru'] as $trx): ?>
-                        <tr><td><a href="<?= site_url('penjualan?id=' . (int) $trx->id_transaksi) ?>"><?= html_escape($trx->nomor_transaksi) ?></a>
+                        <tr><td><a href="<?= $trx->metode_kasir ? site_url('pos/struk/' . (int) $trx->id_transaksi) : site_url('penjualan?id=' . (int) $trx->id_transaksi) ?>"><?= html_escape($trx->nomor_transaksi) ?></a>
                             <?= $trx->status === 'draft' ? '<span class="label label-default">draft</span>' : '' ?></td>
                             <td><?= html_escape(format_tanggal_indonesia($trx->tanggal)) ?></td>
                             <td><?= html_escape($trx->nama_pelanggan) ?></td>
-                            <td><span class="badge badge-<?= $trx->cara_pembayaran === 'kredit' ? 'kredit' : 'tunai' ?>"><?= $trx->cara_pembayaran === 'kredit' ? 'Kredit' : 'Tunai' ?></span></td>
+                            <td><span class="badge badge-<?= $trx->cara_pembayaran === 'kredit' ? 'kredit' : 'tunai' ?>"><?= html_escape($trx->metode_kasir ? strtoupper($trx->metode_kasir) : ($trx->cara_pembayaran === 'kredit' ? 'Kredit' : 'Tunai')) ?></span></td>
                             <td class="text-right">Rp <?= html_escape(format_nominal($trx->total)) ?></td></tr>
                     <?php endforeach; ?>
                     <?php if (!$ringkasan['terbaru']): ?><tr><td colspan="5">Belum ada transaksi penjualan.</td></tr><?php endif; ?></tbody>
@@ -131,7 +131,7 @@ $selisih = $ringkasan['kemarin'] > 0 ? (($hari['total'] - $ringkasan['kemarin'])
             </section>
         </div>
     </div>
-    <p class="note">Ringkasan mencakup penjualan seluruh perusahaan (draft dan diposting, tidak termasuk yang dibatalkan). Kasir mencatat penjualan tunai sebagai draft; posting dilakukan Akuntansi/Admin.</p>
+    <p class="note">Total, grafik dan produk terlaris mencakup penjualan terposting seluruh perusahaan; draft dihitung terpisah. Transaksi kasir selesai langsung diposting. Pembatalan dilakukan Akuntansi/Admin.</p>
 </div>
 <script>
 (function () {
