@@ -13,6 +13,8 @@
 .pos-line-actions { justify-content:flex-start; margin-top:6px; } .pos-line-actions input { width:85px; text-align:center; }
 .pos-line-actions button { min-width:34px; } .pos-cart label { margin-top:10px; } .pos-total-row { padding-top:10px; }
 .pos-total { font-size:22px; color:#183153; font-weight:700; } .pos-pay { width:100%; margin-top:15px; padding:13px; font-size:17px; font-weight:700; }
+.pos-cash-suggestions { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
+.pos-cash-suggestions .btn[aria-pressed="true"] { border-color:#287e91; background:#e4f3f5; color:#183153; }
 .pos-muted { color:#687a91; } .pos-message { margin-top:12px; } .pos-empty { padding:16px 0; color:#687a91; }
 @media(max-width:900px) { .pos-layout { grid-template-columns:1fr; } }
 </style>
@@ -62,6 +64,8 @@
             </select>
             <div id="pos-cash-input"><label for="pos-paid">Uang diterima (Rp)</label>
                 <input id="pos-paid" class="form-control" inputmode="decimal" placeholder="Contoh: 50.000" autocomplete="off">
+                <div id="pos-cash-suggestions" class="pos-cash-suggestions" role="group" aria-label="Pilihan uang diterima"></div>
+                <small class="pos-muted">Pilih nominal cepat atau masukkan jumlah lainnya.</small>
                 <div class="pos-total-row"><span>Kembalian</span><strong id="pos-change">Rp 0</strong></div>
             </div>
             <p id="pos-noncash-note" class="pos-muted" hidden>Pastikan pembayaran sudah diterima. Aplikasi tidak memproses atau memverifikasi pembayaran elektronik.</p>
@@ -139,12 +143,55 @@
         });
         updateTotal();
     }
+    function renderCashSuggestions(total, paid) {
+        var box = $('pos-cash-suggestions');
+        var maximum = BigInt('999999999999999');
+        var signature = total.toString() + ':' + (!!pending || busy);
+        if (box.dataset.signature !== signature) {
+            box.dataset.signature = signature;
+            box.textContent = '';
+            if (total > zero && total <= maximum) {
+                var choices = [{value: total, label: 'Uang pas'}];
+                var denominations = [1000, 2000, 5000, 10000, 20000, 50000, 100000];
+                for (var i = 0; i < denominations.length; i++) {
+                    var denomination = BigInt(denominations[i]) * hundred;
+                    if (denomination > total) {
+                        choices.push({value: denomination});
+                        break;
+                    }
+                }
+                [50000, 100000, 500000].forEach(function (step) {
+                    var unit = BigInt(step) * hundred;
+                    choices.push({value: ((total + unit - BigInt(1)) / unit) * unit});
+                });
+                var seen = {};
+                choices.forEach(function (choice) {
+                    var key = choice.value.toString();
+                    if (choice.value > maximum || seen[key]) return;
+                    seen[key] = true;
+                    var button = make('button', (choice.label ? choice.label + ' · ' : '') + rupiah(choice.value), 'btn btn-default btn-sm');
+                    button.type = 'button';
+                    button.disabled = !!pending || busy;
+                    button.dataset.amount = key;
+                    button.onclick = function () {
+                        $('pos-paid').value = rupiah(choice.value).replace(/^Rp /, '');
+                        updateTotal();
+                    };
+                    box.appendChild(button);
+                });
+            }
+        }
+        Array.prototype.forEach.call(box.children, function (button) {
+            button.setAttribute('aria-pressed', paid !== null && button.dataset.amount === paid.toString() ? 'true' : 'false');
+        });
+    }
     function updateTotal() {
         var amounts = totals();
         if (!amounts) { message('Tarif pajak tidak valid.'); return; }
         $('pos-total').textContent = rupiah(amounts.total); $('pos-tax-total').textContent = rupiah(amounts.tax);
         var paid = parseDecimal($('pos-paid').value, 2, 13, true);
         $('pos-change').textContent = rupiah(paid !== null && paid > amounts.total ? paid - amounts.total : zero);
+        renderCashSuggestions(amounts.total, paid);
     }
     function add(product) {
         if (pending || busy) return;
