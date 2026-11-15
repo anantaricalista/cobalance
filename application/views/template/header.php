@@ -843,6 +843,13 @@
                     <li <?php if ($this->router->fetch_class() == 'pemasok') echo 'class="active"'; ?>><a href="<?php echo site_url('pemasok'); ?>"><span class="glyphicon glyphicon-briefcase cb-nav-icon" aria-hidden="true"></span>Pemasok</a></li>
                     <li <?php if ($this->router->fetch_class() == 'produk') echo 'class="active"'; ?>><a href="<?php echo site_url('produk'); ?>"><span class="glyphicon glyphicon-tags cb-nav-icon" aria-hidden="true"></span>Produk</a></li>
                 </ul>
+                <?php elseif ($this->session->userdata('role') === 'keuangan'): ?>
+                <ul class="nav navbar-nav">
+                    <li <?php if ($this->router->fetch_directory() == 'keuangan/' && $this->router->fetch_class() == 'beranda') echo 'class="active"'; ?>><a href="<?= site_url('keuangan/beranda') ?>"><span class="glyphicon glyphicon-home cb-nav-icon" aria-hidden="true"></span>Beranda</a></li>
+                    <li <?php if ($this->router->fetch_class() == 'kas_bank') echo 'class="active"'; ?>><a href="<?= site_url('kas_bank') ?>"><span class="glyphicon glyphicon-transfer cb-nav-icon" aria-hidden="true"></span>Kas &amp; Bank</a></li>
+                    <li <?php if ($this->router->fetch_class() == 'pembayaran_utang') echo 'class="active"'; ?>><a href="<?= site_url('pembayaran_utang') ?>"><span class="glyphicon glyphicon-credit-card cb-nav-icon" aria-hidden="true"></span>Pembayaran Utang</a></li>
+                    <li <?php if ($this->router->fetch_class() == 'penerimaan_piutang') echo 'class="active"'; ?>><a href="<?= site_url('penerimaan_piutang') ?>"><span class="glyphicon glyphicon-download-alt cb-nav-icon" aria-hidden="true"></span>Penerimaan Piutang</a></li>
+                </ul>
                 <?php elseif ($this->session->userdata('role') === 'kasir'): ?>
                 <ul class="nav navbar-nav">
                     <li <?php if ($this->router->fetch_directory() == 'kasir/' && $this->router->fetch_class() == 'beranda') echo 'class="active"'; ?>><a href="<?= site_url('kasir/beranda') ?>"><span class="glyphicon glyphicon-home cb-nav-icon" aria-hidden="true"></span>Beranda</a></li>

@@ -17,7 +17,7 @@ foreach ($cash_accounts as $account) {
 }
 ?>
 <h3>Penerimaan Piutang</h3>
-<?php if ($this->session->userdata('role') === 'penjualan'): ?>
+<?php if (in_array($this->session->userdata('role'), array('penjualan', 'keuangan'), true)): ?>
     <p class="text-info">Penerimaan disimpan sebagai draft dan belum mengurangi piutang sampai diposting oleh Akuntansi atau Admin.</p>
 <?php endif; ?>
 <p class="text-muted" role="note">Nominal: pemisah ribuan ditambahkan otomatis; gunakan koma untuk desimal, misalnya <strong>1.000,50</strong>.</p>
@@ -231,6 +231,9 @@ $(function () {
     }
 
     function request(url, formData) {
+        <?php if ($this->session->userdata('role') === 'keuangan'): ?>
+        formData.append('keuangan_form_token', <?= json_encode($this->session->userdata('keuangan_form_token')) ?>);
+        <?php endif; ?>
         if (csrf) {
             formData.append(csrf.name, csrf.value);
         }

@@ -25,7 +25,7 @@ Sebelum mencatat transaksi, buka menu **Master** dan lengkapi data berikut:
 2. **Pengguna** — kelola akun yang dapat masuk ke perusahaan ini dan pilih role
    **Admin Perusahaan**, **User**, **Kasir**, **Penjualan**, **Purchasing**,
    **Gudang**, **Keuangan**, **Akuntansi**, atau **Manajer / Pemilik**. Role
-   Gudang, Purchasing, Penjualan, dan Kasir memiliki tampilan serta pembatasan akses khusus;
+   Gudang, Purchasing, Penjualan, Kasir, dan Keuangan memiliki tampilan serta pembatasan akses khusus;
    role lainnya belum dibatasi pada tingkat modul. Admin Perusahaan dan
    Akuntansi dapat mem-posting atau membatalkan transaksi; Kasir juga dapat
    menyelesaikan dan langsung mem-posting transaksi baru melalui POS, tetapi tidak
@@ -106,6 +106,22 @@ Piutang, pengelolaan pelanggan, serta katalog produk dan jasa yang hanya dapat
 dilihat. Penjualan dan penerimaan disimpan sebagai draft; posting dan pembatalan
 dilakukan Akuntansi/Admin. Katalog menampilkan saldo stok saat ini tanpa
 memperhitungkan draft sebagai reservasi.
+
+Role **Keuangan** menggunakan menu Beranda, Kas & Bank, Pembayaran Utang, dan
+Penerimaan Piutang. Pilih akun, pihak, dan tagihan yang sesuai lalu simpan
+transaksi sebagai draft; saldo dan tagihan belum berubah sampai Akuntansi/Admin
+melakukan posting. Pembatalan juga dilakukan Akuntansi/Admin. Pemasok atau
+pelanggan yang tidak aktif harus diaktifkan kembali oleh pengguna berwenang
+sebelum dapat dipilih.
+
+Beranda Keuangan menampilkan saldo jurnal tiap akun di bawah akun kas/bank 1100
+sampai hari ini, jumlah draft, serta tagihan terbuka dan lewat jatuh tempo untuk
+seluruh perusahaan. Utang mencakup saldo awal dan pembelian, perolehan aset, serta
+beban penjualan jasa kredit yang diposting dan memiliki jurnal. Piutang mencakup
+saldo awal, penjualan dan pelepasan aset kredit yang diposting. Pembayaran,
+penerimaan, serta retur mengurangi sisa hanya setelah diposting; tagihan dan
+draft bertanggal mendatang tetap ditampilkan menurut status saat ini. Saldo kas
+berasal dari jurnal, bukan koneksi langsung ke rekening bank.
 
 Beranda Penjualan menampilkan draft dan penjualan yang diposting bulan ini untuk
 seluruh perusahaan, pelanggan aktif, serta tagihan penjualan kredit yang belum

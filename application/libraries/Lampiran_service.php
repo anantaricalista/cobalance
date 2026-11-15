@@ -85,6 +85,8 @@ class Lampiran_service
             $sql .= " AND jenis_transaksi='penjualan'";
         } elseif ($this->ci->session->userdata('role') === 'penjualan') {
             $sql .= " AND jenis_transaksi IN ('penjualan', 'penerimaan_piutang')";
+        } elseif ($this->ci->session->userdata('role') === 'keuangan') {
+            $sql .= " AND jenis_transaksi IN ('kas_masuk', 'kas_keluar', 'transfer_kas', 'pembayaran_utang', 'penerimaan_piutang')";
         }
         $query = $this->ci->db->query($sql, array($company, $id));
         if (!$query) {

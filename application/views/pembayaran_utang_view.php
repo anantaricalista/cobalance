@@ -17,6 +17,9 @@ foreach ($cash_accounts as $account) {
 }
 ?>
 <h3>Pembayaran Utang</h3>
+<?php if ($this->session->userdata('role') === 'keuangan'): ?>
+    <p class="text-info">Pembayaran disimpan sebagai draft dan belum mengurangi utang sampai diposting oleh Akuntansi/Admin.</p>
+<?php endif; ?>
 <p class="text-muted" role="note">Nominal: pemisah ribuan ditambahkan otomatis; gunakan koma untuk desimal, misalnya <strong>1.000,50</strong>.</p>
 <p>Pembayaran dialokasikan ke tagihan pemasok dari pembelian, perolehan aset, beban penjualan jasa kredit, atau saldo awal utang. Saat diposting, jurnal otomatis mendebit utang usaha dan mengkredit kas/bank.</p>
 
@@ -256,6 +259,9 @@ $(function () {
     }
 
     function request(url, formData) {
+        <?php if ($this->session->userdata('role') === 'keuangan'): ?>
+        formData.append('keuangan_form_token', <?= json_encode($this->session->userdata('keuangan_form_token')) ?>);
+        <?php endif; ?>
         if (csrf) {
             formData.append(csrf.name, csrf.value);
         }

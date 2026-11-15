@@ -13,6 +13,9 @@ $map = function ($accounts) {
 };
 ?>
 <h3>Kas dan Bank</h3>
+<?php if ($this->session->userdata('role') === 'keuangan'): ?>
+    <p class="text-info">Transaksi disimpan sebagai draft; saldo dan jurnal baru berubah setelah diposting oleh Akuntansi/Admin.</p>
+<?php endif; ?>
 <p class="text-muted" role="note">Nominal: pemisah ribuan ditambahkan otomatis; gunakan koma untuk desimal, misalnya <strong>1.000,50</strong>.</p>
 <p>Catat kas masuk, kas keluar, dan transfer antar akun kas/bank. Posting membuat jurnal otomatis. Piutang dan utang usaha tidak dipilih di sini; gunakan modul Penerimaan Piutang dan Pembayaran Utang.</p>
 
@@ -220,6 +223,9 @@ $(function () {
 
     function request(url, fields, file) {
         var formData = new FormData();
+        <?php if ($this->session->userdata('role') === 'keuangan'): ?>
+        formData.append('keuangan_form_token', <?= json_encode($this->session->userdata('keuangan_form_token')) ?>);
+        <?php endif; ?>
         Object.keys(fields).forEach(function (key) { formData.append(key, fields[key]); });
         if (file) {
             formData.append('lampiran', file);
