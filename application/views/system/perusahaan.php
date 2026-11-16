@@ -25,7 +25,7 @@
         .system-panel label { color: #42536b; }
         .system-panel .form-control { border-color: #d6dfe8; border-radius: 6px; box-shadow: none; }
         .system-panel .form-control:focus { border-color: #4a93a5; box-shadow: 0 0 0 3px rgba(74,147,165,.13); }
-        .system-panel .btn-primary { border-color: #347e85; background: #347e85; }
+        .system-panel .btn-primary { border-color: #347e85; border-radius: 6px; background: #347e85; }
         .system-panel .btn-primary:hover, .system-panel .btn-primary:focus { border-color: #28666c; background: #28666c; }
         .system-panel .table { margin-bottom: 0; }
         .system-panel .table th { white-space: nowrap; }

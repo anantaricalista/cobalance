@@ -14,7 +14,7 @@ $selisih = $ringkasan['kemarin'] > 0 ? (($hari['total'] - $ringkasan['kemarin'])
     .kasir-home .clock { font-size: 30px; font-weight: 700; letter-spacing: 1px; line-height: 1.1; }
     .kasir-home .clock small { display: block; font-size: 13px; font-weight: 400; opacity: .85; letter-spacing: 0; }
     .kasir-home .cta { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 22px; }
-    .kasir-home .cta .btn-lg { align-self: center; }
+    .kasir-home .cta .btn-lg { border-radius: 9px; font-weight: 600; padding: 14px 26px; }
     .kasir-home .cta form { flex: 1 1 260px; display: flex; gap: 6px; min-width: 240px; }
     .kasir-home .cta form input { height: 100%; min-height: 50px; border-radius: 9px; }
     .kasir-home .stat { margin-bottom: 18px; padding: 18px; border: 1px solid #e1e8f0; border-left: 4px solid #4a93a5; border-radius: 10px; background: #fff; transition: transform .15s, box-shadow .15s; }

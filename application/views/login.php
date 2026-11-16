@@ -22,7 +22,7 @@
         .form-signin label { color: #42536b; font-size: 13px; }
         .form-signin .form-control { height: 44px; border-color: #d6dfe8; border-radius: 6px; box-shadow: none; }
         .form-signin .form-control:focus { border-color: #4a93a5; box-shadow: 0 0 0 3px rgba(74,147,165,.13); }
-        .form-signin .btn { margin-top: 22px; border-color: #347e85; background: #347e85; }
+        .form-signin .btn { margin-top: 22px; border-color: #347e85; border-radius: 6px; background: #347e85; font-size: 15px; font-weight: 600; }
         .form-signin .btn:hover, .form-signin .btn:focus { border-color: #28666c; background: #28666c; }
         .login-footer { margin-top: 20px; color: #8492a5; font-size: 12px; text-align: center; }
         @media (max-width: 480px) { .form-signin { padding: 24px 20px; } }
