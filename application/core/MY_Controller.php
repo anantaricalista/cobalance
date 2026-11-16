@@ -38,7 +38,9 @@ class MY_Controller extends CI_Controller
                 'laporan' => array('index', 'export_pdf'),
                 'laba_rugi' => array('index', 'ajax_get_laba_rugi', 'export_pdf'),
                 'neraca' => array('index', 'ajax_get_neraca', 'export_pdf'),
-                'bagan_akun' => array('index', 'ajax_get_chart', 'export_pdf')
+                'bagan_akun' => array('index', 'ajax_get_chart', 'export_pdf'),
+                'kontrol_periode' => array('index'),
+                'rekonsiliasi_bank' => array('index')
             );
             $class = $this->router->fetch_class();
             if (!isset($read_methods[$class]) || !in_array($this->router->fetch_method(), $read_methods[$class], true)) {
@@ -63,6 +65,18 @@ class MY_Controller extends CI_Controller
                 $this->session->set_userdata('keuangan_form_token', bin2hex(random_bytes(32)));
             }
         }
+        if (in_array($this->router->fetch_class(), array('kontrol_periode', 'rekonsiliasi_bank'), true)) {
+            $token = $this->session->userdata('kontrol_periode_form_token');
+            if ($this->input->method() === 'post') {
+                $submitted = $this->input->post('kontrol_periode_form_token');
+                if (!is_string($token) || $token === '' || !is_string($submitted) || !hash_equals($token, $submitted)) {
+                    show_error('Token formulir tidak valid. Muat ulang halaman.', 403);
+                    exit;
+                }
+            } elseif (!is_string($token) || $token === '') {
+                $this->session->set_userdata('kontrol_periode_form_token', bin2hex(random_bytes(32)));
+            }
+        }
     }
 
     // Role terbatas hanya boleh membuka controller modul perusahaan yang terdaftar di sini.
@@ -70,16 +84,19 @@ class MY_Controller extends CI_Controller
         'gudang' => array('home' => 'gudang/beranda', 'classes' => array()),
         'purchasing' => array('home' => 'purchasing/beranda', 'classes' => array('pembelian', 'pembayaran_utang', 'pemasok', 'produk')),
         'kasir' => array('home' => 'kasir/beranda', 'classes' => array('pos', 'penjualan', 'produk', 'pelanggan', 'lampiran')),
-        'keuangan' => array('home' => 'keuangan/beranda', 'classes' => array('kas_bank', 'pembayaran_utang', 'penerimaan_piutang', 'lampiran')),
+        'keuangan' => array('home' => 'keuangan/beranda', 'classes' => array(
+            'kas_bank', 'pembayaran_utang', 'penerimaan_piutang', 'rekonsiliasi_bank', 'lampiran'
+        )),
         'manajer' => array('home' => 'manajer', 'classes' => array('manajer', 'persediaan', 'jurnal',
-            'jurnal_umum', 'buku_besar', 'laporan', 'laba_rugi', 'neraca', 'bagan_akun')),
+        'jurnal_umum', 'buku_besar', 'laporan', 'laba_rugi', 'neraca', 'bagan_akun',
+        'kontrol_periode', 'rekonsiliasi_bank')),
         'akuntansi' => array('home' => 'akuntansi/beranda', 'classes' => array(
             'akun', 'pelanggan', 'pemasok', 'produk', 'pajak', 'pengaturan_akun',
             'saldo_awal', 'penjualan', 'beban_penjualan_jasa', 'penerimaan_piutang',
             'pembelian', 'pembayaran_utang', 'kas_bank', 'aset_tetap', 'persediaan',
             'penyesuaian_persediaan', 'usulan_opname', 'retur_persediaan', 'modal_prive',
             'penyesuaian_akuntansi', 'jurnal', 'buku_besar', 'jurnal_umum', 'laporan',
-            'laba_rugi', 'neraca', 'bagan_akun', 'lampiran'
+            'laba_rugi', 'neraca', 'bagan_akun', 'kontrol_periode', 'rekonsiliasi_bank', 'lampiran'
         )),
         'penjualan' => array('home' => 'sales/beranda', 'classes' => array('penjualan', 'penerimaan_piutang', 'pelanggan', 'produk', 'lampiran'))
     );

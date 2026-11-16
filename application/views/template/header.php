@@ -852,6 +852,8 @@
                     <li><a href="<?= site_url('manajer/tagihan/piutang') ?>"><span class="glyphicon glyphicon-download-alt cb-nav-icon" aria-hidden="true"></span>Piutang</a></li>
                     <li><a href="<?= site_url('persediaan') ?>"><span class="glyphicon glyphicon-inbox cb-nav-icon" aria-hidden="true"></span>Persediaan</a></li>
                     <li><a href="<?= site_url('jurnal') ?>"><span class="glyphicon glyphicon-book cb-nav-icon" aria-hidden="true"></span>Jurnal</a></li>
+                    <li><a href="<?= site_url('kontrol_periode') ?>"><span class="glyphicon glyphicon-calendar cb-nav-icon" aria-hidden="true"></span>Tutup Buku</a></li>
+                    <li><a href="<?= site_url('rekonsiliasi_bank') ?>"><span class="glyphicon glyphicon-transfer cb-nav-icon" aria-hidden="true"></span>Rekonsiliasi Bank</a></li>
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-stats cb-nav-icon" aria-hidden="true"></span>Laporan <span class="caret"></span></a>
                         <ul class="dropdown-menu">
@@ -868,6 +870,7 @@
                 <ul class="nav navbar-nav">
                     <li <?php if ($this->router->fetch_directory() == 'keuangan/' && $this->router->fetch_class() == 'beranda') echo 'class="active"'; ?>><a href="<?= site_url('keuangan/beranda') ?>"><span class="glyphicon glyphicon-home cb-nav-icon" aria-hidden="true"></span>Beranda</a></li>
                     <li <?php if ($this->router->fetch_class() == 'kas_bank') echo 'class="active"'; ?>><a href="<?= site_url('kas_bank') ?>"><span class="glyphicon glyphicon-transfer cb-nav-icon" aria-hidden="true"></span>Kas &amp; Bank</a></li>
+                    <li <?php if ($this->router->fetch_class() == 'rekonsiliasi_bank') echo 'class="active"'; ?>><a href="<?= site_url('rekonsiliasi_bank') ?>"><span class="glyphicon glyphicon-check cb-nav-icon" aria-hidden="true"></span>Rekonsiliasi Bank</a></li>
                     <li <?php if ($this->router->fetch_class() == 'pembayaran_utang') echo 'class="active"'; ?>><a href="<?= site_url('pembayaran_utang') ?>"><span class="glyphicon glyphicon-credit-card cb-nav-icon" aria-hidden="true"></span>Pembayaran Utang</a></li>
                     <li <?php if ($this->router->fetch_class() == 'penerimaan_piutang') echo 'class="active"'; ?>><a href="<?= site_url('penerimaan_piutang') ?>"><span class="glyphicon glyphicon-download-alt cb-nav-icon" aria-hidden="true"></span>Penerimaan Piutang</a></li>
                 </ul>
@@ -950,6 +953,19 @@
                     <li <?php if ($this->router->fetch_class() == 'jurnal')
                         echo 'class="active"'; ?>>
                         <a href="<?php echo site_url('jurnal'); ?>"><span class="glyphicon glyphicon-book cb-nav-icon" aria-hidden="true"></span>Jurnal Transaksi</a>
+                    </li>
+                    <li class="dropdown <?php if (in_array($this->router->fetch_class(), array('kontrol_periode', 'rekonsiliasi_bank'))) echo 'active'; ?>">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                            <span class="glyphicon glyphicon-calendar cb-nav-icon" aria-hidden="true"></span>Akuntansi <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li <?php if ($this->router->fetch_class() == 'kontrol_periode') echo 'class="active"'; ?>>
+                                <a href="<?= site_url('kontrol_periode') ?>">Tutup Buku</a>
+                            </li>
+                            <li <?php if ($this->router->fetch_class() == 'rekonsiliasi_bank') echo 'class="active"'; ?>>
+                                <a href="<?= site_url('rekonsiliasi_bank') ?>">Rekonsiliasi Bank</a>
+                            </li>
+                        </ul>
                     </li>
                     <li class="dropdown <?php if (in_array($this->router->fetch_class(), array('buku_besar', 'jurnal_umum', 'laporan', 'laba_rugi', 'neraca', 'bagan_akun')))
                         echo 'active'; ?>">

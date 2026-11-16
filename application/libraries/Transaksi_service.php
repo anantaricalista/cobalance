@@ -36,6 +36,7 @@ class Transaksi_service
         $perusahaan = $this->ci->session->userdata('id_perusahaan');
         $pengguna = $this->ci->session->userdata('id_pengguna');
         $db = $this->ci->db;
+        $this->pastikan_periode_terbuka($tanggal);
         $uuid = $db->query('SELECT UUID() AS nomor');
         if (!$uuid) {
             throw new RuntimeException('Gagal membuat nomor transaksi.');
@@ -72,6 +73,7 @@ class Transaksi_service
         if ($transaksi->status !== 'draft') {
             throw new DomainException('Hanya transaksi draft yang dapat diposting.');
         }
+        $this->pastikan_periode_terbuka($transaksi->tanggal);
         $detail = $siapkan_jurnal($transaksi, $this->ci->db);
         $this->validasi_jurnal($detail, $perusahaan, false, $akun_induk_diizinkan);
         $id_jurnal = $this->simpan_jurnal($transaksi, $transaksi->tanggal, $detail, 'posting');
@@ -99,6 +101,8 @@ class Transaksi_service
             if ($transaksi->status !== 'diposting' || $tanggal < $transaksi->tanggal) {
                 throw new DomainException('Transaksi tidak dapat dibatalkan pada tanggal tersebut.');
             }
+            $this->pastikan_periode_terbuka($transaksi->tanggal);
+            $this->pastikan_periode_terbuka($tanggal);
             $query = $db->query("SELECT j.id_jurnal FROM transaksi_jurnal tj
                 JOIN jurnal_transaksi j ON j.id_jurnal = tj.id_jurnal AND j.id_perusahaan = tj.id_perusahaan
                 WHERE tj.id_perusahaan = ? AND tj.id_transaksi = ? AND tj.jenis_jurnal = 'posting' FOR UPDATE",
@@ -164,10 +168,31 @@ class Transaksi_service
             $db->db_debug = $debug;
             return $result;
         } catch (Throwable $e) {
+            $error = $db->error();
+            $periodMessages = array(
+                'Periode transaksi sudah ditutup',
+                'Transaksi berada pada periode yang ditutup',
+                'Tanggal jurnal berada pada periode yang ditutup',
+                'Jurnal berada pada periode yang ditutup',
+                'Detail jurnal berada pada periode yang ditutup',
+                'Relasi transaksi dan jurnal berada pada periode yang ditutup',
+                'Mutasi persediaan berada pada periode yang ditutup',
+                'Penyusutan aset berada pada periode yang ditutup',
+                'Pelepasan aset berada pada periode yang ditutup',
+                'Aset tetap berasal dari periode yang ditutup',
+                'Nilai atau akun aset berasal dari periode yang ditutup'
+            );
             if ($db->trans_active() && !$db->trans_rollback()) {
                 log_message('error', 'Rollback transaksi gagal.');
             }
             $db->db_debug = $debug;
+            if (isset($error['code'], $error['message']) && (int) $error['code'] === 1644) {
+                foreach ($periodMessages as $message) {
+                    if (strpos($error['message'], $message) === 0) {
+                        throw new DomainException($message . '; minta Admin membuka kembali periode secara berurutan.');
+                    }
+                }
+            }
             if (!($e instanceof DomainException) && !($e instanceof InvalidArgumentException)) {
                 log_message('error', 'Transaksi gagal: ' . $e->getMessage());
             }
@@ -264,8 +289,29 @@ class Transaksi_service
         if (!is_string($tanggal)) {
             return false;
         }
+
         $date = DateTime::createFromFormat('!Y-m-d', $tanggal);
         return $date && $date->format('Y-m-d') === $tanggal;
+    }
+
+    public function pastikan_periode_terbuka($tanggal)
+    {
+        if (!$this->tanggal_valid($tanggal)) {
+            throw new InvalidArgumentException('Tanggal transaksi tidak valid.');
+        }
+        $db = $this->ci->db;
+        if (!$db->table_exists('periode_akuntansi')) {
+            return;
+        }
+        $query = $db->query("SELECT periode FROM periode_akuntansi
+            WHERE id_perusahaan=? AND status='ditutup' AND periode>=? LIMIT 1",
+            array($this->ci->session->userdata('id_perusahaan'), substr($tanggal, 0, 7) . '-01'));
+        if (!$query) {
+            throw new RuntimeException('Gagal memeriksa periode akuntansi.');
+        }
+        if ($query->row()) {
+            throw new DomainException('Periode transaksi sudah ditutup atau terdapat periode sesudahnya yang ditutup. Minta Admin membuka kembali periode secara berurutan.');
+        }
     }
 
     private function check($success)

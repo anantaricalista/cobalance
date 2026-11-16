@@ -312,6 +312,7 @@ class Saldo_awal_service
             $db = $this->ci->db;
             $this->require_admin();
             $opening = $this->posted_opening($company, true);
+            $this->ci->transaksi_service->pastikan_periode_terbuka($opening->tanggal);
             $before = $this->get();
             $this->assert_assets_owned($company, $opening->id_transaksi, $data);
             $clean = $this->validate($company, $data, $opening->tanggal, true, true);

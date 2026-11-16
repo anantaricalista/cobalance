@@ -19,6 +19,27 @@ Input nominal uang menggunakan format Indonesia, misalnya `1.000.000,50`
 (titik untuk ribuan dan koma untuk desimal, maksimal dua angka desimal).
 Jumlah barang, umur manfaat, dan persentase pajak tidak memakai format ini.
 
+## Tutup buku dan rekonsiliasi
+
+Cadangkan database, lalu jalankan
+`application/sql/20261116_pengendalian_periode_rekonsiliasi.sql` satu kali
+menggunakan klien MariaDB/MySQL yang mendukung perintah `DELIMITER`. Migrasi
+menambahkan status periode, klasifikasi akun kas/bank, rekening koran manual,
+dan trigger yang melindungi transaksi, jurnal, persediaan, serta aset tetap
+pada periode tertutup. Pastikan pengguna database memiliki hak membuat tabel,
+foreign key, dan trigger. Perintah DDL tidak digulung balik secara atomik: jika
+migrasi gagal sebagian, pulihkan cadangan atau tangani objek yang telah dibuat
+sebelum menjalankannya kembali. Akuntansi memeriksa kesiapan di **Akuntansi → Tutup Buku**;
+hanya Admin Perusahaan yang menutup atau membuka kembali periode terakhir.
+Keuangan menginput dan mencocokkan mutasi di **Rekonsiliasi Bank**. Pastikan
+semua akun rincian di bawah akun `1100` diklasifikasikan sebelum menutup buku.
+Rekonsiliasi ini memerlukan pencocokan satu-ke-satu pada bulan yang sama,
+termasuk seluruh jurnal bank, dengan saldo awal dan akhir sama dengan buku
+besar; transaksi dalam perjalanan belum didukung. Maksimal 200 baris mutasi
+per rekening dan bulan. Perubahan jurnal setelah rekonsiliasi akan diperiksa
+kembali saat tutup buku. Data historis register aset dari perolehan yang telah
+dibatalkan dan dihapus tidak dapat direkonstruksi otomatis.
+
 ## Tampilan
 
 Layout perusahaan menggunakan navigasi samping yang menyesuaikan menu setiap role.

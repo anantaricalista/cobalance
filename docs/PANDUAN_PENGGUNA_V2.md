@@ -62,13 +62,13 @@ berlanjut, hubungi pengelola; jangan membagikan password.
 | Role | Tugas utama | Posting atau pembatalan |
 |---|---|---|
 | Admin Perusahaan | Pengguna, data master, transaksi, jurnal, dan laporan perusahaan | Dapat posting dan membatalkan; khusus Admin dapat mengoreksi saldo awal terposting |
-| Akuntansi | Master terkait, transaksi, penyesuaian, jurnal, dan laporan | Dapat posting dan membatalkan |
-| Keuangan | Kas & Bank, Pembayaran Utang, Penerimaan Piutang | Menyimpan draft; Akuntansi/Admin melakukan posting dan pembatalan |
+| Akuntansi | Master terkait, transaksi, penyesuaian, jurnal, tutup buku, dan laporan | Dapat posting dan membatalkan; menyiapkan pemeriksaan periode |
+| Keuangan | Kas & Bank, rekonsiliasi bank, Pembayaran Utang, Penerimaan Piutang | Menyimpan draft dan menyiapkan rekonsiliasi; Akuntansi/Admin melakukan posting |
 | Purchasing | Pemasok, produk barang, Pembelian, Pembayaran Utang | Menyimpan draft; Akuntansi/Admin melakukan posting dan pembatalan |
 | Penjualan | Pelanggan, katalog, Penjualan, Penerimaan Piutang | Menyimpan draft; Akuntansi/Admin melakukan posting dan pembatalan |
 | Kasir | POS, pelanggan, katalog, struk, dan riwayat | POS menyelesaikan dan langsung posting; pembatalan oleh Akuntansi/Admin |
 | Gudang | Stok, kartu stok, dan usulan opname | Usulan tidak membuat jurnal atau mengubah stok |
-| Manajer / Pemilik | Ringkasan, penjualan, tagihan, stok, jurnal, dan laporan | Baca-saja |
+| Manajer / Pemilik | Ringkasan, penjualan, tagihan, stok, jurnal, tutup buku, rekonsiliasi, dan laporan | Baca-saja |
 
 **Draft** adalah transaksi yang disimpan untuk ditinjau; belum mengubah laporan,
 stok, atau tagihan. **Posting** membuat jurnal dan dampak bisnis sesuai jenis
@@ -143,9 +143,12 @@ Pengguna tidak tersedia. Menu **Transaksi**, **Jurnal Transaksi**, dan
 4. Periksa jumlah usulan opname menunggu. Buka **Transaksi → Opname &
    Penyesuaian**, tinjau stok sekarang dan usulan, kemudian tindak lanjuti
    sebagaimana bagian 11.8.
-5. Pada akhir periode, periksa penyesuaian, penyusutan, jurnal, neraca saldo,
-   laba rugi, dan neraca. Aplikasi **belum memiliki tutup buku atau penguncian
-   periode otomatis**; lakukan pengendalian periode secara prosedural.
+5. Pada akhir periode, buka **Akuntansi → Tutup Buku**, pilih bulan, lalu
+   tinjau seluruh hasil pemeriksaan, termasuk draft, keseimbangan jurnal,
+   piutang, utang, persediaan, aset tetap, klasifikasi kas/bank, dan rekonsiliasi
+   rekening bank. Akuntansi menyiapkan dan menyelesaikan temuan; hanya Admin
+   Perusahaan yang dapat menutup periode atau membuka kembali periode terakhir.
+   Tutup periode secara berurutan dan pastikan semua draft selesai.
 
 Beranda menampilkan draft seluruh perusahaan, termasuk tanggal mendatang,
 dan sampai 15 draft terawal menurut tanggal. Rincian piutang/utang saldo awal
@@ -155,7 +158,7 @@ saldo awal terposting tetap khusus Admin.
 ## 5. Keuangan
 
 **Masuk:** gunakan role **Keuangan**. Menu: **Beranda**, **Kas & Bank**,
-**Pembayaran Utang**, dan **Penerimaan Piutang**.
+**Rekonsiliasi Bank**, **Pembayaran Utang**, dan **Penerimaan Piutang**.
 
 1. Periksa saldo akun kas/bank, tagihan terbuka, tagihan lewat jatuh tempo,
    dan jumlah draft pada **Beranda**.
@@ -168,6 +171,18 @@ saldo awal terposting tetap khusus Admin.
    tagihan, isi alokasi dan akun penerimaan, lalu simpan draft.
 5. Minta Akuntansi/Admin memeriksa dan mem-posting. Draft belum mengurangi
    tagihan dan belum mengubah saldo kas.
+6. Pada **Rekonsiliasi Bank**, pilih rekening dan bulan, masukkan saldo awal,
+   saldo akhir, serta setiap mutasi rekening koran. Simpan, lalu cocokkan setiap
+   baris ke jurnal dengan arah dan nominal yang sama. Selesaikan rekonsiliasi
+   hanya setelah seluruh mutasi rekening dan jurnal cocok. Akuntansi/Admin juga
+   dapat meninjau dan menyelesaikan rekonsiliasi.
+
+   Input saldo dan jumlah pada halaman ini memakai titik sebagai pemisah
+   desimal tanpa pemisah ribuan, misalnya `1000.50`. Maksimal 200 mutasi per
+   rekening dan bulan. Menyimpan ulang rekening koran menghapus pencocokan
+   sebelumnya. Rekonsiliasi ini belum mendukung transaksi dalam perjalanan:
+   semua mutasi rekening dan jurnal pada bulan yang sama harus cocok satu
+   per satu, dan saldo awal serta akhir harus sama dengan buku besar.
 
 Saldo pada beranda berasal dari jurnal akun kas/bank hingga hari ini, bukan
 koneksi rekening bank. Tagihan mengikuti status saat ini dan dapat mencakup
@@ -289,6 +304,8 @@ bersifat baca-saja.
    neraca, laporan akuntansi, buku besar, jurnal umum, dan bagan akun.
 5. Pada **Mutasi Kas & Bank**, pilih periode untuk melihat saldo awal, masuk,
    keluar, saldo akhir, dan rincian bersih per jurnal.
+6. Gunakan **Tutup Buku** dan **Rekonsiliasi Bank** untuk melihat status
+   pemeriksaan dan hasil rekonsiliasi; seluruh akses Manajer bersifat baca-saja.
 
 Mutasi kas adalah nilai **bersih per jurnal**: debit dan kredit kas dalam
 jurnal yang sama saling mengurangi. Transfer internal bersih nol tidak
@@ -322,11 +339,11 @@ ulang sebagai pembukaan baru. Akumulasi penyusutan awal mencakup bulan
 pembukaan; penyusutan berikutnya dimulai sesudahnya.
 
 Koreksi pembukaan terposting hanya oleh Admin melalui pratinjau, alasan, dan
-konfirmasi. Aplikasi belum mengunci periode; Admin harus memastikan sendiri
-periode terbuka. Koreksi memperbarui jurnal awal dan dapat mengubah laporan
-historis. Jurnal HPP berikutnya tidak dihitung ulang, sedangkan jadwal dan
-jurnal penyusutan dihitung ulang; aset yang sudah dilepas tidak dapat dikoreksi
-melalui alur ini. Tinjau kembali laporan dan buku pembantu setelahnya.
+konfirmasi. Periode yang sudah ditutup harus dibuka kembali terlebih dahulu.
+Koreksi memperbarui jurnal awal dan dapat mengubah laporan historis. Jurnal
+HPP berikutnya tidak dihitung ulang, sedangkan jadwal dan jurnal penyusutan
+dihitung ulang; aset yang sudah dilepas tidak dapat dikoreksi melalui alur ini.
+Tinjau kembali laporan dan buku pembantu setelahnya.
 
 ### 11.2 Penjualan
 
@@ -500,6 +517,8 @@ Role operasional lain tidak memiliki seluruh menu ini.
 | Laporan → Laba Rugi | Pilih tanggal mulai/selesai, tampilkan atau ekspor | Pendapatan, beban, dan laba/rugi bersih selama periode |
 | Laporan → Neraca | Pilih tanggal neraca, tampilkan atau ekspor | Aset, kewajiban, dan ekuitas pada tanggal pilihan |
 | Laporan → Bagan Akun | Buka daftar atau PDF | Kode, nama, dan hierarki akun |
+| Akuntansi → Tutup Buku | Pilih bulan dan tinjau kesiapan; Admin menutup/membuka kembali periode terakhir | Semua pemeriksaan wajib lulus; penutupan harus berurutan |
+| Rekonsiliasi Bank (Keuangan) / Akuntansi → Rekonsiliasi Bank | Input saldo dan mutasi rekening koran, cocokkan ke jurnal, lalu selesaikan | Saldo awal/akhir harus sama dengan buku besar dan seluruh mutasi harus cocok |
 
 Draft tidak masuk laporan sampai diposting. Neraca saldo bukan laporan laba
 rugi; total debit/kredit dapat digunakan untuk memeriksa keseimbangan, tetapi
@@ -522,10 +541,18 @@ tersedia ditandai **Tidak tercatat**; nama pelaku mengikuti data pengguna saat i
 | Laporan tidak sesuai harapan | Periksa perusahaan, tanggal filter, status posting, akun terkait, jurnal pembalik, dan transaksi lanjutan. |
 | Struk POS dibutuhkan kembali | Buka **Riwayat Kasir** atau transaksi terbaru pada beranda Kasir. |
 
-**Belum tersedia:** modul Tutup Buku/Penguncian Periode, Rekonsiliasi Buku
-Pembantu, dan Rekonsiliasi Bank. Jangan mencari atau mengandalkan menu tersebut
-sebagai fitur aktif. Laporan arus kas terklasifikasi juga belum tersedia;
-Mutasi Kas & Bank Manajer adalah ringkasan bersih jurnal.
+Tutup Buku mencakup pemeriksaan rekonsiliasi buku pembantu piutang, utang,
+persediaan, dan aset tetap. Penguncian transaksi memerlukan migrasi
+`application/sql/20261116_pengendalian_periode_rekonsiliasi.sql`; cadangkan
+database dan jalankan satu kali sebelum menggunakan menu Tutup Buku atau
+Rekonsiliasi Bank. Rekening koran diinput manual. Laporan arus kas
+terklasifikasi tetap belum tersedia; Mutasi Kas & Bank Manajer adalah ringkasan
+bersih jurnal.
+
+Jika register aset perolehan lama sudah terhapus karena pembatalan, pemeriksaan
+aset untuk periode sebelum pembatalan dapat ditandai tidak tersedia dan perlu
+ditelusuri; aplikasi tidak mengarang data yang hilang. Tutup buku dan
+rekonsiliasi tidak membuat jurnal otomatis.
 
 ## 14. Persiapan teknis
 
