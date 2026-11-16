@@ -1,16 +1,14 @@
-<div class="row" style="margin-bottom:10px;">
-    <div class="col-xs-12 col-sm-6">
-        <h1>Data Pengguna</h1>
-    </div>
-    <div class="col-xs-12 col-sm-6 text-right" style="padding-top:20px;">
-        <button type="button" class="btn btn-success btn-sm" onclick="add_pengguna()">
-            <i class="glyphicon glyphicon-plus"></i> Tambah Pengguna
+<div class="master-page">
+<div class="master-card">
+    <div class="master-card-heading">
+        <div>
+            <h2>Daftar Pengguna</h2>
+            <p class="master-card-hint">Pilih role sesuai tugas pengguna. Admin Perusahaan dibuat saat perusahaan didaftarkan dan tidak dapat ditambah, dihapus, atau diubah rolenya di sini.</p>
+        </div>
+        <button type="button" class="btn btn-success master-add" onclick="add_pengguna()">
+            <i class="glyphicon glyphicon-plus" aria-hidden="true"></i> Tambah Pengguna
         </button>
     </div>
-</div>
-<p class="text-muted">
-    Pilih role sesuai tugas pengguna. Admin Perusahaan dibuat saat perusahaan didaftarkan dan tidak dapat ditambah, dihapus, atau diubah rolenya di sini.
-</p>
 
 <div class="table-responsive">
     <table id="table" class="table table-striped table-bordered" cellspacing="0" width="100%">
@@ -25,6 +23,8 @@
         </thead>
         <tbody></tbody>
     </table>
+</div>
+</div>
 </div>
 
 <div class="modal fade" id="modal_form" role="dialog" aria-labelledby="modal_title">

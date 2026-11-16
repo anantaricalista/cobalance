@@ -1,6 +1,10 @@
-<h3>Katalog Produk dan Jasa</h3>
-<p class="text-muted">Katalog hanya dapat dilihat. Stok barang menunjukkan saldo saat ini, bukan jumlah yang sudah dicadangkan untuk draft.</p>
-<form class="form-inline" method="get" action="<?= site_url('produk') ?>" style="margin-bottom: 15px">
+<div class="master-page">
+<div class="master-card">
+<div class="master-card-heading"><div>
+    <h2>Katalog Produk dan Jasa</h2>
+    <p class="master-card-hint">Katalog hanya dapat dilihat. Stok barang menunjukkan saldo saat ini, bukan jumlah yang sudah dicadangkan untuk draft.</p>
+</div></div>
+<form class="form-inline master-search" method="get" action="<?= site_url('produk') ?>">
     <label for="product-search">Cari produk</label>
     <input id="product-search" name="cari" class="form-control" type="text" maxlength="100" placeholder="Kode atau nama" value="<?= html_escape($search) ?>">
     <button class="btn btn-default" type="submit">Cari</button>
@@ -22,3 +26,5 @@
     <span>Halaman <?= (int) $page ?></span>
     <?php if ($more && $page < 999999): ?><a class="btn btn-default" href="<?= html_escape(site_url('produk?' . http_build_query(array('cari' => $search, 'halaman' => $page + 1)))) ?>">Berikutnya</a><?php endif; ?>
 </p>
+</div>
+</div>

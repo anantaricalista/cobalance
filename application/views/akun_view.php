@@ -1,14 +1,14 @@
-<!-- File: application/views/akun_view.php -->
-<div class="row" style="margin-bottom:10px;">
-    <div class="col-xs-12 col-sm-6">
-        <h1>Data Akun</h1>
-    </div>
-    <div class="col-xs-12 col-sm-6 text-right" style="padding-top:20px;">
-        <button class="btn btn-success btn-sm" onclick="add_akun()">
-            <i class="glyphicon glyphicon-plus"></i> Tambah Akun
+<div class="master-page">
+<div class="master-card">
+    <div class="master-card-heading">
+        <div>
+            <h2>Daftar Akun</h2>
+            <p class="master-card-hint">Kelola kode, nama, tipe, dan akun induk untuk pencatatan akuntansi.</p>
+        </div>
+        <button type="button" class="btn btn-success master-add" onclick="add_akun()">
+            <i class="glyphicon glyphicon-plus" aria-hidden="true"></i> Tambah Akun
         </button>
     </div>
-</div>
 
 <div class="table-responsive">
     <table id="table" class="table table-striped table-bordered" cellspacing="0" width="100%">
@@ -24,6 +24,8 @@
         </thead>
         <tbody></tbody>
     </table>
+</div>
+</div>
 </div>
 
 <!-- Modal Form -->

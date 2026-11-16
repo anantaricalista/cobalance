@@ -1,18 +1,5 @@
 <style>
-    .supplier-page { color: #263b51; padding: 14px 0 30px; }
-    .supplier-hero { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 20px; }
-    .supplier-eyebrow { color: #087c80; font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
-    .supplier-hero h1 { margin: 6px 0 8px; font-size: 30px; font-weight: 700; color: #183153; }
-    .supplier-hero p, .supplier-hint { color: #5e7084; line-height: 1.5; margin: 0; }
-    .supplier-add { border: 0; border-radius: 7px; padding: 11px 16px; background: #087d82; font-weight: 600; white-space: nowrap; }
-    .supplier-add:hover, .supplier-add:focus { background: #06696d; }
-    .supplier-panel { padding: 22px; background: #fff; border: 1px solid #e0e8ee; border-radius: 10px; box-shadow: 0 4px 18px rgba(27, 49, 79, .07); }
-    .supplier-panel h2 { font-size: 18px; font-weight: 700; margin: 0 0 6px; color: #183153; }
-    .supplier-panel .dataTables_wrapper { margin-top: 20px; }
-    .supplier-panel .table-responsive { border: 0; margin: 0; }
-    .supplier-panel .table { margin-top: 12px !important; }
-    .supplier-panel .table > thead > tr > th { background: #f3f8f9; border-bottom: 1px solid #dce8ea; font-size: 12px; color: #4a6070; white-space: nowrap; }
-    .supplier-panel .table > tbody > tr > td { vertical-align: middle; }
+    .supplier-hint { color: #5e7084; line-height: 1.5; margin: 0; }
     .supplier-status { display: inline-block; padding: 4px 9px; border-radius: 20px; font-size: 12px; font-weight: 700; white-space: nowrap; }
     .supplier-status.is-active { color: #126540; background: #e4f5ea; }
     .supplier-status.is-inactive { color: #5d6570; background: #eef1f4; }
@@ -25,29 +12,22 @@
     .supplier-modal .form-control:focus { border-color: #168a8e; box-shadow: 0 0 0 3px rgba(22, 138, 142, .12); }
     .supplier-modal .modal-footer { padding: 15px 24px; }
     @media (max-width: 767px) {
-        .supplier-hero { align-items: flex-start; flex-direction: column; }
-        .supplier-add { width: 100%; }
-        .supplier-panel { padding: 16px; }
         .supplier-modal .control-label { text-align: left; }
     }
 </style>
 
-<div class="supplier-page">
-    <div class="supplier-hero">
-        <div>
-            <span class="supplier-eyebrow">Master data</span>
-            <h1>Data Pemasok</h1>
-            <p>Kelola informasi dan status pemasok untuk transaksi pembelian.</p>
+<div class="master-page">
+    <div class="master-card">
+        <div class="master-card-heading">
+            <div>
+                <h2>Daftar Pemasok</h2>
+                <p class="master-card-hint">Kelola informasi dan status pemasok untuk transaksi pembelian. Cari berdasarkan kode, nama, atau kontak. Pemasok tidak aktif tidak dapat dipilih untuk pembelian baru.</p>
+            </div>
+            <button type="button" class="btn btn-success master-add" onclick="add_pemasok()">
+                <i class="glyphicon glyphicon-plus" aria-hidden="true"></i> Tambah Pemasok
+            </button>
         </div>
-        <button type="button" class="btn btn-success supplier-add" onclick="add_pemasok()">
-            <i class="glyphicon glyphicon-plus" aria-hidden="true"></i> Tambah Pemasok
-        </button>
-    </div>
-
-    <div id="supplier_message" role="status" aria-live="polite"></div>
-    <div class="supplier-panel">
-        <h2>Daftar Pemasok</h2>
-        <p class="supplier-hint">Cari pemasok berdasarkan kode, nama, atau kontak. Pemasok tidak aktif tidak dapat dipilih untuk pembelian baru.</p>
+        <div id="supplier_message" role="status" aria-live="polite"></div>
         <div class="table-responsive">
     <table id="table" class="table table-striped table-bordered" cellspacing="0" width="100%">
         <thead>
