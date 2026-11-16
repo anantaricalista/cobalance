@@ -41,6 +41,7 @@ $masterHints = array(
 );
 ?>
 <div class="master-page">
+<h1 class="master-page-title">Master Data - <?php echo html_escape($master['title']); ?></h1>
 <div class="master-card">
     <div class="master-card-heading">
         <div>

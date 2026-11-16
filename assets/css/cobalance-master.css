@@ -1,4 +1,5 @@
 .master-page { color: #263b51; padding: 14px 0 30px; }
+.master-page-title { margin: 0 0 16px; color: #087c80; font-size: 14px; font-weight: 700; }
 .master-card { padding: 22px; background: #fff; border: 1px solid #e0e8ee; border-radius: 10px; box-shadow: 0 4px 18px rgba(27, 49, 79, .07); }
 .master-card-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; }
 .master-card h2 { margin: 0 0 6px; color: #183153; font-size: 18px; font-weight: 700; }
