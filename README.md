@@ -11,8 +11,9 @@ only, then disable it again after investigation.
 
 ## Panduan pengguna
 
-Lihat [Panduan Pengguna Co-Balance](docs/PANDUAN_PENGGUNA.md) untuk alur dari
-login, pengaturan data awal, pencatatan transaksi, hingga membaca laporan.
+Lihat [Panduan Pengguna Co-Balance Versi 2](docs/PANDUAN_PENGGUNA_V2.md) untuk
+petunjuk per role dan alur penggunaan setiap modul. [Panduan sebelumnya](docs/PANDUAN_PENGGUNA.md)
+tetap tersedia sebagai ringkasan dari login hingga membaca laporan.
 
 Input nominal uang menggunakan format Indonesia, misalnya `1.000.000,50`
 (titik untuk ribuan dan koma untuk desimal, maksimal dua angka desimal).
