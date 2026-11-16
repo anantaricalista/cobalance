@@ -7,6 +7,7 @@
     <link rel="icon" type="image/png" sizes="32x32" href="<?= base_url('assets/img/favicon-32.png') ?>">
     <link rel="apple-touch-icon" sizes="180x180" href="<?= base_url('assets/img/apple-touch-icon.png') ?>">
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="<?= base_url('assets/css/cobalance-buttons.css') ?>" rel="stylesheet">
     <style>
         body { background: #f4f6f9; color: #263248; }
         .system-bar { background: #243444; color: #fff; padding: 18px 0; box-shadow: 0 3px 14px rgba(23,38,55,.14); }
@@ -24,7 +25,7 @@
         .system-panel label { color: #42536b; }
         .system-panel .form-control { border-color: #d6dfe8; border-radius: 6px; box-shadow: none; }
         .system-panel .form-control:focus { border-color: #4a93a5; box-shadow: 0 0 0 3px rgba(74,147,165,.13); }
-        .system-panel .btn-primary { border-color: #347e85; border-radius: 6px; background: #347e85; }
+        .system-panel .btn-primary { border-color: #347e85; background: #347e85; }
         .system-panel .btn-primary:hover, .system-panel .btn-primary:focus { border-color: #28666c; background: #28666c; }
         .system-panel .table { margin-bottom: 0; }
         .system-panel .table th { white-space: nowrap; }

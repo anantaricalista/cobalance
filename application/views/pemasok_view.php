@@ -4,7 +4,7 @@
     .supplier-eyebrow { color: #087c80; font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
     .supplier-hero h1 { margin: 6px 0 8px; font-size: 30px; font-weight: 700; color: #183153; }
     .supplier-hero p, .supplier-hint { color: #5e7084; line-height: 1.5; margin: 0; }
-    .supplier-add { border: 0; border-radius: 7px; padding: 11px 16px; background: #087d82; font-weight: 600; white-space: nowrap; }
+    .supplier-add { border: 0; background: #087d82; white-space: nowrap; }
     .supplier-add:hover, .supplier-add:focus { background: #06696d; }
     .supplier-panel { padding: 22px; background: #fff; border: 1px solid #e0e8ee; border-radius: 10px; box-shadow: 0 4px 18px rgba(27, 49, 79, .07); }
     .supplier-panel h2 { font-size: 18px; font-weight: 700; margin: 0 0 6px; color: #183153; }
