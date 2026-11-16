@@ -17,7 +17,6 @@
 </style>
 
 <div class="master-page">
-    <h1 class="master-page-title">Master Data - Pemasok</h1>
     <div class="master-card">
         <div class="master-card-heading">
             <div>

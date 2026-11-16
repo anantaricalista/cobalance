@@ -1,5 +1,4 @@
 <div class="master-page">
-<h1 class="master-page-title">Master Data - Produk dan Jasa</h1>
 <div class="master-card">
 <div class="master-card-heading"><div>
     <h2>Katalog Produk dan Jasa</h2>
