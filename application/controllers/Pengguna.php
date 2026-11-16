@@ -49,8 +49,8 @@ class Pengguna extends MY_Controller
                 html_escape($user->nama_lengkap),
                 html_escape($user->username),
                 html_escape(isset($roles[$user->role]) ? $roles[$user->role] : ($user->role === 'user' ? 'User (perlu role baru)' : (string) $user->role)),
-                '<button type="button" class="btn btn-sm btn-primary" title="Edit" onclick="edit_pengguna(' . $id . ')"><i class="glyphicon glyphicon-pencil"></i></button> '
-                . ($user->role === 'admin' ? '' : '<button type="button" class="btn btn-sm btn-danger" title="Hapus" onclick="delete_pengguna(' . $id . ')"><i class="glyphicon glyphicon-trash"></i></button>')
+                '<button type="button" class="btn btn-sm btn-default supplier-edit" title="Edit" aria-label="Edit" onclick="edit_pengguna(' . $id . ')"><i class="glyphicon glyphicon-pencil" aria-hidden="true"></i> Edit</button> '
+                . ($user->role === 'admin' ? '' : '<button type="button" class="btn btn-sm btn-default supplier-delete" title="Hapus" aria-label="Hapus" onclick="delete_pengguna(' . $id . ')"><i class="glyphicon glyphicon-trash" aria-hidden="true"></i></button>')
             );
         }
         $this->json(array(

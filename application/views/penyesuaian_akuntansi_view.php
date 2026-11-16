@@ -175,7 +175,8 @@ $(function () {
         var credit = $('<input class="form-control adjustment-credit" type="text" inputmode="decimal">');
         var description = $('<input class="form-control adjustment-line-description" maxlength="255">');
         row.append(account, $('<td>').append(debit), $('<td>').append(credit), $('<td>').append(description),
-            $('<td>').append($('<button type="button" class="btn btn-danger adjustment-remove-line">').text('Hapus')));
+            $('<td>').append($('<button type="button" class="btn btn-sm btn-default supplier-delete adjustment-remove-line" title="Hapus baris" aria-label="Hapus baris">')
+                .append('<i class="glyphicon glyphicon-trash" aria-hidden="true"></i>')));
         $('#adjustment-lines tbody').append(row);
         MoneyInput.init(debit[0], line ? line.debit : '');
         MoneyInput.init(credit[0], line ? line.kredit : '');

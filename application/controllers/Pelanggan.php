@@ -42,8 +42,8 @@ class Pelanggan extends MY_Controller
                 html_escape($pelanggan->telepon === null ? '' : $pelanggan->telepon),
                 html_escape($pelanggan->email === null ? '' : $pelanggan->email),
                 $pelanggan->aktif ? 'Aktif' : 'Tidak Aktif',
-                '<button type="button" class="btn btn-sm btn-primary" title="Edit" onclick="edit_pelanggan(' . $id . ')"><i class="glyphicon glyphicon-pencil"></i></button> '
-                . '<button type="button" class="btn btn-sm btn-danger" title="Hapus" onclick="delete_pelanggan(' . $id . ')"><i class="glyphicon glyphicon-trash"></i></button>'
+                '<button type="button" class="btn btn-sm btn-default supplier-edit" title="Edit" aria-label="Edit" onclick="edit_pelanggan(' . $id . ')"><i class="glyphicon glyphicon-pencil" aria-hidden="true"></i> Edit</button> '
+                . '<button type="button" class="btn btn-sm btn-default supplier-delete" title="Hapus" aria-label="Hapus" onclick="delete_pelanggan(' . $id . ')"><i class="glyphicon glyphicon-trash" aria-hidden="true"></i></button>'
             );
         }
         $this->json(array(

@@ -1,9 +1,15 @@
-/* Match the button dimensions of the Pemasok edit/delete actions. */
-.btn,
-.btn.btn-lg,
-.btn.btn-sm,
-.btn.btn-xs {
-    min-height: 30px !important;
-    padding: 5px 10px !important;
-    font-size: 12px !important;
+.btn.supplier-edit {
+    color: #08767a;
+    border-color: #b6dadd;
+    font-weight: 600;
+}
+
+.btn.supplier-delete {
+    color: #a63c3c;
+    font-weight: 400;
+}
+
+.transaction-ui .btn.supplier-edit .glyphicon,
+.transaction-ui .btn.supplier-delete .glyphicon {
+    margin-right: 0;
 }

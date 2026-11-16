@@ -113,7 +113,7 @@
                 <td>Rp <?= html_escape(format_nominal($item->total)) ?></td><td><?= html_escape($item->status) ?></td>
                 <td>
                     <?php if ($item->status === 'draft'): ?>
-                        <button type="button" class="btn btn-default btn-xs expense-edit" data-id="<?= (int) $item->id_transaksi ?>">Edit</button>
+                        <button type="button" class="btn btn-sm btn-default supplier-edit expense-edit" data-id="<?= (int) $item->id_transaksi ?>"><i class="glyphicon glyphicon-pencil" aria-hidden="true"></i> Edit</button>
                         <?php if ($this->can_post_transactions): ?><button type="button" class="btn btn-success btn-xs expense-post" data-id="<?= (int) $item->id_transaksi ?>">Posting</button><?php endif; ?>
                     <?php elseif ($item->status === 'diposting' && $this->can_post_transactions): ?>
                         <button type="button" class="btn btn-danger btn-xs expense-cancel" data-id="<?= (int) $item->id_transaksi ?>">Batalkan</button>

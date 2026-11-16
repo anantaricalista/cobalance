@@ -262,8 +262,8 @@ $(function () {
         });
         row.append($('<td>').append(tax));
         if (editable) {
-            row.append($('<td>').append($('<button type="button" class="btn btn-danger btn-xs">')
-                .text('Hapus').on('click', function () { row.remove(); })));
+            row.append($('<td>').append($('<button type="button" class="btn btn-sm btn-default supplier-delete" title="Hapus rincian" aria-label="Hapus rincian">')
+                .append('<i class="glyphicon glyphicon-trash" aria-hidden="true"></i>').on('click', function () { row.remove(); })));
         }
         $('#sale-lines tbody').append(row);
     }

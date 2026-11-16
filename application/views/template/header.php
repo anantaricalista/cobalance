@@ -802,7 +802,7 @@
         }
     </style>
     <link href="<?= base_url('assets/css/cobalance-layout.css') ?>" rel="stylesheet">
-    <link href="<?= base_url('assets/css/cobalance-buttons.css') ?>" rel="stylesheet">
+    <link href="<?= base_url('assets/css/cobalance-buttons.css?v=2') ?>" rel="stylesheet">
 </head>
 
 <body class="cb-layout <?php echo in_array($this->router->fetch_class(), array(

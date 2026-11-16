@@ -187,7 +187,8 @@ $(function () {
         var amount = $('<input class="form-control" type="number" min="0.01" step="0.01" required data-field="jumlah">');
         MoneyInput.init(amount[0], values.subtotal || values.jumlah || '');
         row.append($('<td>').append(amount));
-        row.append($('<td>').append($('<button type="button" class="btn btn-danger btn-xs">').text('Hapus')
+        row.append($('<td>').append($('<button type="button" class="btn btn-sm btn-default supplier-delete" title="Hapus rincian" aria-label="Hapus rincian">')
+            .append('<i class="glyphicon glyphicon-trash" aria-hidden="true"></i>')
             .on('click', function () { row.remove(); })));
         $('#cash-lines tbody').append(row);
     }

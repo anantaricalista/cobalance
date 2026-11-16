@@ -253,8 +253,8 @@ $(function () {
         if (kind === 'aset' && values.id_aset_tetap != null) {
             row.append($('<input type="hidden" data-field="id_aset_tetap">').val(values.id_aset_tetap));
         }
-        if (editable) row.append($('<td>').append($('<button type="button" class="btn btn-danger btn-sm">')
-            .attr('aria-label', 'Hapus rincian ' + kind).append($('<span class="glyphicon glyphicon-trash" aria-hidden="true">'))
+        if (editable) row.append($('<td>').append($('<button type="button" class="btn btn-sm btn-default supplier-delete">')
+            .attr('title', 'Hapus rincian ' + kind).attr('aria-label', 'Hapus rincian ' + kind).append($('<span class="glyphicon glyphicon-trash" aria-hidden="true">'))
             .on('click', function () { row.remove(); updateCounts(); updatePreview(); })));
         $('#table-' + kind + ' tbody').append(row);
         updateCounts();

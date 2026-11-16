@@ -32,11 +32,11 @@ class Akun extends MY_Controller
             $row[] = html_escape($akun->nama_akun);
             $row[] = html_escape($akun->tipe_akun);
             $row[] = html_escape($akun->nama_akun_induk === null ? '' : $akun->nama_akun_induk);
-            $row[] = '<a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Edit" onclick="edit_akun(' . "'" . $akun->id_akun . "'" . ')">
-                        <i class="glyphicon glyphicon-pencil"></i>
+            $row[] = '<a class="btn btn-sm btn-default supplier-edit" href="javascript:void(0)" title="Edit" aria-label="Edit" onclick="edit_akun(' . "'" . $akun->id_akun . "'" . ')">
+                        <i class="glyphicon glyphicon-pencil" aria-hidden="true"></i> Edit
                       </a>
-                      <a class="btn btn-sm btn-danger" href="javascript:void(0)" title="Hapus" onclick="delete_akun(' . "'" . $akun->id_akun . "'" . ')">
-                        <i class="glyphicon glyphicon-trash"></i>
+                      <a class="btn btn-sm btn-default supplier-delete" href="javascript:void(0)" title="Hapus" aria-label="Hapus" onclick="delete_akun(' . "'" . $akun->id_akun . "'" . ')">
+                        <i class="glyphicon glyphicon-trash" aria-hidden="true"></i>
                       </a>';
             $data[] = $row;
         }

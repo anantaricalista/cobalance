@@ -77,8 +77,8 @@ abstract class Master_Controller extends MY_Controller
                         '" alt="Gambar produk" loading="lazy">'
                     : '<span class="text-muted">Tidak ada</span>';
             }
-            $row[] = '<button type="button" class="btn btn-sm btn-primary" title="Edit" onclick="edit_master(' . $id . ')"><i class="glyphicon glyphicon-pencil"></i></button> '
-                . '<button type="button" class="btn btn-sm btn-danger" title="Hapus" onclick="delete_master(' . $id . ')"><i class="glyphicon glyphicon-trash"></i></button>';
+            $row[] = '<button type="button" class="btn btn-sm btn-default supplier-edit" title="Edit" aria-label="Edit" onclick="edit_master(' . $id . ')"><i class="glyphicon glyphicon-pencil" aria-hidden="true"></i> Edit</button> '
+                . '<button type="button" class="btn btn-sm btn-default supplier-delete" title="Hapus" aria-label="Hapus" onclick="delete_master(' . $id . ')"><i class="glyphicon glyphicon-trash" aria-hidden="true"></i></button>';
             $rows[] = $row;
         }
         $this->json(array(

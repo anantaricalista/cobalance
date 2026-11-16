@@ -129,7 +129,12 @@
             var minus = make('button', '−', 'btn btn-default btn-sm'), plus = make('button', '+', 'btn btn-default btn-sm');
             var input = make('input', null, 'form-control input-sm'); input.type = 'text'; input.inputMode = 'decimal'; input.value = decimal(item.qty, 4).replace(/0+$/, '').replace(/\.$/, '').replace('.', ',');
             input.setAttribute('aria-label', 'Jumlah ' + item.product.nama_produk);
-            var remove = make('button', 'Hapus', 'btn btn-link btn-sm');
+            var remove = make('button', null, 'btn btn-sm btn-default supplier-delete');
+            remove.title = 'Hapus ' + item.product.nama_produk;
+            remove.setAttribute('aria-label', remove.title);
+            var removeIcon = make('i', null, 'glyphicon glyphicon-trash');
+            removeIcon.setAttribute('aria-hidden', 'true');
+            remove.appendChild(removeIcon);
             minus.onclick = function () { if (item.qty <= qtyScale) delete cart[id]; else item.qty -= qtyScale; renderCart(); };
             plus.onclick = function () { item.qty += qtyScale; renderCart(); };
             input.onchange = function () {

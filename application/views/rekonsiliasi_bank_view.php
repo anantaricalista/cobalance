@@ -66,7 +66,7 @@
                                     <option value="keluar"<?= $line->arah === 'keluar' ? ' selected' : '' ?>>Keluar</option>
                                 </select></td>
                                 <td><input class="form-control input-sm" type="number" min="0.01" step="0.01" name="mutasi[<?= (int) $i ?>][jumlah]" value="<?= html_escape($line->jumlah) ?>"></td>
-                                <td><button class="btn btn-xs btn-default remove-statement-line" type="button">Hapus</button></td>
+                                <td><button class="btn btn-sm btn-default supplier-delete remove-statement-line" type="button" title="Hapus mutasi" aria-label="Hapus mutasi"><i class="glyphicon glyphicon-trash" aria-hidden="true"></i></button></td>
                             </tr>
                         <?php endforeach; ?>
                         </tbody>
@@ -170,7 +170,7 @@
                 '<td><input class="form-control input-sm" maxlength="255" name="mutasi[' + next + '][keterangan]"></td>' +
                 '<td><select class="form-control input-sm" name="mutasi[' + next + '][arah]"><option value="masuk">Masuk</option><option value="keluar">Keluar</option></select></td>' +
                 '<td><input class="form-control input-sm" type="number" min="0.01" step="0.01" name="mutasi[' + next + '][jumlah]"></td>' +
-                '<td><button class="btn btn-xs btn-default remove-statement-line" type="button">Hapus</button></td>';
+                '<td><button class="btn btn-sm btn-default supplier-delete remove-statement-line" type="button" title="Hapus mutasi" aria-label="Hapus mutasi"><i class="glyphicon glyphicon-trash" aria-hidden="true"></i></button></td>';
             body.appendChild(row);
             updateCount();
             bindRemove(row.querySelector('.remove-statement-line'));

@@ -16,8 +16,6 @@
     .supplier-status { display: inline-block; padding: 4px 9px; border-radius: 20px; font-size: 12px; font-weight: 700; white-space: nowrap; }
     .supplier-status.is-active { color: #126540; background: #e4f5ea; }
     .supplier-status.is-inactive { color: #5d6570; background: #eef1f4; }
-    .supplier-edit { color: #08767a; border-color: #b6dadd; font-weight: 600; }
-    .supplier-delete { color: #a63c3c; }
     .supplier-modal .modal-content { border: 0; border-radius: 10px; overflow: hidden; }
     .supplier-modal .modal-header { padding: 20px 24px; background: #f3f9f9; }
     .supplier-modal .modal-title { color: #183153; font-weight: 700; }
