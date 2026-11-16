@@ -300,8 +300,10 @@ peringatan di layar sebelum melanjutkan.
 
 Buka menu **Laporan** setelah transaksi diposting:
 
-- **Laporan Akuntansi (Trial Balance)** merangkum debit, kredit, dan saldo akun.
-  Gunakan untuk memeriksa keseimbangan pembukuan; tersedia ekspor PDF.
+- **Laporan Akuntansi (Trial Balance)** merangkum akumulasi debit, kredit, dan
+  saldo akun sampai tanggal yang dipilih, termasuk jurnal pembalik. Gunakan
+  untuk memeriksa keseimbangan pembukuan; tersedia ekspor PDF dengan tanggal
+  yang sama.
 - **Laba Rugi** menampilkan pendapatan, beban, dan laba/rugi bersih untuk rentang
   tanggal. Pilih tanggal mulai dan selesai, lalu tekan **Tampilkan**. Periode bulan
   berjalan dimuat sebagai nilai awal; tersedia ekspor PDF.

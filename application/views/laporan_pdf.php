@@ -87,6 +87,7 @@
             </td>
         </tr>
     </table>
+    <p>Akumulasi jurnal sampai dengan <?= html_escape(format_tanggal_indonesia($tanggal)) ?>, termasuk jurnal pembalik.</p>
     <table class="laporan-table">
         <thead>
             <tr>
@@ -109,10 +110,10 @@
                 ?>
                 <tr>
                     <td>
-                        <?php echo $row->kode_akun; ?>
+                        <?php echo html_escape($row->kode_akun); ?>
                     </td>
                     <td class="left">
-                        <?php echo $row->nama_akun; ?>
+                        <?php echo html_escape($row->nama_akun); ?>
                     </td>
                     <td style="text-align:right;">
                         <?php echo format_nominal($row->total_debit); ?>

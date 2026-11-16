@@ -4,12 +4,19 @@
         <h1>Laporan Akuntansi (Trial Balance)</h1>
     </div>
     <div class="col-xs-12 col-sm-6 text-right" style="padding-top:20px;">
-        <a class="btn btn-warning btn-sm" href="<?php echo site_url('laporan/export_pdf'); ?>" target="_blank"
+        <a class="btn btn-warning btn-sm" href="<?= site_url('laporan/export_pdf') . '?tanggal=' . rawurlencode($tanggal) ?>" target="_blank"
             title="Export PDF">
             <i class="glyphicon glyphicon-file"></i>
         </a>
     </div>
 </div>
+
+<form method="get" action="<?= site_url('laporan') ?>" class="form-inline" style="margin-bottom:20px">
+    <label for="tanggal">Tanggal neraca saldo</label>
+    <input type="date" name="tanggal" id="tanggal" class="form-control" value="<?= html_escape($tanggal) ?>" required>
+    <button type="submit" class="btn btn-primary">Tampilkan</button>
+</form>
+<p>Akumulasi jurnal sampai dengan <?= html_escape(format_tanggal_indonesia($tanggal)) ?>, termasuk jurnal pembalik.</p>
 
 <div class="table-responsive">
     <table class="table table-striped table-bordered">
@@ -27,10 +34,10 @@
                 <?php foreach ($laporan as $row): ?>
                     <tr>
                         <td>
-                            <?php echo $row->kode_akun; ?>
+                            <?php echo html_escape($row->kode_akun); ?>
                         </td>
                         <td>
-                            <?php echo $row->nama_akun; ?>
+                            <?php echo html_escape($row->nama_akun); ?>
                         </td>
                         <td style="text-align:right;">
                             <?php echo format_nominal($row->total_debit); ?>
