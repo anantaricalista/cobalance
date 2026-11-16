@@ -11,19 +11,18 @@ Untuk pemasangan, skema database, dan migrasi, pengelola teknis perlu membaca
 
 - [Mulai menggunakan aplikasi](#1-mulai-menggunakan-aplikasi)
 - [Hak akses dan alur kerja](#2-hak-akses-dan-alur-kerja)
-- [System Admin](#3-system-admin)
-- [Admin Perusahaan](#4-admin-perusahaan)
-- [Akuntansi](#5-akuntansi)
-- [Keuangan](#6-keuangan)
-- [Purchasing](#7-purchasing)
-- [Penjualan](#8-penjualan)
-- [Kasir](#9-kasir)
-- [Gudang](#10-gudang)
-- [Manajer / Pemilik](#11-manajer--pemilik)
-- [Petunjuk transaksi](#12-petunjuk-transaksi)
-- [Jurnal dan laporan](#13-jurnal-dan-laporan)
-- [Masalah umum dan batasan](#14-masalah-umum-dan-batasan)
-- [Persiapan teknis](#15-persiapan-teknis)
+- [Admin Perusahaan](#3-admin-perusahaan)
+- [Akuntansi](#4-akuntansi)
+- [Keuangan](#5-keuangan)
+- [Purchasing](#6-purchasing)
+- [Penjualan](#7-penjualan)
+- [Kasir](#8-kasir)
+- [Gudang](#9-gudang)
+- [Manajer / Pemilik](#10-manajer--pemilik)
+- [Petunjuk transaksi](#11-petunjuk-transaksi)
+- [Jurnal dan laporan](#12-jurnal-dan-laporan)
+- [Masalah umum dan batasan](#13-masalah-umum-dan-batasan)
+- [Persiapan teknis](#14-persiapan-teknis)
 
 ## 1. Mulai menggunakan aplikasi
 
@@ -35,8 +34,7 @@ Untuk pemasangan, skema database, dan migrasi, pengelola teknis perlu membaca
    Hubungi Admin Perusahaan jika role atau perusahaan tidak sesuai.
 3. Gunakan tombol menu untuk membuka atau menyembunyikan navigasi. Pada layar
    kecil, navigasi ditampilkan sebagai panel.
-4. Pilih **Keluar** setelah selesai, terutama pada perangkat bersama. System
-   Admin juga menggunakan tombol **Keluar** pada halaman pengelolaan perusahaan.
+4. Pilih **Keluar** setelah selesai, terutama pada perangkat bersama.
 
 Jika gagal masuk, periksa username dan password. Terlalu banyak percobaan dari
 alamat jaringan yang sama dapat membatasi login selama 15 menit. Jika masalah
@@ -63,7 +61,6 @@ berlanjut, hubungi pengelola; jangan membagikan password.
 
 | Role | Tugas utama | Posting atau pembatalan |
 |---|---|---|
-| System Admin | Membuat perusahaan dan adminnya | Tidak mengakses modul transaksi perusahaan |
 | Admin Perusahaan | Pengguna, data master, transaksi, jurnal, dan laporan perusahaan | Dapat posting dan membatalkan; khusus Admin dapat mengoreksi saldo awal terposting |
 | Akuntansi | Master terkait, transaksi, penyesuaian, jurnal, dan laporan | Dapat posting dan membatalkan |
 | Keuangan | Kas & Bank, Pembayaran Utang, Penerimaan Piutang | Menyimpan draft; Akuntansi/Admin melakukan posting dan pembatalan |
@@ -85,34 +82,12 @@ yang selesai langsung diposting. Jika muncul pesan kesalahan, baca penyebabnya
 dan perbaiki data sebelum mencoba lagi; jangan menganggap transaksi berhasil
 hanya karena tombol ditekan.
 
-## 3. System Admin
-
-**Masuk:** gunakan akun `system` pada halaman login biasa. Akun ini berbeda dari
-Admin Perusahaan dan tidak masuk ke modul operasional perusahaan.
-
-**Membuat perusahaan:**
-
-1. Pada halaman **Tambah Perusahaan**, isi nama perusahaan; alamat, email, dan
-   telepon dapat dilengkapi sesuai kebutuhan.
-2. Isi nama, username, dan password Admin Perusahaan. Username harus unik,
-   menggunakan huruf, angka, titik, garis bawah, atau tanda hubung; `system`
-   tidak boleh digunakan. Password baru 8–72 byte.
-3. Pilih **Buat Perusahaan**. Perusahaan dibuat bersama satu admin dan salinan
-   hierarki master akun dari perusahaan template ID 1.
-4. Periksa hasil pada **Daftar Perusahaan** dan sampaikan kredensial kepada
-   Admin melalui saluran aman.
-
-Perusahaan template ID 1 dan hierarki akunnya harus tersedia dan valid.
-Pengaturan akun, pelanggan, pemasok, produk, serta transaksi tidak disalin;
-Admin perusahaan harus menyiapkannya. Jika perusahaan lama tidak memiliki
-admin, hubungi pengelola database; System Admin tidak otomatis memperbaikinya.
-
-## 4. Admin Perusahaan
+## 3. Admin Perusahaan
 
 **Masuk:** gunakan akun Admin untuk perusahaan yang dituju. Menu utama meliputi
 **Master**, **Transaksi**, **Jurnal Transaksi**, dan **Laporan**.
 
-### 4.1 Siapkan perusahaan
+### 3.1 Siapkan perusahaan
 
 1. Buka **Master → Akun**; periksa kode, nama, tipe, dan hubungan akun induk.
    Gunakan akun rincian untuk transaksi yang mensyaratkannya.
@@ -122,11 +97,11 @@ admin, hubungi pengelola database; System Admin tidak otomatis memperbaikinya.
 3. Lengkapi **Master → Pelanggan**, **Pemasok**, **Produk dan Jasa**, serta
    **Pajak**. Siapkan pelanggan umum jika POS melayani pembeli tanpa identitas.
 4. Jika usaha sudah memiliki saldo sebelum memakai aplikasi, catat **Transaksi →
-   Saldo Awal** sebelum transaksi rutin; lihat bagian 12.1.
+   Saldo Awal** sebelum transaksi rutin; lihat bagian 11.1.
 5. Buat akun petugas di **Master → Pengguna** dan berikan role sesuai tugas.
    Sampaikan username dan password awal melalui saluran aman.
 
-### 4.2 Mengelola pengguna
+### 3.2 Mengelola pengguna
 
 1. Buka **Master → Pengguna**, pilih **Tambah Pengguna**, isi nama, username,
    role, dan password, lalu simpan.
@@ -141,15 +116,15 @@ Satu Admin dibuat saat perusahaan didaftarkan. Role lama **User** tidak tersedia
 jika masih ada akun lama tersebut, pilih role baru untuknya sebelum dapat login.
 Lihat README untuk prasyarat migrasi dan penanganan perusahaan lama.
 
-### 4.3 Memeriksa dan mem-posting
+### 3.3 Memeriksa dan mem-posting
 
 Buka transaksi terkait pada menu **Transaksi**, buka draft, periksa tanggal,
 pihak, rincian, akun, pajak, total, dan lampiran, lalu pilih **Posting** pada
 halaman tersebut. Gunakan **Jurnal Transaksi → Detail** untuk memeriksa
 hasilnya. Untuk pembatalan, buka transaksi terposting, isi tanggal dan alasan,
-lalu ikuti peringatan yang ditampilkan. Lihat bagian 12 untuk jenis transaksi.
+lalu ikuti peringatan yang ditampilkan. Lihat bagian 11 untuk jenis transaksi.
 
-## 5. Akuntansi
+## 4. Akuntansi
 
 **Masuk:** gunakan akun ber-role **Akuntansi**. Menu **Master** tersedia untuk
 akun, pelanggan, pemasok, produk/jasa, pajak, dan pengaturan akun; Master
@@ -167,7 +142,7 @@ Pengguna tidak tersedia. Menu **Transaksi**, **Jurnal Transaksi**, dan
    besar, dan laporan terkait.
 4. Periksa jumlah usulan opname menunggu. Buka **Transaksi → Opname &
    Penyesuaian**, tinjau stok sekarang dan usulan, kemudian tindak lanjuti
-   sebagaimana bagian 12.8.
+   sebagaimana bagian 11.8.
 5. Pada akhir periode, periksa penyesuaian, penyusutan, jurnal, neraca saldo,
    laba rugi, dan neraca. Aplikasi **belum memiliki tutup buku atau penguncian
    periode otomatis**; lakukan pengendalian periode secara prosedural.
@@ -177,7 +152,7 @@ dan sampai 15 draft terawal menurut tanggal. Rincian piutang/utang saldo awal
 yang diposting bersama induknya tidak dihitung sebagai draft terpisah. Koreksi
 saldo awal terposting tetap khusus Admin.
 
-## 6. Keuangan
+## 5. Keuangan
 
 **Masuk:** gunakan role **Keuangan**. Menu: **Beranda**, **Kas & Bank**,
 **Pembayaran Utang**, dan **Penerimaan Piutang**.
@@ -186,7 +161,7 @@ saldo awal terposting tetap khusus Admin.
    dan jumlah draft pada **Beranda**.
 2. Untuk penerimaan/pengeluaran umum atau transfer, buka **Kas & Bank**; isi
    tanggal, jenis, akun, nominal, keterangan, dan bukti, lalu simpan draft.
-   Gunakan alur bagian 12.5.
+   Gunakan alur bagian 11.5.
 3. Untuk pembayaran pemasok, buka **Pembayaran Utang**, pilih pemasok dan
    tagihan yang sesuai, isi alokasi dan akun pembayaran, lalu simpan draft.
 4. Untuk pelunasan pelanggan, buka **Penerimaan Piutang**, pilih pelanggan dan
@@ -199,7 +174,7 @@ koneksi rekening bank. Tagihan mengikuti status saat ini dan dapat mencakup
 tanggal mendatang. Pelanggan/pemasok tidak aktif perlu diaktifkan oleh pengguna
 berwenang sebelum dipilih.
 
-## 7. Purchasing
+## 6. Purchasing
 
 **Masuk:** gunakan role **Purchasing**. Menu: **Beranda**, **Pembelian**,
 **Pembayaran Utang**, **Pemasok**, dan **Produk**.
@@ -221,7 +196,7 @@ barang; saldo awal dan utang dari transaksi lain tidak termasuk. Jumlah draft
 dan pembelian beranda memakai role pembuat **saat ini**, sehingga perubahan
 role atau penghapusan akun pembuat dapat mengubah angka ringkasan.
 
-## 8. Penjualan
+## 7. Penjualan
 
 **Masuk:** gunakan role **Penjualan**. Menu: **Beranda**, **Penjualan**,
 **Penerimaan Piutang**, **Pelanggan**, dan **Katalog Produk**.
@@ -241,12 +216,12 @@ role atau penghapusan akun pembuat dapat mengubah angka ringkasan.
 Stok katalog adalah saldo saat ini; draft penjualan tidak mereservasi stok.
 Lampiran role Penjualan dibatasi pada transaksi Penjualan dan Penerimaan Piutang.
 
-## 9. Kasir
+## 8. Kasir
 
 **Masuk:** gunakan role **Kasir**. Menu: **Beranda**, **Kasir**, **Riwayat
 Kasir**, **Pelanggan**, dan **Katalog Produk**.
 
-### 9.1 Melayani pembayaran
+### 8.1 Melayani pembayaran
 
 1. Buka **Kasir**. Cari nama/kode produk atau pindai kode yang tersimpan,
    lalu tekan Enter. Pilih barang atau jasa dan masukkan jumlah pada keranjang.
@@ -269,13 +244,13 @@ Jika koneksi terputus saat pembayaran, **jangan langsung membuat transaksi
 baru**. Gunakan **Periksa / coba ulang pembayaran** pada browser dan perangkat
 yang sama untuk memastikan hasil tanpa transaksi ganda.
 
-### 9.2 Riwayat dan koreksi
+### 8.2 Riwayat dan koreksi
 
 Buka **Riwayat Kasir** atau transaksi terbaru di beranda untuk melihat transaksi
 dan membuka kembali struk. Kasir tidak membatalkan transaksi terposting; minta
 Akuntansi/Admin menangani pembatalan atau retur melalui modul yang sesuai.
 
-## 10. Gudang
+## 9. Gudang
 
 **Masuk:** gunakan role **Gudang**. Gunakan beranda, menu stok/kartu stok,
 dan **Stock Opname**. Gudang melihat jumlah barang, bukan nilai rupiah.
@@ -295,7 +270,7 @@ Usulan hanya pemberitahuan; stok dan jurnal **belum berubah**. Akuntansi/Admin
 meninjau dan mem-posting penyesuaian. Jika penyesuaian yang terkait dibatalkan,
 usulan kembali menunggu.
 
-## 11. Manajer / Pemilik
+## 10. Manajer / Pemilik
 
 **Masuk:** gunakan role **Manajer / Pemilik**. Semua halaman role ini
 bersifat baca-saja.
@@ -321,13 +296,13 @@ ditampilkan. Ini bukan laporan arus kas operasi/investasi/pendanaan dan bukan
 saldo dari koneksi bank. Jika akun induk kas/bank `1100` tidak tersedia,
 aplikasi menampilkan peringatan; hubungi Admin.
 
-## 12. Petunjuk transaksi
+## 11. Petunjuk transaksi
 
 Bagian ini digunakan terutama oleh Admin dan Akuntansi. Role lain mengikuti
 menu dan batas akses pada bagiannya masing-masing. Simpan draft, periksa,
 dan posting sesuai kewenangan; nama tombol dapat berbeda antarhalaman.
 
-### 12.1 Saldo awal
+### 11.1 Saldo awal
 
 **Menu:** Transaksi → Saldo Awal.
 
@@ -353,7 +328,7 @@ historis. Jurnal HPP berikutnya tidak dihitung ulang, sedangkan jadwal dan
 jurnal penyusutan dihitung ulang; aset yang sudah dilepas tidak dapat dikoreksi
 melalui alur ini. Tinjau kembali laporan dan buku pembantu setelahnya.
 
-### 12.2 Penjualan
+### 11.2 Penjualan
 
 **Menu:** Transaksi → Penjualan, atau **Penjualan** pada role Penjualan.
 
@@ -369,7 +344,7 @@ Penjualan yang sudah memiliki alokasi penerimaan, retur, beban jasa terposting,
 atau mutasi stok lanjutan dapat memerlukan penyelesaian transaksi terkait
 sebelum pembatalan. Periksa pesan yang ditampilkan.
 
-### 12.3 Beban penjualan jasa
+### 11.3 Beban penjualan jasa
 
 **Menu:** Transaksi → Beban Penjualan Jasa.
 
@@ -385,7 +360,7 @@ Tidak ada rincian pajak atau mutasi stok pada beban ini. Pembayaran terkait
 harus dibatalkan terlebih dahulu sebelum membatalkan beban terposting; beban
 terposting harus ditangani sebelum penjualan asal dapat dibatalkan.
 
-### 12.4 Pembelian
+### 11.4 Pembelian
 
 **Menu:** Transaksi → Pembelian, atau **Pembelian** pada role Purchasing.
 
@@ -400,7 +375,7 @@ terposting harus ditangani sebelum penjualan asal dapat dibatalkan.
 Pembatalan dapat ditolak jika ada pembayaran terposting atau mutasi stok
 berikutnya. Periksa transaksi terkait sebelum meminta pembatalan.
 
-### 12.5 Kas dan bank
+### 11.5 Kas dan bank
 
 **Menu:** Transaksi → Kas dan Bank, atau **Kas & Bank** pada role Keuangan.
 
@@ -415,7 +390,7 @@ Jangan gunakan akun kontrol utang/piutang sebagai akun lawan untuk pelunasan;
 gunakan modul **Pembayaran Utang** atau **Penerimaan Piutang** agar alokasi
 tagihan ikut diperbarui.
 
-### 12.6 Penerimaan piutang dan pembayaran utang
+### 11.6 Penerimaan piutang dan pembayaran utang
 
 **Menu:** Transaksi → Penerimaan Piutang / Pembayaran Utang; kedua menu juga
 tersedia untuk Keuangan. Penjualan memiliki Penerimaan Piutang dan Purchasing
@@ -431,7 +406,7 @@ Tagihan dapat berasal dari saldo awal atau transaksi kredit yang didukung,
 termasuk pelepasan aset kredit untuk piutang serta perolehan aset dan beban
 jasa kredit untuk utang.
 
-### 12.7 Persediaan, retur, dan penyesuaian
+### 11.7 Persediaan, retur, dan penyesuaian
 
 **Menu:** Transaksi → Persediaan; Transaksi → Retur Transaksi; Transaksi →
 Opname & Penyesuaian.
@@ -448,7 +423,7 @@ Opname & Penyesuaian.
   Retur transaksi lama memerlukan riwayat akun saat posting; riwayat yang
   tidak tersedia tidak dapat ditebak dari master saat ini.
 
-### 12.8 Menindaklanjuti stock opname
+### 11.8 Menindaklanjuti stock opname
 
 **Menu:** Transaksi → Opname & Penyesuaian.
 
@@ -472,7 +447,7 @@ bukan jumlah selisih. Selisih dihitung terhadap saldo saat posting. Draft
 penyesuaian tidak dapat diedit; jika salah, buat draft baru. Pembatalan hanya
 diperbolehkan jika belum ada mutasi stok berikutnya untuk produk tersebut.
 
-### 12.9 Aset tetap
+### 11.9 Aset tetap
 
 **Menu:** Transaksi → Aset Tetap.
 
@@ -493,7 +468,7 @@ Bulan pelepasan mencakup penyusutan satu bulan penuh jika belum diposting.
 Pembatalan dibatasi bila merusak urutan penyusutan atau tagihan telah dibayar.
 Pengaturan akun laba/rugi pelepasan harus disiapkan sesuai kebutuhan.
 
-### 12.10 Modal, prive, dan penyesuaian akuntansi
+### 11.10 Modal, prive, dan penyesuaian akuntansi
 
 **Modal dan Prive:** pilih jenis setoran modal atau prive, tanggal, akun
 kas/bank, akun ekuitas yang sesuai, dan nominal; simpan draft dan posting.
@@ -510,7 +485,7 @@ Laba (Rugi) Berjalan**, pilih tahun sebelum tahun berjalan, tinjau status,
 buat draft, lalu posting setelah diperiksa. Aplikasi menggunakan akun `3103`
 dan `3102` yang disyaratkan. Fitur ini bukan tutup buku atau penguncian periode.
 
-## 13. Jurnal dan laporan
+## 12. Jurnal dan laporan
 
 **Akses:** Admin dan Akuntansi menggunakan menu **Jurnal Transaksi** dan
 **Laporan**. Manajer menggunakan **Jurnal** dan **Laporan** baca-saja.
@@ -533,7 +508,7 @@ Pada neraca, saldo kredit kewajiban/ekuitas ditampilkan positif dan saldo
 debit negatif; aset menggunakan tanda sebaliknya. Data jurnal lama yang tidak
 tersedia ditandai **Tidak tercatat**; nama pelaku mengikuti data pengguna saat ini.
 
-## 14. Masalah umum dan batasan
+## 13. Masalah umum dan batasan
 
 | Situasi | Tindakan |
 |---|---|
@@ -552,7 +527,7 @@ Pembantu, dan Rekonsiliasi Bank. Jangan mencari atau mengandalkan menu tersebut
 sebagai fitur aktif. Laporan arus kas terklasifikasi juga belum tersedia;
 Mutasi Kas & Bank Manajer adalah ringkasan bersih jurnal.
 
-## 15. Persiapan teknis
+## 14. Persiapan teknis
 
 Pengelola teknis harus mencadangkan database dan menyiapkan skema serta migrasi
 yang relevan sebelum fitur digunakan. Jangan menjalankan migrasi berulang tanpa
@@ -562,7 +537,7 @@ memeriksa kondisi database. Skema dasar tidak disertakan di repository; lihat
 Migrasi yang secara langsung terkait penggunaan:
 
 - Keamanan login dan role: `20261112_login_security.sql`,
-  `20261112_system_admin_database.sql`, `20261112_satu_admin_perusahaan.sql`,
+  `20261112_satu_admin_perusahaan.sql`,
   `20261112_role_pengguna.sql`, dan `20261115_hapus_role_user.sql`.
 - Retur dan riwayat akun: `20261109_riwayat_akun_transaksi.sql`.
 - Gambar produk, usulan opname, dan stok minimum:
