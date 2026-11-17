@@ -3,8 +3,9 @@ window.MoneyInput = (function ($) {
     var instances = new WeakMap();
     var maxAmount = '9999999999999.99';
 
-    function validFormat(value) {
-        return /^(?:\d+|\d{1,3}(?:\.\d{3})+)(?:,\d{1,2})?$/.test(value);
+    function validFormat(value, input) {
+        var sign = input.getAttribute('data-money-negative') === '1' ? '-?' : '';
+        return new RegExp('^' + sign + '(?:\\d+|\\d{1,3}(?:\\.\\d{3})+)(?:,\\d{1,2})?$').test(value);
     }
 
     function display(value) {
@@ -60,7 +61,7 @@ window.MoneyInput = (function ($) {
             decimalCharacter: ',',
             decimalCharacterAlternative: null,
             decimalPlaces: 2,
-            minimumValue: '0',
+            minimumValue: input.getAttribute('data-money-negative') === '1' ? '-' + maxAmount : '0',
             maximumValue: maxAmount,
             overrideMinMaxLimits: 'ignore',
             emptyInputBehavior: 'null',
@@ -81,8 +82,10 @@ window.MoneyInput = (function ($) {
         input.addEventListener('paste', function (event) {
             var pasted = event.clipboardData && event.clipboardData.getData('text/plain');
             var combined = input.value.slice(0, input.selectionStart) + pasted + input.value.slice(input.selectionEnd);
-            if (!pasted || !validFormat(pasted) ||
-                !/^\d*(?:,\d{0,2})?$/.test(combined.replace(/\./g, ''))) {
+            var combinedPattern = input.getAttribute('data-money-negative') === '1'
+                ? /^-?\d*(?:,\d{0,2})?$/ : /^\d*(?:,\d{0,2})?$/;
+            if (!pasted || !validFormat(pasted, input) ||
+                !combinedPattern.test(combined.replace(/\./g, ''))) {
                 event.preventDefault();
                 event.stopImmediatePropagation();
                 reject(input, 'Tempel nominal dalam format Indonesia, misalnya 1.000,50, dengan maksimal dua desimal.');

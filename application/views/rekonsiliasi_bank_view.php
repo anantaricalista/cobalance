@@ -1,7 +1,7 @@
 <div class="container-fluid">
     <h3>Keuangan &mdash; Rekonsiliasi Bank</h3>
     <p class="text-muted">Masukkan saldo dan mutasi rekening koran, cocokkan satu per satu dengan jurnal, lalu selesaikan rekonsiliasi.</p>
-    <p class="text-muted">Gunakan titik sebagai desimal tanpa pemisah ribuan, misalnya 1000.50. Maksimal 200 mutasi per rekening dan bulan.</p>
+    <p class="text-muted">Nominal menggunakan format Indonesia; pemisah ribuan berupa titik dan desimal berupa koma, misalnya 1.000,50. Maksimal 200 mutasi per rekening dan bulan.</p>
     <?php if ($message): ?><div class="alert alert-<?= html_escape($message_type ?: 'info') ?>" role="alert"><?= html_escape($message) ?></div><?php endif; ?>
     <?php if (!$schema_ready): ?>
         <div class="alert alert-warning">Fitur belum tersedia. Terapkan migrasi <code>application/sql/20261116_pengendalian_periode_rekonsiliasi.sql</code> pada database terlebih dahulu.</div>
@@ -43,12 +43,12 @@
                     <div class="row">
                         <div class="col-sm-3 form-group">
                             <label for="opening-balance">Saldo awal rekening koran</label>
-                            <input id="opening-balance" class="form-control" type="number" step="0.01" name="saldo_awal"
+                            <input id="opening-balance" class="form-control" type="text" inputmode="decimal" data-money="1" data-money-negative="1" name="saldo_awal"
                                 value="<?= html_escape($reconciliation->saldo_awal) ?>" required>
                         </div>
                         <div class="col-sm-3 form-group">
                             <label for="closing-balance">Saldo akhir rekening koran</label>
-                            <input id="closing-balance" class="form-control" type="number" step="0.01" name="saldo_akhir"
+                            <input id="closing-balance" class="form-control" type="text" inputmode="decimal" data-money="1" data-money-negative="1" name="saldo_akhir"
                                 value="<?= html_escape($reconciliation->saldo_akhir) ?>" required>
                         </div>
                     </div>
@@ -65,7 +65,7 @@
                                     <option value="masuk"<?= $line->arah === 'masuk' ? ' selected' : '' ?>>Masuk</option>
                                     <option value="keluar"<?= $line->arah === 'keluar' ? ' selected' : '' ?>>Keluar</option>
                                 </select></td>
-                                <td><input class="form-control input-sm" type="number" min="0.01" step="0.01" name="mutasi[<?= (int) $i ?>][jumlah]" value="<?= html_escape($line->jumlah) ?>"></td>
+                                <td><input class="form-control input-sm" type="text" inputmode="decimal" data-money="1" min="0.01" step="0.01" name="mutasi[<?= (int) $i ?>][jumlah]" value="<?= html_escape($line->jumlah) ?>"></td>
                                 <td><button class="btn btn-sm btn-default supplier-delete remove-statement-line" type="button" title="Hapus mutasi" aria-label="Hapus mutasi"><i class="glyphicon glyphicon-trash" aria-hidden="true"></i></button></td>
                             </tr>
                         <?php endforeach; ?>
@@ -150,6 +150,17 @@
 <?php if (!empty($reconciliation) && $editable): ?>
 <script>
 (function () {
+    var form = document.getElementById('bank-statement-form');
+    if (form) {
+        form.querySelectorAll('[data-money]').forEach(function (input) {
+            MoneyInput.init(input, input.value);
+        });
+        form.addEventListener('submit', function () {
+            form.querySelectorAll('[data-money]').forEach(function (input) {
+                input.value = MoneyInput.value(input);
+            });
+        });
+    }
     var body = document.querySelector('#statement-lines tbody');
     var next = body ? body.querySelectorAll('tr').length : 0;
     function updateCount() {
@@ -169,9 +180,10 @@
             row.innerHTML = '<td><input class="form-control input-sm" type="date" name="mutasi[' + next + '][tanggal]"></td>' +
                 '<td><input class="form-control input-sm" maxlength="255" name="mutasi[' + next + '][keterangan]"></td>' +
                 '<td><select class="form-control input-sm" name="mutasi[' + next + '][arah]"><option value="masuk">Masuk</option><option value="keluar">Keluar</option></select></td>' +
-                '<td><input class="form-control input-sm" type="number" min="0.01" step="0.01" name="mutasi[' + next + '][jumlah]"></td>' +
+                '<td><input class="form-control input-sm" type="text" inputmode="decimal" data-money="1" min="0.01" step="0.01" name="mutasi[' + next + '][jumlah]"></td>' +
                 '<td><button class="btn btn-sm btn-default supplier-delete remove-statement-line" type="button" title="Hapus mutasi" aria-label="Hapus mutasi"><i class="glyphicon glyphicon-trash" aria-hidden="true"></i></button></td>';
             body.appendChild(row);
+            MoneyInput.init(row.querySelector('[data-money]'), '');
             updateCount();
             bindRemove(row.querySelector('.remove-statement-line'));
             next++;

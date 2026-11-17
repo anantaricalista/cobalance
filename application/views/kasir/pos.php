@@ -63,7 +63,7 @@
                 <?php endforeach; ?>
             </select>
             <div id="pos-cash-input"><label for="pos-paid">Uang diterima (Rp)</label>
-                <input id="pos-paid" class="form-control" inputmode="decimal" placeholder="Contoh: 50.000" autocomplete="off">
+                <input id="pos-paid" class="form-control" type="text" inputmode="decimal" placeholder="Contoh: 50.000,00" autocomplete="off">
                 <div id="pos-cash-suggestions" class="pos-cash-suggestions" role="group" aria-label="Pilihan uang diterima"></div>
                 <small class="pos-muted">Pilih nominal cepat atau masukkan jumlah lainnya.</small>
                 <div class="pos-total-row"><span>Kembalian</span><strong id="pos-change">Rp 0</strong></div>
@@ -81,6 +81,7 @@
     var $ = function (id) { return document.getElementById(id); };
     var cart = {}, products = [], timer, requestNumber = 0, pending = null, busy = false;
     var zero = BigInt(0), hundred = BigInt(100), qtyScale = BigInt(10000), rateScale = BigInt(1000000);
+    MoneyInput.init($('pos-paid'), '');
     function rupiah(value) {
         var integer = (value / hundred).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
         var fraction = (value % hundred).toString().padStart(2, '0');
@@ -182,7 +183,7 @@
                     button.disabled = !!pending || busy;
                     button.dataset.amount = key;
                     button.onclick = function () {
-                        $('pos-paid').value = rupiah(choice.value).replace(/^Rp /, '');
+                        MoneyInput.set($('pos-paid'), MoneyInput.fromCents(choice.value));
                         updateTotal();
                     };
                     box.appendChild(button);
@@ -197,7 +198,8 @@
         var amounts = totals();
         if (!amounts) { message('Tarif pajak tidak valid.'); return; }
         $('pos-total').textContent = rupiah(amounts.total); $('pos-tax-total').textContent = rupiah(amounts.tax);
-        var paid = parseDecimal($('pos-paid').value, 2, 13, true);
+        var paidValue = MoneyInput.value($('pos-paid'));
+        var paid = paidValue === '' ? null : parseDecimal(paidValue, 2, 13, false);
         $('pos-change').textContent = rupiah(paid !== null && paid > amounts.total ? paid - amounts.total : zero);
         renderCashSuggestions(amounts.total, paid);
     }
@@ -274,7 +276,9 @@
         if (!amounts || amounts.total <= zero || !Object.keys(cart).length) { message('Tambahkan produk dengan total lebih besar dari nol.'); return; }
         if (!$('pos-customer').value || !$('pos-account').value) { message('Pilih pelanggan dan akun penerimaan.'); return; }
         if (mode !== 'tidak_dikenakan' && !$('pos-tax').value) { message('Pilih pajak untuk transaksi.'); return; }
-        var paid = method === 'tunai' ? parseDecimal($('pos-paid').value, 2, 13, true) : amounts.total;
+        var paidValue = MoneyInput.value($('pos-paid'));
+        var paid = method === 'tunai'
+            ? (paidValue === '' ? null : parseDecimal(paidValue, 2, 13, false)) : amounts.total;
         if (paid === null || paid < amounts.total) { message('Uang diterima belum cukup atau tidak valid.'); return; }
         if (!confirm('Pastikan pembayaran sudah diterima. Selesaikan transaksi sebesar ' + rupiah(amounts.total) + '?')) return;
         var details = Object.keys(cart).map(function (id) { return {id_produk:id, jumlah:decimal(cart[id].qty, 4), harga:decimal(cart[id].price, 2)}; });

@@ -177,8 +177,9 @@ saldo awal terposting tetap khusus Admin.
    hanya setelah seluruh mutasi rekening dan jurnal cocok. Akuntansi/Admin juga
    dapat meninjau dan menyelesaikan rekonsiliasi.
 
-   Input saldo dan jumlah pada halaman ini memakai titik sebagai pemisah
-   desimal tanpa pemisah ribuan, misalnya `1000.50`. Maksimal 200 mutasi per
+   Input saldo dan jumlah pada halaman ini memakai format Indonesia: titik
+   untuk pemisah ribuan dan koma untuk desimal, misalnya
+   `1.000,50`. Maksimal 200 mutasi per
    rekening dan bulan. Menyimpan ulang rekening koran menghapus pencocokan
    sebelumnya. Rekonsiliasi ini belum mendukung transaksi dalam perjalanan:
    semua mutasi rekening dan jurnal pada bulan yang sama harus cocok satu

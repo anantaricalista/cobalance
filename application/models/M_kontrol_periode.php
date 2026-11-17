@@ -853,10 +853,26 @@ class M_kontrol_periode extends CI_Model
 
     private function valid_money($value, $label)
     {
-        if (!is_string($value) || !preg_match('/^-?\d{1,13}(?:\.\d{1,2})?$/D', $value)) {
+        if (!is_string($value)) {
             throw new InvalidArgumentException($label . ' tidak valid.');
         }
-        return $this->money($this->cents($value));
+        $sign = '';
+        if (isset($value[0]) && $value[0] === '-') {
+            $sign = '-';
+            $value = substr($value, 1);
+        }
+        if (preg_match('/^\d{1,3}(?:\.\d{3})+(?:,\d{1,2})?$/D', $value)) {
+            $value = str_replace('.', '', $value);
+            $value = str_replace(',', '.', $value);
+        } elseif (preg_match('/^\d+(?:,\d{1,2})?$/D', $value)) {
+            $value = str_replace(',', '.', $value);
+        } elseif (!preg_match('/^\d{1,13}(?:\.\d{1,2})?$/D', $value)) {
+            throw new InvalidArgumentException($label . ' tidak valid.');
+        }
+        if (!preg_match('/^\d{1,13}(?:\.\d{1,2})?$/D', $value)) {
+            throw new InvalidArgumentException($label . ' tidak valid.');
+        }
+        return $this->money($this->cents($sign . $value));
     }
 
     private function audit($company, $period, $action, $reason, $user)
