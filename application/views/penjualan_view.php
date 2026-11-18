@@ -94,7 +94,10 @@ foreach ($cash_accounts as $account) {
                 </div>
                 <div class="form-group col-sm-5">
                     <label for="sale-customer">Pelanggan</label>
-                    <select class="form-control customer-search" id="sale-customer" required></select>
+                    <div class="sale-customer-picker">
+                        <div class="sale-customer-select"><select class="form-control customer-search" id="sale-customer" required></select></div>
+                        <button type="button" class="btn btn-success" id="add-sale-customer" data-toggle="modal" data-target="#sale-customer-modal" title="Tambah pelanggan" aria-label="Tambah pelanggan"><i class="glyphicon glyphicon-plus" aria-hidden="true"></i></button>
+                    </div>
                 </div>
                 <div class="form-group col-sm-4">
                     <label for="sale-payment">Cara pembayaran</label>
@@ -155,6 +158,37 @@ foreach ($cash_accounts as $account) {
             <p><button type="submit" class="btn btn-primary">Simpan draft</button></p>
         </fieldset>
     </form>
+
+    <div class="modal fade" id="sale-customer-modal" role="dialog" aria-modal="true" aria-labelledby="sale-customer-modal-title">
+        <div class="modal-dialog"><div class="modal-content">
+            <form id="sale-customer-form" class="form-horizontal">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Tutup"><span aria-hidden="true">&times;</span></button>
+                    <h3 class="modal-title" id="sale-customer-modal-title">Tambah Pelanggan</h3>
+                </div>
+                <div class="modal-body">
+                    <div id="sale-customer-error" class="alert alert-danger" role="alert" style="display:none"></div>
+                    <?php if ($this->session->userdata('role') === 'penjualan'): ?>
+                        <input type="hidden" name="pelanggan_form_token" value="<?= html_escape($this->session->userdata('pelanggan_form_token')) ?>">
+                    <?php endif; ?>
+                    <input type="hidden" name="aktif" value="1">
+                    <div class="form-group"><label for="new-customer-code" class="control-label col-sm-3">Kode Pelanggan</label><div class="col-sm-9"><input id="new-customer-code" name="kode_pelanggan" class="form-control" maxlength="50" required></div></div>
+                    <div class="form-group"><label for="new-customer-name" class="control-label col-sm-3">Nama Pelanggan</label><div class="col-sm-9"><input id="new-customer-name" name="nama_pelanggan" class="form-control" maxlength="255" required></div></div>
+                    <div class="form-group"><label for="new-customer-address" class="control-label col-sm-3">Alamat</label><div class="col-sm-9"><textarea id="new-customer-address" name="alamat" class="form-control" rows="3"></textarea></div></div>
+                    <div class="form-group"><label for="new-customer-phone" class="control-label col-sm-3">Telepon</label><div class="col-sm-9"><input id="new-customer-phone" name="telepon" class="form-control" type="tel" maxlength="20"></div></div>
+                    <div class="form-group"><label for="new-customer-email" class="control-label col-sm-3">Email</label><div class="col-sm-9"><input id="new-customer-email" name="email" class="form-control" type="email" maxlength="100"></div></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary" id="save-sale-customer">Simpan</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
+                </div>
+            </form>
+        </div></div>
+    </div>
+    <style>
+        .sale-customer-picker { display:flex; align-items:flex-start; gap:8px; }
+        .sale-customer-select { flex:1; min-width:0; }
+    </style>
 <?php endif; ?>
 
 <?php if ($transaction && $transaction->status === 'draft'): ?>
@@ -214,6 +248,56 @@ $(function () {
         'cash' => $cash_options
     ), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
     var editable = <?= $editable ? 'true' : 'false' ?>;
+    var csrf = <?php if ($this->config->item('csrf_protection')): ?><?= json_encode(array(
+        'name' => $this->security->get_csrf_token_name(), 'value' => $this->security->get_csrf_hash())) ?><?php else: ?>null<?php endif; ?>;
+    var savingCustomer = false;
+
+    function updateCsrf(response) {
+        if (response && response.csrf) csrf = response.csrf;
+    }
+
+    $('#sale-customer-modal').on('show.bs.modal', function () {
+        $('#sale-customer-form')[0].reset();
+        $('#sale-customer-error').hide().text('');
+    }).on('shown.bs.modal', function () {
+        $('#new-customer-code').trigger('focus');
+    }).on('hide.bs.modal', function (event) {
+        if (savingCustomer) event.preventDefault();
+    });
+
+    $('#sale-customer-form').on('submit', function (event) {
+        event.preventDefault();
+        if (savingCustomer) return;
+        var fields = $(this).serializeArray();
+        if (csrf) fields.push({name: csrf.name, value: csrf.value});
+        savingCustomer = true;
+        $('#sale-customer-error').hide().text('');
+        $('#sale-customer-form button').prop('disabled', true);
+        $.ajax({
+            url: <?= json_encode(site_url('pelanggan/ajax_add')) ?>,
+            method: 'POST',
+            data: fields,
+            dataType: 'json'
+        }).done(function (response) {
+            updateCsrf(response);
+            if (!response.status || !response.customer || !response.customer.id) {
+                $('#sale-customer-error').text('Pelanggan belum dapat dipilih. Periksa Master Pelanggan sebelum mencoba kembali.').show();
+                return;
+            }
+            var customer = response.customer;
+            $('#sale-customer').append($('<option>').val(customer.id).text(customer.kode + ' - ' + customer.nama))
+                .val(String(customer.id)).trigger('change');
+            savingCustomer = false;
+            $('#sale-customer-modal').modal('hide');
+        }).fail(function (xhr) {
+            updateCsrf(xhr.responseJSON);
+            $('#sale-customer-error').text(xhr.responseJSON && xhr.responseJSON.message
+                ? xhr.responseJSON.message : 'Penyimpanan gagal atau hasilnya belum pasti. Periksa Master Pelanggan sebelum mencoba kembali.').show();
+        }).always(function () {
+            savingCustomer = false;
+            $('#sale-customer-form button').prop('disabled', false);
+        });
+    });
 
     function fillSelect(select, list, selected, placeholder) {
         select.append($('<option>').val('').text(placeholder));
@@ -299,13 +383,12 @@ $(function () {
             formData.delete('lampiran');
             if (data.lampiran) formData.append('lampiran', data.lampiran);
         }
-        <?php if ($this->config->item('csrf_protection')): ?>
-        formData.append(<?= json_encode($this->security->get_csrf_token_name()) ?>, <?= json_encode($this->security->get_csrf_hash()) ?>);
-        <?php endif; ?>
+        if (csrf) formData.append(csrf.name, csrf.value);
         $('button').prop('disabled', true);
         $.ajax({url: url, method: 'POST', data: formData, processData: false, contentType: false}).done(function () {
             location.href = <?= json_encode(site_url('penjualan')) ?>;
         }).fail(function (xhr) {
+            updateCsrf(xhr.responseJSON);
             $('#sale-message').empty().append($('<div class="alert alert-danger">').text(
                 xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : 'Permintaan gagal. Silakan coba kembali.'
             ));

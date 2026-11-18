@@ -195,11 +195,25 @@ class Pelanggan extends MY_Controller
             log_message('error', 'Gagal ' . $action . ' pelanggan: ' . $error['code'] . ' ' . $error['message']);
             return $this->error('Gagal menyimpan perubahan pelanggan.', 500);
         }
-        $this->json(array('status' => true));
+        $response = array('status' => true);
+        if ($action === 'save') {
+            $response['customer'] = array(
+                'id' => (int) $this->db->insert_id(),
+                'kode' => $data['kode_pelanggan'],
+                'nama' => $data['nama_pelanggan']
+            );
+        }
+        $this->json($response);
     }
 
     private function json($data)
     {
+        if ($this->config->item('csrf_protection') && is_array($data)) {
+            $data['csrf'] = array(
+                'name' => $this->security->get_csrf_token_name(),
+                'value' => $this->security->get_csrf_hash()
+            );
+        }
         $this->output->set_content_type('application/json')->set_output(json_encode($data));
     }
 

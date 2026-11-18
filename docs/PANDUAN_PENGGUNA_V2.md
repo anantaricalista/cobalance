@@ -354,6 +354,9 @@ Tinjau kembali laporan dan buku pembantu setelahnya.
 
 1. Pilih pelanggan, tanggal, produk/jasa, jumlah, harga, dan potongan jika ada.
    Atur pajak per rincian: tidak dikenakan, termasuk, atau belum termasuk.
+   Jika pelanggan belum tersedia, tekan tombol **+** di sebelah pilihan
+   pelanggan, isi data pada formulir, lalu simpan. Pelanggan baru langsung
+   terpilih tanpa meninggalkan penjualan; kode pelanggan harus unik.
 2. Pilih tunai dan akun kas/bank, atau kredit dan tanggal jatuh tempo.
    Periksa total, simpan draft, dan tambahkan bukti bila diperlukan.
 3. Setelah diperiksa, Akuntansi/Admin mem-posting. Penjualan barang mengurangi

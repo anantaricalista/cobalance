@@ -17,6 +17,12 @@ class Penjualan extends MY_Controller
             redirect('pos');
             return;
         }
+        if ($this->session->userdata('role') === 'penjualan') {
+            $token = $this->session->userdata('pelanggan_form_token');
+            if (!is_string($token) || $token === '') {
+                $this->session->set_userdata('pelanggan_form_token', bin2hex(random_bytes(32)));
+            }
+        }
         $perusahaan = $this->session->userdata('id_perusahaan');
         $id = $this->input->get('id');
         $transaction = null;
@@ -121,7 +127,14 @@ class Penjualan extends MY_Controller
 
     private function error($message, $status)
     {
+        $response = array('status' => false, 'message' => $message);
+        if ($this->config->item('csrf_protection')) {
+            $response['csrf'] = array(
+                'name' => $this->security->get_csrf_token_name(),
+                'value' => $this->security->get_csrf_hash()
+            );
+        }
         $this->output->set_status_header($status)->set_content_type('application/json')
-            ->set_output(json_encode(array('status' => false, 'message' => $message)));
+            ->set_output(json_encode($response));
     }
 }
