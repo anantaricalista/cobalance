@@ -53,6 +53,8 @@ berlanjut, hubungi pengelola; jangan membagikan password.
   Pada POS, ikuti format yang diminta pada kolom jumlah.
 - **Pilihan akun:** buka daftar dan cari kode atau nama. Pilih akun rincian
   yang tersedia; akun induk yang dinonaktifkan tidak dapat dipakai.
+- **Pilihan pelanggan:** buka daftar, ketik kode atau nama pelanggan, lalu
+  pilih hasil yang sesuai.
 - **Lampiran transaksi:** modul yang mendukungnya menerima satu PDF, JPG, atau
   PNG maksimal 5 MB per transaksi. Lampiran diubah ketika masih draft dan
   dapat dibuka dari rincian transaksi sesuai hak akses.

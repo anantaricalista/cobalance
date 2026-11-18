@@ -94,7 +94,7 @@ foreach ($cash_accounts as $account) {
                 </div>
                 <div class="form-group col-sm-5">
                     <label for="sale-customer">Pelanggan</label>
-                    <select class="form-control" id="sale-customer" required></select>
+                    <select class="form-control customer-search" id="sale-customer" required></select>
                 </div>
                 <div class="form-group col-sm-4">
                     <label for="sale-payment">Cara pembayaran</label>

@@ -158,7 +158,7 @@ $isDraft = $transaction && $transaction->status === 'draft';
         <div class="row">
             <div class="form-group col-sm-3"><label for="disposal-payment">Cara penerimaan</label><select class="form-control" id="disposal-payment"><option value="tanpa_hasil">Tanpa hasil</option><option value="tunai">Tunai</option><option value="kredit">Kredit</option></select></div>
             <div class="form-group col-sm-4" id="disposal-cash-wrap"><label for="disposal-cash">Akun kas/bank</label><select class="form-control account-search" id="disposal-cash"></select></div>
-            <div class="form-group col-sm-5" id="disposal-customer-wrap"><label for="disposal-customer">Pelanggan</label><select class="form-control" id="disposal-customer"></select></div>
+            <div class="form-group col-sm-5" id="disposal-customer-wrap"><label for="disposal-customer">Pelanggan</label><select class="form-control customer-search" id="disposal-customer"></select></div>
             <div class="form-group col-sm-4" id="disposal-due-wrap"><label for="disposal-due">Jatuh tempo</label><input class="form-control" id="disposal-due" type="date"></div>
         </div>
         <div class="form-group"><label for="disposal-file">Lampiran bukti (PDF/JPG/PNG, maks. 5 MB)</label><input id="disposal-file" type="file" accept="application/pdf,image/jpeg,image/png">

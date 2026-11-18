@@ -2,12 +2,12 @@
     'use strict';
 
     var $ = window.jQuery;
-    var selector = 'select.account-search';
+    var selector = 'select.account-search, select.customer-search';
     var invalidFocused = false;
     var errorId = 0;
 
     if (!$ || !$.fn.select2) {
-        console.error('Select2 atau jQuery tidak tersedia; pilihan akun menggunakan select bawaan.');
+        console.error('Select2 atau jQuery tidak tersedia; pilihan akun dan pelanggan menggunakan select bawaan.');
         return;
     }
 
@@ -37,7 +37,9 @@
             width: '100%',
             dropdownParent: dropdownParent,
             language: {
-                noResults: function () { return 'Akun tidak ditemukan'; },
+                noResults: function () {
+                    return $select.hasClass('customer-search') ? 'Pelanggan tidak ditemukan' : 'Akun tidak ditemukan';
+                },
                 searching: function () { return 'Mencari...'; }
             }
         });

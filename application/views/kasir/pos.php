@@ -34,7 +34,7 @@
             <h3>Keranjang <span id="pos-count" class="badge">0</span></h3>
             <div id="pos-lines" class="pos-lines"></div>
             <label for="pos-customer">Pelanggan</label>
-            <select id="pos-customer" class="form-control" required>
+            <select id="pos-customer" class="form-control customer-search" required>
                 <option value="">Pilih pelanggan</option>
                 <?php foreach ($customers as $customer): ?>
                     <option value="<?= (int) $customer->id_pelanggan ?>"><?= html_escape($customer->kode_pelanggan . ' - ' . $customer->nama_pelanggan) ?></option>

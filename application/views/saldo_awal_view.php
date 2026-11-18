@@ -236,6 +236,7 @@ $(function () {
             if (field[1] === 'select') {
                 input = $('<select class="form-control">');
                 if (kind === 'akun' || kind === 'aset') input.addClass('account-search').attr('aria-label', 'Akun ' + field[0].replace(/_/g, ' '));
+                if (kind === 'piutang') input.addClass('customer-search').attr('aria-label', 'Pelanggan');
                 fillSelect(input, kind === 'aset' ? assetAccounts[field[0]] : options[kind], values[field[0]]);
             } else {
                 input = $('<input class="form-control">').attr('type', field[1] === 'date' ? 'date' : 'text');
