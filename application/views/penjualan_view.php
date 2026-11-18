@@ -186,7 +186,7 @@ foreach ($cash_accounts as $account) {
         </div></div>
     </div>
     <style>
-        .sale-customer-picker { display:flex; align-items:flex-start; gap:8px; }
+        .sale-customer-picker { display:flex; align-items:center; gap:8px; }
         .sale-customer-select { flex:1; min-width:0; }
     </style>
 <?php endif; ?>

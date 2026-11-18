@@ -12,7 +12,7 @@
 .pos-line-head,.pos-line-actions,.pos-total-row { display:flex; justify-content:space-between; gap:8px; align-items:center; }
 .pos-line-actions { justify-content:flex-start; margin-top:6px; } .pos-line-actions input { width:85px; text-align:center; }
 .pos-line-actions button { min-width:34px; } .pos-cart label { margin-top:10px; } .pos-total-row { padding-top:10px; }
-.pos-total { font-size:22px; color:#183153; font-weight:700; } .pos-pay { width:100%; margin-top:15px; padding:13px; font-size:17px; font-weight:700; }
+.pos-total { font-size:22px; color:#183153; font-weight:700; } .pos-pay { margin-top:15px; font-weight:700; }
 .pos-cash-suggestions { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
 .pos-cash-suggestions .btn[aria-pressed="true"] { border-color:#287e91; background:#e4f3f5; color:#183153; }
 .pos-muted { color:#687a91; } .pos-message { margin-top:12px; } .pos-empty { padding:16px 0; color:#687a91; }

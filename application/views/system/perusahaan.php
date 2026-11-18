@@ -7,7 +7,7 @@
     <link rel="icon" type="image/png" sizes="32x32" href="<?= base_url('assets/img/favicon-32.png') ?>">
     <link rel="apple-touch-icon" sizes="180x180" href="<?= base_url('assets/img/apple-touch-icon.png') ?>">
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet">
-    <link href="<?= base_url('assets/css/cobalance-buttons.css') ?>" rel="stylesheet">
+    <link href="<?= base_url('assets/css/cobalance-buttons.css?v=3') ?>" rel="stylesheet">
     <style>
         body { background: #f4f6f9; color: #263248; }
         .system-bar { background: #243444; color: #fff; padding: 18px 0; box-shadow: 0 3px 14px rgba(23,38,55,.14); }

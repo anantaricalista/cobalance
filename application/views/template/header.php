@@ -357,11 +357,6 @@
             background: #fafcff;
         }
 
-        .transaction-ui button[type="submit"] .glyphicon,
-        .transaction-ui .btn .glyphicon {
-            margin-right: 4px;
-        }
-
         .transaction-ui .opening-overview {
             display: flex;
             align-items: stretch;
@@ -796,14 +791,11 @@
                 flex-direction: column;
             }
 
-            .transaction-ui .opening-save-bar .btn {
-                width: 100%;
-            }
         }
     </style>
     <link href="<?= base_url('assets/css/cobalance-layout.css') ?>" rel="stylesheet">
-    <link href="<?= base_url('assets/css/cobalance-buttons.css?v=2') ?>" rel="stylesheet">
-    <link href="<?= base_url('assets/css/cobalance-master.css') ?>" rel="stylesheet">
+    <link href="<?= base_url('assets/css/cobalance-buttons.css?v=3') ?>" rel="stylesheet">
+    <link href="<?= base_url('assets/css/cobalance-master.css?v=3') ?>" rel="stylesheet">
 </head>
 
 <body class="cb-layout <?php echo in_array($this->router->fetch_class(), array(

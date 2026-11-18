@@ -4,7 +4,7 @@
 .master-card h2 { margin: 0 0 6px; color: #183153; font-size: 18px; font-weight: 700; }
 .master-card-hint { margin: 0; color: #5e7084; line-height: 1.5; }
 .master-card-hint + .master-card-hint { margin-top: 6px; }
-.master-add { flex-shrink: 0; border: 0; border-radius: 7px; padding: 11px 16px; background: #087d82; font-weight: 600; white-space: nowrap; }
+.master-add { flex-shrink: 0; border-radius: 7px; background: #087d82; font-weight: 600; }
 .master-add:hover, .master-add:focus { background: #06696d; }
 .master-card .dataTables_wrapper { margin-top: 20px; }
 .master-card .table-responsive { border: 0; margin: 0; }
@@ -15,5 +15,4 @@
 @media (max-width: 767px) {
     .master-card { padding: 16px; }
     .master-card-heading { flex-direction: column; }
-    .master-add { width: 100%; }
 }
